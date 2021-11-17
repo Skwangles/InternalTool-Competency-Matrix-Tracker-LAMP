@@ -1,0 +1,19 @@
+body {
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #389E47;
+}
+.dangerous{
+    background-color: red;
+}
+nav{
+width: 100%;
+list-style: none;
+}
+.banner{
+    width: 100%;
+    background-color: blanchedalmond;
+}
+li {
+    display: inline;
+}
