@@ -7,24 +7,19 @@ if (isset($_POST["addG"])) { //If add group was selected - add group
     $groups = $_POST["groups"];
 
     foreach ($groups as $group) { //Loops through entries in array to apply to multiple groups
-        $resultData = UserGroupFromGroup($conn, $group);
         foreach ($users as $user) {
-            $canAdd = true;
-            while ($result = mysqli_fetch_array($resultData)) { //Checks if any users already exist in UserGroups table for that group
-                if ($result["UserID"] == $user) {
-                    $canAdd = false;
+            $competencies = CompetencyGroupFromGroup($conn, $group);//Renews the array - can probably just store another value and then reset it to save queries - but I am going for reliability first...
+            if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE users = " . $user . " AND groups = " . $group))) { //If entry is not present, add to user groups, and add the associated competencies
+                mysqli_query($conn, "INSERT INTO UserGroups (Users, Groups) VALUES (" . $user . ", " . $group . ")");
+                //Add competencies associated witht he groups to user
+                while ($competency = mysqli_fetch_array($competencies)) { //goes through list of competencies, finds ones which do not exist - and adds
+                    if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $user . " AND competencies = " . $competency["CompetencyID"]))) {
+                        mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $user . ", " . $competency["CompetencyID"] . ")");
+                    }
                 }
-            }
-            //Skipping outside the while loop - using the false - could have used continue, but wouldn't have worked in While
-
-            if ($canAdd) { //Only adds the users unselected
-                $sql = mysqli_query($conn, "INSERT INTO UserGroups (Users, Groups) VALUES (" . $user . ", " . $group . ")");
             }
         }
     }
-    //
-    //--- Add Competencies Connected to the Role from the user..
-    //
     header("location: ../staffedit.php?error=none");
     exit();
 } else if (isset($_POST["removeG"])) { //If remove group was selected - remove group
@@ -34,13 +29,16 @@ if (isset($_POST["addG"])) { //If add group was selected - add group
     foreach ($groups as $group) { //Loops through every entry
         foreach ($users as $user) {
             mysqli_query($conn, "DELETE FROM UserGroups WHERE Groups = " . $group . " AND Users = " . $user); //If it is in the table, add, otherwise skip
+            $competencies = CompetencyGroupFromGroup($conn, $group);
+            while ($competency = mysqli_fetch_array($competencies)) { //Deletes competencies associated with the group
+
+                //
+                //----------For Future, check that the competency is not associated with another group the user is a part of - for now, functionality
+                //
+                mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $user);
+            }
         }
     } //--foreach end--
-
-    //  
-    //--- Remove Competencies Connected to the Group from the user..
-    //
-
     header("location: ../staffedit.php?error=none");
     exit();
 } else if (isset($_POST["roleUpdate"])) { //If role update was selected - update role
