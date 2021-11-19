@@ -54,7 +54,7 @@ if (isset($_POST["addG"])) { //If add group was selected - add group
     //--- Remove Competencies Connected to the Role from the user..
 }
    
-    }
+    
 
     header("location: ../staffedit.php?error=none");
     exit();
