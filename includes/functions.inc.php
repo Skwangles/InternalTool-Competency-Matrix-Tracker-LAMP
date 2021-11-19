@@ -312,3 +312,12 @@ function getUserRatings($conn, $user, $competency){
     From UserCompetencies
     WHERE Users = " . $user . " AND Competencies = " . $competency);
 }
+
+
+function isCompInOtherGroup($conn, $comp, $group, $user){//Check if there exists any groups that the competency already exists in. 
+    return mysqli_query($conn, "SELECT * FROM CompetencyGroups WHERE NOT Groups = ".$group." AND Competencies = ".$comp." AND EXISTS (SELECT * FROM UserGroups WHERE `UserGroups`.Groups = `competencygroups`.`Groups` AND `usergroups`.`Users` = ".$user.");");
+}
+
+function isCompInOtherRole($conn, $comp, $role, $user){//Check if there exists any roles that the competency already exists in. 
+    return mysqli_query($conn, "SELECT * FROM CompetencyRoles WHERE NOT Roles = ".$role." AND Competencies = ".$comp." AND EXISTS (SELECT * FROM UserRoles WHERE `UserRoles`.Roles = `competencyroles`.`Roles` AND `userroles`.`Users` = ".$user.");");
+}

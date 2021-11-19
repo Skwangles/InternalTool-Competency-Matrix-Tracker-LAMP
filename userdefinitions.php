@@ -32,7 +32,8 @@ while ($user = mysqli_fetch_array($allUsers)) {
         $userComptencies = UserCompetenciesFromUser($conn, $user["UserID"]);
         while ($competencies = mysqli_fetch_assoc($userComptencies)) {
             $groups = CompetencyGroupFromCompetency($conn, $competencies["CompetencyID"]); //Gets groups which contain the specific competency
-            echo "<tr><td>" . $competencies["CName"] . "</td><td><ul>";
+            echo "<tr><td>" . $competencies["CName"] . "</td>
+            <td><ul>";
             while ($group = mysqli_fetch_assoc($groups)) {
                 if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE Users = " . $user["UserID"] . " AND Groups = " . $group["GroupID"]))) { //only displays if user is in that group
                     echo "<li>" . $group["GName"] . "</li>";
@@ -50,21 +51,23 @@ while ($user = mysqli_fetch_array($allUsers)) {
             </td>
             <td>
                 <?php
-                echo "<select name=\"compVal\" value=\"". mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE Users = " . $user["UserID"] . " AND Competencies = " . $competencies["CompetencyID"]))["Rating"]."\">";
+                $valueIndex = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE Users = " . $user["UserID"] . " AND Competencies = " . $competencies["CompetencyID"]))["Rating"];
+                echo "<select name=\"".$user["UserID"]."[]\">";
                 ?>
-                    <option value="0">Not Trained</option>
-                    <option value="1">Trained</option>
-                    <option value="2">Can demonstrate competency</option>
-                    <option value="3">Can train others</option>
+                    <option value="0" <?php echo $valueIndex == 0 ? "selected" : "";//Sets the default selected option ?>>Not Trained</option>
+                    <option value="1"  <?php echo $valueIndex == 1 ? "selected" : ""; ?>>Trained</option>
+                    <option value="2"  <?php echo $valueIndex == 2 ? "selected" : ""; ?>>Can demonstrate competency</option>
+                    <option value="3"  <?php echo $valueIndex == 3 ? "selected" : ""; ?>>Can train others</option>
                 </select>
+                <input type="hidden" name="<?php echo $user["UserID"] ?>-id[]" value="<?php echo $competencies["CompetencyID"];?>">
             </td>
-            
+            </tr>
         <?php
         }
 
         ?>
     </table>
-    <button type="submit" name="<?php echo $user["UserID"]//Will give processing form the id to update ?>">Update <?php echo $user["UName"]?>'s Values</button>
+    <button type="submit" name="updateC" value="<?php echo $user["UserID"]//Will give processing form the id to update ?>">Update <?php echo $user["UName"]?>'s Values</button>
     <br>
     <br>
 <?php

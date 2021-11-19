@@ -69,7 +69,7 @@ if (isset($_POST["submit"])) {
         $roles = $_POST["roles"];
         foreach ($roles as $role) { //Loops through entries in array to apply to multiple groups
             foreach ($competencies as $competency) {
-                $sql = mysqli_query($conn, "DELETE FROM Competencyroles WHERE Competencies = " . $competency . " AND roles = " . $role); //Deletes every occurence of the groups, and each of the competencies together
+                $sql = mysqli_query($conn, "DELETE FROM Competencyroles WHERE Competencies = " . $competency . " AND roles = " . $roles); //Deletes every occurence of the groups, and each of the competencies together
             }
         }
     }
