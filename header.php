@@ -15,23 +15,23 @@ session_start();
 <nav>
 <div class="wrapper">
     <ul>
-        <li><a href="index.php">Home</a></li>
-        <li><a href="singleview.php">Your Competencies</a></li>
+        <a href="index.php">Home</a>
+        <a href="singleview.php">Your Competencies</a>
         
         <?php
         if(isset($_SESSION["username"])){
-            if($_SESSION["role"] != "1"){
-                echo "<li><a href=\"managerview.php\">Your Department's Competencies</a></li>";
+            if($_SESSION["role"] > 1){
+                echo "<a href=\"managerview.php\">Your Department's Competencies</a>";
             }
             if($_SESSION["role"] == "3"){//If admin, shows admin options
-                echo "<li><a href=\"admin.php\">Admin Panel</a></li>";
+                echo "<a href=\"admin.php\">Admin Panel</a>";
                 
             }
-            echo "<li><a href=\"includes/logout.inc.php\">Logout</a></li>";            
+            echo "<a href=\"includes/logout.inc.php\">Logout</a>";            
         }
         else{
            
-           echo "<li><a href=\"login.php\">Log In</a></li>";
+           echo "<a href=\"login.php\">Log In</a>";
         }
         
         ?>

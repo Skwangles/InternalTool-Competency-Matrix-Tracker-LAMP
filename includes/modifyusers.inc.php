@@ -5,63 +5,52 @@ session_start(); //Allows access to $_SESSION for the roleUpdate
 if (isset($_POST["addG"])) { //If add group was selected - add group
     $users = $_POST["users"];
     $groups = $_POST["groups"];
-
-    foreach ($groups as $group) { //Loops through entries in array to apply to multiple groups
-        foreach ($users as $user) {
-            $competencies = CompetencyGroupFromGroup($conn, $group); //Renews the array - can probably just store another value and then reset it to save queries - but I am going for reliability first...
-            if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE users = " . $user . " AND groups = " . $group))) { //If entry is not present, add to user groups, and add the associated competencies
-                mysqli_query($conn, "INSERT INTO UserGroups (Users, Groups) VALUES (" . $user . ", " . $group . ")");
+    foreach ($groups as $groupid) { //Loops through entries in array to apply to multiple groups
+        $itemsFromCG = CompetencyGroupFromGroup($conn, $groupid);
+        foreach ($users as $userid) {
+            $competencies = $itemsFromCG; //Renews the array - can probably just store another value and then reset it to save queries - but I am going for reliability first...
+            if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE users = " . $userid . " AND groups = " . $groupid))) { //If entry is not present, add to user groups, and add the associated competencies
+                mysqli_query($conn, "INSERT INTO UserGroups (Users, Groups) VALUES (" . $userid . ", " . $groupid . ")");
                 //Add competencies associated witht he groups to user
-                while ($competency = mysqli_fetch_array($competencies)) { //goes through list of competencies, finds ones which do not exist - and adds
-                    if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $user . " AND competencies = " . $competency["CompetencyID"]))) {
-                        mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $user . ", " . $competency["CompetencyID"] . ")");
-                    }
-                }
+                addCompetenciesAssociatedWithGroup($conn, $userid, $competencies);
             }
         }
     }
     header("location: ../staffedit.php?error=none");
     exit();
 } else if (isset($_POST["removeG"])) { //If remove group was selected - remove group
-    $users = $_POST["users"];
-    $groups = $_POST["groups"];
+    $selectedUsers = $_POST["users"];
+    $selectedGroups = $_POST["groups"];
 
-    foreach ($groups as $group) { //Loops through every entry
-        foreach ($users as $user) {
-            mysqli_query($conn, "DELETE FROM UserGroups WHERE Groups = " . $group . " AND Users = " . $user); //If it is in the table, add, otherwise skip
-            $competencies = CompetencyGroupFromGroup($conn, $group);
-            while ($competency = mysqli_fetch_array($competencies)) { //Deletes competencies associated with the group
-
-                //
-                //----------For Future, check that the competency is not associated with another group the user is a part of - for now, functionality
-                //
-                if (!isCompInOtherGroup($conn, $competency["CompetencyID"], $group, $user) && !isCompInOtherRole($conn, $competency["CompetencyID"], 0, $user)) {//Checks if competency is associated with another group before removal
-                    mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $user);
-                }
-            }
+    foreach ($selectedGroups as $groupid) { //Loops through every entry
+        $itemsFromCG = CompetencyGroupFromGroup($conn, $groupid);
+        foreach ($selectedUsers as $userid) {
+            mysqli_query($conn, "DELETE FROM UserGroups WHERE Groups = " . $groupid . " AND Users = " . $userid); //If it is in the table, add, otherwise skip
+            removeCompetenciesAssociatedWithGroup($conn, $itemsFromCG, $userid, $groupid);
         }
     } //--foreach end--
     header("location: ../staffedit.php?error=none");
     exit();
 } else if (isset($_POST["roleUpdate"])) { //If role update was selected - update role
     $users = $_POST["users"];
-    foreach ($users as $user) { //Foreach user selected, update the Role to be the desired
-        if ($user == $_SESSION["userid"]) continue; //Cannot update own role. 
-        mysqli_query($conn, "UPDATE Users SET URole = " . $_POST["role"] . " WHERE UserID = " . $user); //Overwrites role with new one
-   
-   //if (!isCompInOtherGroup($conn, $competency["CompetencyID"], $group, $user) && !isCompInOtherRole($conn, $competency["CompetencyID"], 0, $user)) {//Checks if competency is associated with another group before removal
-    //mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $user);
-    //--- Remove Competencies Connected to the Role from the user..
-}
-   
-    
+    foreach ($users as $userid) { //Foreach user selected, update the Role to be the desired
+        if ($userid == $_SESSION["userid"]) continue; //Cannot update own role. 
+
+        $oldRole =  mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = " . $userid))[0];
+        
+        mysqli_query($conn, "UPDATE Users SET URole = " . $_POST["role"] . " WHERE UserID = " . $userid); //Overwrites role with new one
+
+        addCompetenciesAssociatedWithRole($conn, $userid, CompetencyRolesFromRoles($conn, $_POST["role"]));
+        removeCompetenciesAssociatedWithRole($conn, CompetencyRolesFromRoles($conn, $oldRole), $userid, $oldRole);//removed after the change to ensure that any values shared between roles are preserved
+    }
 
     header("location: ../staffedit.php?error=none");
     exit();
 } elseif (isset($_POST["delete"])) {
     $users = $_POST["users"];
-    foreach ($users as $User) {
-        mysqli_query($conn, "DELETE FROM Users WHERE UserID = " . $User);
+    foreach ($users as $userid) {
+        if ($userid == $_SESSION["userid"]) continue; //Cannot delete yourself. 
+        mysqli_query($conn, "DELETE FROM Users WHERE UserID = " . $userid);
     }
     header("location: ../staffedit.php?error=none");
     exit();

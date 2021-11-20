@@ -17,7 +17,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
 <br>
 <h3 class="banner">Create Competency</h3>
 <!--Gets name of a competency and allows the addition of it to the database-->
-<form action="includes/addcompetency.inc.php" method="post">
+<form action="includes/actioncompetencies.inc.php" method="post">
     <input type="text" name="competency" placeholder="Competency Name">
     <br>
     <button type="submit" name="submit">Add Competency</button>
@@ -26,7 +26,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
 <h3 class="banner"> Add Competencies To Groups, Roles and Users </h3>
 
 <!--Defines all groups, and what their assigned competencies are in a table-->
-<form action="includes/addcompetency.inc.php" method="post">
+<form action="includes/actioncompetencies.inc.php" method="post">
     <table border="1">
         <tr>
             <th>Select</th>

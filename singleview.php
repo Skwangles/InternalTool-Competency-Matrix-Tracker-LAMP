@@ -14,16 +14,24 @@ require_once "includes/functions.inc.php";
         <th><?php echo $_SESSION["name"]; ?></th>
     </tr>
     <?php
+        $role = mysqli_fetch_assoc(RoleFromUser($conn, $_SESSION["userid"]));
+
+        echo "<tr><td><b>" . $role["RName"] . "</b></td></tr>";
+        $competencies = CompetencyRolesFromRoles($conn, $role["RoleID"]);
+        while ($competency = mysqli_fetch_array($competencies)) {
+            echo "<tr><td>" . $competency["CName"] . "</td>";
+            displayUserRatings($conn, $competency, $_SESSION["userid"]);
+    }
+
+    ?>
+    <?php
     $groups = UserGroupFromUser($conn, $_SESSION["userid"]);
     while ($group = mysqli_fetch_array($groups)) {
         echo "<tr><td><b>" . $group["GName"] . "</b></td></tr>";
         $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
         while ($competency = mysqli_fetch_array($competencies)) {
             echo "<tr><td>" . $competency["CName"] . "</td>";
-            $Ratings = getUserRatings($conn, $_SESSION["userid"], $competency["CompetencyID"]);
-            if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-                echo "<td>" . $Rating["Rating"] . "</td></tr>";
-            }
+            displayUserRatings($conn, $competency, $_SESSION["userid"]);
         }
     }
     ?>

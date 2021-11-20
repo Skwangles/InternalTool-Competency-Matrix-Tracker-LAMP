@@ -88,12 +88,34 @@ function getUsers($conn) //Returns the names of the different groups in the grou
     return mysqli_query($conn, "SELECT * FROM users;"); //gets users
 }
 
+function deleteUser($conn, $POST, $SESSION)
+{
+    $values = mysqli_query($conn, "SELECT * FROM users");
+    foreach ($values as $value) {
+        if (isset($POST[$value["UserID"]]) && $value["UserID"] != $SESSION["userid"]) { //Checks value exists, and is not the current user (Can't delete yourself)
+
+            $sql = "DELETE FROM users WHERE UserID = ?"; //Sets up the add to database
+            $stmt = mysqli_stmt_init($conn); //Initates database connection
+
+            if (!mysqli_stmt_prepare($stmt, $sql)) { //if sql fails, rejects with an error
+                header("location: ../staffedit.php?error=stmtfailure");
+                exit();
+            }
+
+            mysqli_stmt_bind_param($stmt, "s", $value["UserID"]); //Binding prevents injection
+            mysqli_stmt_execute($stmt);
+
+            mysqli_stmt_close($stmt);
+        }
+    }
+}
+
 //
 //GROUP PROCESSING
 //
 function getGroups($conn) //Returns complete array of all departmanets
 {
-   return mysqli_query($conn, "SELECT * FROM groups;"); //gets users
+    return mysqli_query($conn, "SELECT * FROM groups;"); //gets users
 }
 
 function addGroup($conn, $name) //Adds Group to database
@@ -206,118 +228,167 @@ function getCompetencies($conn) //Returns complete array of all departmanets
     mysqli_stmt_close($stmt);
 }
 
-function deleteUser($conn, $POST, $SESSION){
-    $values = mysqli_query($conn, "SELECT * FROM users");
-    foreach ($values as $value) {
-        if (isset($POST[$value["UserID"]]) && $value["UserID"] != $SESSION["userid"]) { //Checks value exists, and is not the current user (Can't delete yourself)
-
-            $sql = "DELETE FROM users WHERE UserID = ?"; //Sets up the add to database
-            $stmt = mysqli_stmt_init($conn); //Initates database connection
-
-            if (!mysqli_stmt_prepare($stmt, $sql)) { //if sql fails, rejects with an error
-                header("location: ../staffedit.php?error=stmtfailure");
-                exit();
-            }
-
-            mysqli_stmt_bind_param($stmt, "s", $value["UserID"]); //Binding prevents injection
-            mysqli_stmt_execute($stmt);
-
-            mysqli_stmt_close($stmt);
+function addCompetenciesAssociatedWithGroup($conn, $userid, $competencies)
+{
+    while ($competency = mysqli_fetch_assoc($competencies)) { //goes through list of competencies, finds ones which do not exist - and adds
+        if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"]))) {
+            mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency["CompetencyID"] . ")");
         }
     }
 }
 
-function UserGroupFromGroup($conn, $group){
+function removeCompetenciesAssociatedWithGroup($conn, $competenciesWithGroup, $userid, $groupid)
+{
+    while ($competency = mysqli_fetch_array($competenciesWithGroup)) { //Deletes competencies associated with the group
+        if (!isCompInOtherGroup($conn, $competency["CompetencyID"], $groupid, $userid) && !isCompInOtherRole($conn, $competency["CompetencyID"], 0, $userid)) { //Checks if competency is associated with another group/role before removal
+            mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
+        }
+    }
+}
+
+function addCompetenciesAssociatedWithRole($conn, $userid, $competenciesWithRole)
+{
+    while ($competency = mysqli_fetch_assoc($competenciesWithRole)) { //goes through list of competencies, finds ones which do not exist - and adds
+        if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"]))) {
+            mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency["CompetencyID"] . ")");
+        }
+    }
+}
+
+function removeCompetenciesAssociatedWithRole($conn, $competenciesWithRole, $userid, $roleid)
+{
+    while ($competency = mysqli_fetch_array($competenciesWithRole)) { //Deletes competencies associated with the group
+        if (!isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) && !isCompInOtherRole($conn, $competency["CompetencyID"], $roleid, $userid)) { //Checks if competency is associated with another group/role before removal
+            mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
+        }
+    }
+}
+
+function isCompInOtherGroup($conn, $comp, $group, $user)
+{ //Check if there exists any groups that the competency already exists in. 
+    return mysqli_query($conn, "SELECT * FROM CompetencyGroups WHERE NOT Groups = " . $group . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM UserGroups WHERE `UserGroups`.Groups = `competencygroups`.`Groups` AND `usergroups`.`Users` = " . $user . ");");
+}
+
+function isCompInOtherRole($conn, $comp, $role, $user)
+{ //Check if there exists any roles that the competency already exists in. 
+    return mysqli_query($conn, "SELECT * FROM CompetencyRoles WHERE NOT Roles = " . $role . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM UserRoles WHERE `UserRoles`.Roles = `competencyroles`.`Roles` AND `userroles`.`Users` = " . $user . ");");
+}
+
+//
+//JOINING TABLE PROCESSING
+//
+
+function UserGroupFromGroup($conn, $groupid)
+{
     return mysqli_query($conn, "SELECT
     `Users`.*
 FROM
     `Users`
     JOIN `Usergroups` ON `Users`.`UserID` = `UserGroups`.`Users`
 WHERE
-    `UserGroups`.`Groups` = " . $group);
+    `UserGroups`.`Groups` = " . $groupid);
 }
 
-function UserGroupFromUser($conn,$user){
+function UserGroupFromUser($conn, $userid)
+{
     return mysqli_query($conn, "SELECT
     `Groups`.*
 FROM
     `Groups`
     JOIN `UserGroups` ON `Groups`.`GroupID` = `UserGroups`.`Groups`
 WHERE
-    `UserGroups`.`Users` = ".$user);//Gets all groups the user is a part of
+    `UserGroups`.`Users` = " . $userid); //Gets all groups the user is a part of
 }
 
-function CompetencyGroupFromGroup($conn, $group){
-  return mysqli_query($conn,"SELECT
+function CompetencyGroupFromGroup($conn, $groupid)
+{
+    return mysqli_query($conn, "SELECT
 `Competencies`.*
 FROM
 `Competencies`
 JOIN `CompetencyGroups` ON `Competencies`.`CompetencyID` = `CompetencyGroups`.`Competencies`
 WHERE
-`CompetencyGroups`.`Groups` = " . $group);
+`CompetencyGroups`.`Groups` = " . $groupid);
 }
 
-function CompetencyGroupFromCompetency($conn, $competency){//Recieves competency ID and returns groups
-    return mysqli_query($conn,"SELECT
+function CompetencyGroupFromCompetency($conn, $competencyid)
+{ //Recieves competency ID and returns groups
+    return mysqli_query($conn, "SELECT
   `Groups`.*
   FROM
   `Groups`
   JOIN `CompetencyGroups` ON `Groups`.`GroupID` = `CompetencyGroups`.`Groups`
   WHERE
-  `CompetencyGroups`.`Competencies` = " . $competency);
-  }
+  `CompetencyGroups`.`Competencies` = " . $competencyid);
+}
 
-  function CompetencyRolesFromCompetency($conn, $competency){//Recieves competency ID and returns groups
-    return mysqli_query($conn,"SELECT
+function CompetencyRolesFromCompetency($conn, $competencyid)
+{ //Recieves competency ID and returns groups
+    return mysqli_query($conn, "SELECT
   `Roles`.*
   FROM
   `Roles`
   JOIN `CompetencyRoles` ON `Roles`.`RoleID` = `CompetencyRoles`.`Roles`
   WHERE
-  `CompetencyRoles`.`Competencies` = " . $competency);
-  }
-
-  function UserCompetenciesFromCompetency($conn, $competency){//Recieves competency ID and returns groups
-    return mysqli_query($conn,"SELECT
-  `users`.*
-  FROM
-  `users`
-  JOIN `userCompetencies` ON `users`.`UserID` = `userCompetencies`.`users`
-  WHERE
-  `userCompetencies`.`Competencies` = " . $competency);
-  }
-
-  function UserCompetenciesFromUser($conn, $user){//Recieves competency ID and returns groups
-    return mysqli_query($conn,"SELECT
-  `Competencies`.*
-  FROM
-  `Competencies`
-  JOIN `userCompetencies` ON `Competencies`.`CompetencyID` = `usercompetencies`.`Competencies`
-  WHERE
-  `usercompetencies`.`users` = " . $user);
-  }
-
-  function CompetencyRolesFromRoles($conn, $role){
-    return mysqli_query($conn,"SELECT
+  `CompetencyRoles`.`Competencies` = " . $competencyid);
+}
+function CompetencyRolesFromRoles($conn, $roleid)
+{
+    return mysqli_query($conn, "SELECT
   `Competencies`.*
   FROM
   `Competencies`
   JOIN `Competencyroles` ON `Competencies`.`CompetencyID` = `Competencyroles`.`Competencies`
   WHERE
-  `Competencyroles`.`roles` = " . $role);
-  }
+  `Competencyroles`.`roles` = " . $roleid);
+}
 
-function getUserRatings($conn, $user, $competency){
+function UserCompetenciesFromCompetency($conn, $competencyid)
+{ //Recieves competency ID and returns groups
+    return mysqli_query($conn, "SELECT
+  `users`.*
+  FROM
+  `users`
+  JOIN `userCompetencies` ON `users`.`UserID` = `userCompetencies`.`users`
+  WHERE
+  `userCompetencies`.`Competencies` = " . $competencyid);
+}
+
+function UserCompetenciesFromUser($conn, $userid)
+{ //Recieves competency ID and returns groups
+    return mysqli_query($conn, "SELECT
+  `Competencies`.*
+  FROM
+  `Competencies`
+  JOIN `userCompetencies` ON `Competencies`.`CompetencyID` = `usercompetencies`.`Competencies`
+  WHERE
+  `usercompetencies`.`users` = " . $userid);
+}
+
+function RoleFromUser($conn, $userid)
+{ //Recieves competency ID and returns groups
+    return mysqli_query($conn, "SELECT
+  `Roles`.*
+  FROM
+  `Roles`
+  JOIN `users` ON `Roles`.`RoleID` = `users`.`URole`
+  WHERE
+  `Users`.`UserID` = " . $userid);
+}
+
+function getUserRatingsFromCompetency($conn, $userid, $competencyid)
+{
     return mysqli_query($conn, "SELECT Rating
     From UserCompetencies
-    WHERE Users = " . $user . " AND Competencies = " . $competency);
+    WHERE Users = " . $userid . " AND Competencies = " . $competencyid);
 }
 
-
-function isCompInOtherGroup($conn, $comp, $group, $user){//Check if there exists any groups that the competency already exists in. 
-    return mysqli_query($conn, "SELECT * FROM CompetencyGroups WHERE NOT Groups = ".$group." AND Competencies = ".$comp." AND EXISTS (SELECT * FROM UserGroups WHERE `UserGroups`.Groups = `competencygroups`.`Groups` AND `usergroups`.`Users` = ".$user.");");
-}
-
-function isCompInOtherRole($conn, $comp, $role, $user){//Check if there exists any roles that the competency already exists in. 
-    return mysqli_query($conn, "SELECT * FROM CompetencyRoles WHERE NOT Roles = ".$role." AND Competencies = ".$comp." AND EXISTS (SELECT * FROM UserRoles WHERE `UserRoles`.Roles = `competencyroles`.`Roles` AND `userroles`.`Users` = ".$user.");");
+function displayUserRatings($conn, $competency, $user){
+    $ratingNames = array("Not Trained", "Trained", "Can demonstrate competency", "Can train others");
+    $Ratings = getUserRatingsFromCompetency($conn, $user, $competency["CompetencyID"]);
+                if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
+                    echo "<td>" . $ratingNames[$Rating["Rating"]-1] . "</td>";//Gives the text versions of the names
+                } else {
+                    echo "<td></td>"; //Gives empty
+                }
 }

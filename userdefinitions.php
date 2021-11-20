@@ -23,8 +23,8 @@ while ($user = mysqli_fetch_array($allUsers)) {
         </tr>
         <tr>
             <th>Competency</th>
-            <th>Groups Found</th>
-            <th>Roles Found</th>
+            <th>Groups Associated</th>
+            <th>Roles Associated</th>
             <th>Value</th>
         </tr>
         <?php
