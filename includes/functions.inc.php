@@ -365,6 +365,11 @@ function UserCompetenciesFromUser($conn, $userid)
   `usercompetencies`.`users` = " . $userid);
 }
 
+//
+//Roles & Ratings
+//
+
+
 function RoleFromUser($conn, $userid)
 { //Recieves competency ID and returns groups
     return mysqli_query($conn, "SELECT
@@ -383,12 +388,16 @@ function getUserRatingsFromCompetency($conn, $userid, $competencyid)
     WHERE Users = " . $userid . " AND Competencies = " . $competencyid);
 }
 
-function displayUserRatings($conn, $competency, $user){
+function displayUserRatings($conn, $competency, $user)
+{
+    //
+    //----If you want to get rid of the "Not trained" options, 1. Remove it from the select in the userdefinitions, 1. Change the default value of a competency to be 1/any
+    //
     $ratingNames = array("Not Trained", "Trained", "Can demonstrate competency", "Can train others");
     $Ratings = getUserRatingsFromCompetency($conn, $user, $competency["CompetencyID"]);
-                if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-                    echo "<td>" . $ratingNames[$Rating["Rating"]-1] . "</td>";//Gives the text versions of the names
-                } else {
-                    echo "<td></td>"; //Gives empty
-                }
+    if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
+        echo "<td>" . $ratingNames[$Rating["Rating"]] . "</td>"; //Gives the text versions of the names
+    } else {
+        echo "<td>N/A</td>"; //Gives empty
+    }
 }

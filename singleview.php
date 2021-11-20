@@ -8,7 +8,7 @@ if (!isset($_SESSION["username"])) {
 require_once "includes/dbh.inc.php";
 require_once "includes/functions.inc.php";
 ?>
-<table border="1">
+<table border="1" class="centre">
     <tr>
         <th></th>
         <th><?php echo $_SESSION["name"]; ?></th>

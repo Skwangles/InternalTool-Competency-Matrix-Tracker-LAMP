@@ -9,14 +9,13 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] == "1") {
 }
 
 ?>
-<h2>--Your Departments--</h2>
+<h2 class="centre">--Your Departments--</h2>
 <?php
-
 $groups = UserGroupFromUser($conn, $_SESSION["userid"]);
 while ($group = mysqli_fetch_array($groups)) {
 ?>
 
-    <table border="1">
+    <table border="1" class="centre">
         <tr>
             <th><?php echo $group["GName"] ?></th>
         </tr>
@@ -49,12 +48,12 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
     $groups = getGroups($conn);
 ?>
 
-    <h2>--ALL groups--</h2>
+    <h2 class="centre">--ALL groups--</h2>
     <?php
     while ($group = mysqli_fetch_array($groups)) {
     ?>
 
-        <table border="1">
+        <table border="1" class="centre">
             <tr>
                 <th><?php echo $group["GName"] ?></th>
             </tr>

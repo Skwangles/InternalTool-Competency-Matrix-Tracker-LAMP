@@ -1,33 +1,31 @@
 body {
     justify-content: center;
-    min-height: 100vh;
+    /* min-height: 100vh; */
+    display: block;
+    margin:0 auto;
     background-color: #389E47;
 }
 .dangerous{
     background-color: red;
 }
-nav{
-width: 100%;
-list-style: none;
-}
-.banner{
-    width: 100%;
-    background-color: blanchedalmond;
-}
 
-
-/* Style the navigation menu */
-.navbar {
+.centre{
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* Style the navigation menu - from https://www.w3schools.com/howto/howto_css_topnav_equal_width.asp */
+nav {
     width: 100%;
-    background-color: #555;
-    overflow: auto;
+    background-color: #05b43f;
+    overflow: hidden;
+    text-align: center;
   }
   
   /* Navigation links */
-  .navbar a {
-    float: left;
+  nav a {
     padding: 12px;
-    color: white;
+    color: black;
     text-decoration: none;
     font-size: 17px;
     width: 25%; /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
@@ -35,21 +33,115 @@ list-style: none;
   }
   
   /* Add a background color on mouse-over */
-  .navbar a:hover {
-    background-color: #000;
-  }
-  
-  /* Style the current/active link */
-  .navbar a.active {
-    background-color: #04AA6D;
+  nav a:hover {
+    background-color: #0b6d2c;
   }
   
   /* Add responsiveness - on screens less than 500px, make the navigation links appear on top of each other, instead of next to each other */
   @media screen and (max-width: 500px) {
-    .navbar a {
+    nav a {
       float: none;
       display: block;
       width: 100%;
       text-align: left; /* If you want the text to be left-aligned on small screens */
     }
+  }
+
+  .block{
+    display: block;
+    width: 100%;
+    border: none;
+    background-color: #04AA6D;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  .block:hover{
+      background-color: #0d724d;
+  }
+
+  .actionbuttons{
+    display: block;
+    width: 30%;
+    border: none;
+    background-color: #29519b;
+    padding: 14px 28px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .actionbuttons:hover{
+    background-color: #1f3968;
+  }
+
+  input[type=text], input[type=password] {
+    width: 20%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid red;
+    border-radius: 4px;
+  }
+
+  input[type=text]:focus{
+   background-color: lightblue;
+  }
+
+  input[type=password]:focus{
+    background-color: lightblue;
+   }
+
+  select {
+    padding: 16px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #f1f1f1;
+  }
+
+  input[type=button], input[type=submit] {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 16px 32px;
+    text-decoration: none;
+    margin: 4px 2px;
+    cursor: pointer;
+  }
+
+  td { 
+    padding: 10px;
+}
+
+.error {
+    padding: 10px;
+    background: green;
+    color: white;
+  }
+  .error {
+    -moz-animation: cssAnimation 6s ease-in;
+    /* Firefox */
+    -webkit-animation: cssAnimation 6s ease-in;
+    /* Safari and Chrome */
+    -o-animation: cssAnimation 6s ease-in;
+    /* Opera */
+    animation: cssAnimation 6s ease-in;
+    -webkit-animation-fill-mode: forwards;
+    animation-fill-mode: forwards;
+}
+  
+  @keyframes cssAnimation {
+    0%   {opacity: 1;display:block;}
+    /* 60 sec : visible */
+    44%   {opacity: 1;display:block;}
+    /* 62 sec : start fading out */
+    55%   {opacity: 1;display:block;}
+    /* 63 sec : not visible */
+    60%   {opacity: 0;display:block;}
+    /* 64 sec */
+    100%   {opacity: 0;display:none;}
   }

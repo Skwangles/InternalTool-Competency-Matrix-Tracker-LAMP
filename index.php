@@ -2,11 +2,17 @@
 include_once 'header.php';
 ?>
 <?php
+include_once 'error.php';
+
         if(isset($_SESSION["username"])){
-            echo "<p>Welcome, " . $_SESSION["name"] . "</p>";            
+            echo "<h2 class=\"centre\">Welcome, " . $_SESSION["name"] . "</h2>"; 
+            include_once 'singleview.php';           
         }
         else{
-            echo "<p>Login to see you competencies</p>";    
+            ?>
+            <h1 class="centre">Login to see your competencies</h1>
+            <form action="login.php"><button class="actionbuttons">Go To Login</button></form>
+<?php
         }
         ?>
 

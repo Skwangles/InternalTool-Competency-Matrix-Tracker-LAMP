@@ -5,26 +5,29 @@ include_once 'header.php';
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
-    header("location: index.php?error=invalidcall");
-    exit();
-}
+// if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
+//     header("location: index.php?error=invalidcall");
+//     exit();
+// }
+include_once 'error.php';
+
+include_once 'admin.php';
 ?>
-<form action="admin.php" method="post"><button type="submit" name="submit">Go back</button></form>
+<!-- <form class="centre" action="admin.php" method="post"><button class="block" type="submit" name="submit">Go back</button></form> -->
 
 
-<h3 class="banner">Add Department/Group</h3>
-<form action="includes/addgroup.inc.php" method="post">
+<h3 class="centre">Add Department/Group</h3>
+<form class="centre" action="includes/actiongroups.inc.php" method="post">
     <input type="text" name="groupname" placeholder="Group Name">
-    <button type="submit" name="submit">Add Group</button>
+    <button class="actionbuttons" type="submit" name="add">Add Group</button>
 </form>
-<h3 class="banner">Current Departments/Groups</h3>
+<h3 class="centre">Current Departments/Groups</h3>
 
-
+<form class="centre" action="includes/actiongroups.inc.php" method="post">
 <?php //list of Groups in a table
 $result = mysqli_query($conn, "SELECT * FROM groups");
 
-echo "<table border='1'>
+echo "<table border='1' class=\"centre\">
 <tr>
 <th>Select</th>
 <th>Name</th>
@@ -32,34 +35,17 @@ echo "<table border='1'>
 
 while ($row = mysqli_fetch_array($result)) {
     echo "<tr>";
-    echo "<td>" . "<br><input type=\"checkbox\" id=\"" . $row["GroupID"] . "\" name=\"" . $row["GroupID"] . "\" value=\"" . $row["GroupID"] . "\">" . "</td>"; //Creates Checkbox
+    echo "<td>" . "<input type=\"checkbox\" name=\"groups[]\" value=\"" . $row["GroupID"] . "\">"."</td>"; //Creates Checkbox
     echo "<td>" . $row['GName'] . "</td>"; //Gives name
     echo "</tr>";
 }
 echo "</table>";
 ?>
-
+<br>
+<button class="dangerous" type="submit" name="remove">Delete Selected PERMANENTLY</button>
+</form>
 
 <br>
 <?php
-//Handles error tags
-if (isset($_GET["error"])) {
-    if ($_GET["error"] == "emptyinput") {
-        echo "<p>Some fields are empty!</p>";
-    } else if ($_GET["error"] == "stmtfailure") {
-        echo "<p>Processing failure occurred!</p>";
-    } else if ($_GET["error"] == "invaliduser") {
-        echo "<p>Value must be alphanumeric!</p>";
-    } else if ($_GET["error"] == "invalidcall") {
-        echo "<p>Page was accessed incorrectly!</p>";
-    } else if ($_GET["error"] == "none") {
-        echo "<p>Successfully Added!</p>";
-    } else if ($_GET["error"] == "usernametaken") {
-        echo "<p>Username is already taken!</p>";
-    } else {
-        echo "<p>Something went wrong!</p>";
-    }
-}
-
 include_once 'footer.php';
 ?>

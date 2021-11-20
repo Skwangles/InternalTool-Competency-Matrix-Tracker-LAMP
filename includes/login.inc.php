@@ -16,10 +16,10 @@ if (isset($_POST["submit"])) {
     }
     if (userExists($conn, $username) !== false) {
         loginUser($conn, $username, $password); //Sets session variables, after checking values
-        header("location: ../index.php?error=none");
+        header("location: ../index.php?error=login");
         exit();
     } else {
-        header("location: ../login.php?error=nouser");
+        header("location: ../login.php?error=incorrectlogin");
         exit();
     }
 } else {

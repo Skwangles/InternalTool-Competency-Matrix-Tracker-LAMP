@@ -5,29 +5,32 @@ include_once 'header.php';
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
-    header("location: index.php?error=invalidcall");
-    exit();
-}
+// if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
+//     header("location: index.php?error=invalidcall");
+//     exit();
+// }
+include_once "error.php";
+
+include_once 'admin.php';
 ?>
-<form action="admin.php" method="post"><button type="submit" name="submit">Go back</button></form>
+<!-- <form class="centre" action="admin.php" method="post"><button class="block" type="submit" name="submit">Go back</button></form> -->
 
 
 
 <br>
-<h3 class="banner">Create Competency</h3>
+<h3 class="centre">Create Competency</h3>
 <!--Gets name of a competency and allows the addition of it to the database-->
-<form action="includes/actioncompetencies.inc.php" method="post">
+<form class="centre" action="includes/actioncompetencies.inc.php" method="post">
     <input type="text" name="competency" placeholder="Competency Name">
     <br>
-    <button type="submit" name="submit">Add Competency</button>
+    <button class="actionbuttons" type="submit" name="submit">Add Competency</button>
 </form>
 
-<h3 class="banner"> Add Competencies To Groups, Roles and Users </h3>
+<h3 class="centre"> Add Competencies To Groups, Roles and Users </h3>
 
 <!--Defines all groups, and what their assigned competencies are in a table-->
-<form action="includes/actioncompetencies.inc.php" method="post">
-    <table border="1">
+<form class="centre" action="includes/actioncompetencies.inc.php" method="post">
+    <table border="1" class="centre">
         <tr>
             <th>Select</th>
             <th>Name</th>
@@ -40,7 +43,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
         $groups = mysqli_query($conn, "SELECT * FROM groups");
         while ($row = mysqli_fetch_array($groups)) {
             echo "<tr>";
-            echo "<td>" . "<br><input type=\"checkbox\" name=\"groups[]\" value=\"" . $row["GroupID"] . "\">" . "</td>"; //Creates Checkbox with group ID
+            echo "<td>" . "<input type=\"checkbox\" name=\"groups[]\" value=\"" . $row["GroupID"] . "\">" . "</td>"; //Creates Checkbox with group ID
             echo "<td>" . $row["GName"] . "</td>";   //Gives name of the group
             echo "<td><ul>"; //Lists the competencies in a cell
 
@@ -60,7 +63,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
         $roles = mysqli_query($conn, "SELECT * FROM roles");
         while ($row = mysqli_fetch_array($roles)) {
             echo "<tr>";
-            echo "<td>" . "<br><input type=\"checkbox\" name=\"roles[]\" value=\"" . $row["RoleID"] . "\">" . "</td>"; //Creates Checkbox with group ID
+            echo "<td>" . "<input type=\"checkbox\" name=\"roles[]\" value=\"" . $row["RoleID"] . "\">" . "</td>"; //Creates Checkbox with group ID
             echo "<td>" . $row["RName"] . "</td>";   //Gives name of the group
             echo "<td><ul>"; //Lists the competencies in a cell
 
@@ -79,7 +82,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
     <?php //list of Competencies in a table
     $result = mysqli_query($conn, "SELECT * FROM competencies");
 
-    echo "<table border='1'>
+    echo "<table border='1' class=\"centre\">
 <tr>
 <th>Select</th>
 <th>Name</th>
@@ -87,36 +90,24 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
 
     while ($row = mysqli_fetch_array($result)) {
         echo "<tr>";
-        echo "<td>" . "<br><input type=\"checkbox\"  name=\"competencies[]\" value=\"" . $row["CompetencyID"] . "\">" . "</td>"; //Creates Checkbox
+        echo "<td>" . "<input type=\"checkbox\"  name=\"competencies[]\" value=\"" . $row["CompetencyID"] . "\">" . "</td>"; //Creates Checkbox
         echo "<td>" . $row["CName"] . "</td>"; //Gives name
         echo "</tr>";
     }
     echo "</table>";
     ?>
-    <button type="submit" name="removeC">Remove Competency From Groups</button>
-    <button type="submit" name="addC">Add Competencies To Groups</button>
+    <button class="actionbuttons" type="submit" name="removeC">Remove Competency From Groups</button>
+    <button class="actionbuttons" type="submit" name="addC">Add Competencies To Groups</button>
     <br>
     <br>
     <br>
     <button type="submit" name="permdelete" class="dangerous">DELETE SELECTED PERMANENTLY</button>
 </form>
-<p>After adding any new competencies, make sure all users have had their values entered</p>
+<br>
+<br>
+<br>
+<br>
 <?php
 //Handles error tags
-if (isset($_GET["error"])) {
-    if ($_GET["error"] == "emptyinput") {
-        echo "<p>Some fields are empty!</p>";
-    } else if ($_GET["error"] == "stmtfailure") {
-        echo "<p>Processing failure occurred!</p>";
-    } else if ($_GET["error"] == "invalidname") {
-        echo "<p>Names must be alphanumeric!</p>";
-    } else if ($_GET["error"] == "invalidcall") {
-        echo "<p>Page was accessed incorrectly!</p>";
-    } else if ($_GET["error"] == "none") {
-        echo "<p>Successfully Added!</p>";
-    } else {
-        echo "<p>Something went wrong!</p>";
-    }
-}
 
 include_once 'footer.php';
