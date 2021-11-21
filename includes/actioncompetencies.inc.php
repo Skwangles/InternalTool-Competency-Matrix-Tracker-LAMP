@@ -44,6 +44,16 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
             }
         }
     }
+    if (isset($_POST["users"])) { //Only if some roles are selected
+        $users = $_POST["users"];
+        foreach ($users as $userid) { //Loops through entries in array to apply to multiple groups
+            foreach ($selectedCompetencies as $competencyid) {
+                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM IndividualUserCompetencies WHERE Competencies = " . $competencyid . " AND Users = " . $userid)) == false) {
+                    mysqli_query($conn, "INSERT INTO IndividualUserCompetencies (Competencies, Users) VALUES (" . $competencyid . ", " . $userid . ")");
+                }
+            }
+        }
+    }
 
     //
     //----------------------------------------Update All Users Competencies Upon Add-----------
@@ -73,7 +83,15 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
             }
         }
     }
-     //
+    if (isset($_POST["users"])) { //Only if some roles are selected
+        $users = $_POST["users"];
+        foreach ($users as $userid) { //Loops through entries in array to apply to multiple groups
+            foreach ($selectedCompetencies as $competency) {
+                mysqli_query($conn, "DELETE FROM IndividualUserCompetencies WHERE Competencies = " . $competency . " AND Users = " . $userid); //Deletes every occurence of the rioles and competency together
+            }
+        }
+    }
+    //
     //----------------------------------------Update All Users Competencies Upon Add-----------
     //
     $users = getUsers($conn);
