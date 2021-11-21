@@ -27,6 +27,7 @@ include_once 'admin.php';
 <?php
 $allUsers = getUsers($conn);
 while ($user = mysqli_fetch_array($allUsers)) {
+    updateUserCompetencies($conn, $user["UserID"]);///-----------------likely an inefficent spot
 ?>
 <section id="<?php echo $user["UserID"] ?>">
     <form class="centre" action="includes/actionuservalues.inc.php" method="post">

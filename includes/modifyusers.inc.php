@@ -11,7 +11,8 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
             if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE users = " . $userid . " AND groups = " . $groupid))) { //If entry is not present, add to user groups, and add the associated competencies
                 mysqli_query($conn, "INSERT INTO UserGroups (Users, Groups) VALUES (" . $userid . ", " . $groupid . ")");
                 //Add competencies associated witht he groups to user
-                addCompetenciesAssociated($conn, $userid, CompetencyGroupFromGroup($conn, $groupid));//Can save queries by making a reusable variable of the CompGroupfromGroup thingy, I couldn't get it to work. 
+                //addCompetenciesAssociated($conn, $userid, CompetencyGroupFromGroup($conn, $groupid));//Can save queries by making a reusable variable of the CompGroupfromGroup thingy, I couldn't get it to work. 
+                updateUserCompetencies($conn, $userid);
             }
         }
     }
@@ -25,7 +26,8 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
         $itemsFromCG = CompetencyGroupFromGroup($conn, $groupid);
         foreach ($selectedUsers as $userid) {
             mysqli_query($conn, "DELETE FROM UserGroups WHERE Groups = " . $groupid . " AND Users = " . $userid); //If it is in the table, add, otherwise skip
-            removeCompetenciesAssociatedWithGroup($conn, $itemsFromCG, $userid, $groupid);
+            //removeCompetenciesAssociatedWithGroup($conn, $itemsFromCG, $userid, $groupid);
+            updateUserCompetencies($conn, $userid);
         }
     } //--foreach end--
     header("location: ../staffedit.php?error=none#AddRemoveGR");
@@ -37,6 +39,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
         if ($userid == $_SESSION["userid"]) continue; //Cannot update own role. 
         mysqli_query($conn, "UPDATE Users SET URole = " . $role . " WHERE UserID = " . $userid); //Overwrites role with new one
         managerRoleSwitch($conn, $userid);
+        updateUserCompetencies($conn, $userid);
     }
 
     header("location: ../staffedit.php?error=none#AddRemoveGR");

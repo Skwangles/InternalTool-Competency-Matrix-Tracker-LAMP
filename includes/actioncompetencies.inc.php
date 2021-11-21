@@ -44,6 +44,15 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
             }
         }
     }
+
+    //
+    //----------------------------------------Update All Users Competencies Upon Add-----------
+    //
+    $users = getUsers($conn);
+    while ($user = mysqli_fetch_assoc($users)) {
+        updateUserCompetencies($conn, $user["UserID"]);
+    }
+
     header("location: ../gcedit.php?error=none#AddRemoveCG");
     exit();
 } elseif (isset($_POST["removeC"]) && isset($_POST["competencies"])) { //-------------------------Remove Competency From Group------------------------
@@ -63,6 +72,13 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
                 mysqli_query($conn, "DELETE FROM Competencyroles WHERE Competencies = " . $competency . " AND roles = " . $roleid); //Deletes every occurence of the rioles and competency together
             }
         }
+    }
+     //
+    //----------------------------------------Update All Users Competencies Upon Add-----------
+    //
+    $users = getUsers($conn);
+    while ($user = mysqli_fetch_assoc($users)) {
+        updateUserCompetencies($conn, $user["UserID"]);
     }
     header("location: ../gcedit.php#AddRemoveCG");
     exit();

@@ -12,7 +12,7 @@ if (isset($_POST["add"])) {
         }
         addGroup($conn, $name);
         header("location: ../gcedit.php?error=none#GroupManage");
-                exit();
+        exit();
 } elseif (isset($_POST["remove"])) {
         if (isset($_POST["groups"])) {
                 $groups = $_POST["groups"];
@@ -20,7 +20,8 @@ if (isset($_POST["add"])) {
                         $groupComp = CompetencyGroupFromGroup($conn, $groupid);
                         $userList = UserGroupFromGroup($conn, $groupid);
                         while ($row = mysqli_fetch_assoc($userList)) {
-                                removeCompetenciesAssociatedWithGroup($conn, $groupComp, $row["UserID"], $groupid); //Remove any competencies
+                                //removeCompetenciesAssociatedWithGroup($conn, $groupComp, $row["UserID"], $groupid); //Remove any competencies
+                                updateUserCompetencies($conn, $row["UserID"]);
                         }
                         mysqli_query($conn, "DELETE FROM Groups WHERE GroupID =" . $groupid);
                 }
