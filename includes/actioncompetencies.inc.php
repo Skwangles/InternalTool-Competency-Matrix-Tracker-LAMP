@@ -2,22 +2,22 @@
 require_once 'dbh.inc.php';
 require_once 'functions.inc.php';
 
-if (isset($_POST["submit"])) { //----------------Create Competency----------------
+if (isset($_POST["submit"]) && isset($_POST["competency"])) { //----------------Create Competency----------------
     $name = $_POST["competency"]; //This is where the name of the competency is stored
     if (emptyInputs($name, $name, $name)) {
-        header("location: ../competencyedit.php?error=emptyinput");
+        header("location: ../gcedit.php?error=emptyinput");
         exit();
     }
     if (!isset($_POST["competency"])) { //must be empty, if not set
-        header("location: ../competencyedit.php?error=emptyinput");
+        header("location: ../gcedit.php?error=emptyinput");
         exit();
     }
 
     addCompetency($conn, $name); //Adds competency to the database
 
-    header("location: ../competencyedit.php?error=none"); //Returns back to edit page - success
+    header("location: ../gcedit.php?error=none"); //Returns back to edit page - success
     exit();
-} elseif (isset($_POST["addC"])) { //--------------------------------ADD Competency---------------------
+} elseif (isset($_POST["addC"]) && isset($_POST["competencies"])) { //--------------------------------ADD Competency---------------------
     $selectedCompetencies = $_POST["competencies"];//Selected values in the form
     if (isset($_POST["groups"])) { //only if some groups are selected
         $selectedGroups = $_POST["groups"];
@@ -39,9 +39,9 @@ if (isset($_POST["submit"])) { //----------------Create Competency--------------
             }
         }
     }
-    header("location: ../competencyedit.php?error=none");
+    header("location: ../gcedit.php?error=none");
     exit();
-} elseif (isset($_POST["removeC"])) { //-------------------------Remove Competency------------------------
+} elseif (isset($_POST["removeC"]) && isset($_POST["competencies"])) { //-------------------------Remove Competency------------------------
     $selectedCompetencies = $_POST["competencies"];
     if (isset($_POST["Groups"])) {
         $selectedGroups = $_POST["groups"];
@@ -52,7 +52,6 @@ if (isset($_POST["submit"])) { //----------------Create Competency--------------
             }
         }
     }
-    echo var_dump($_POST);
     if (isset($_POST["roles"])) { //Only if some roles are selected
         $roles = $_POST["roles"];
         foreach ($roles as $roleid) { //Loops through entries in array to apply to multiple groups
@@ -61,15 +60,15 @@ if (isset($_POST["submit"])) { //----------------Create Competency--------------
             }
         }
     }
-    header("location: ../competencyedit.php?error=none");
+    header("location: ../gcedit.php?error=none");
     exit();
-} elseif (isset($_POST["permdelete"])) { //--------------------------Delete Competency--------------------
+} elseif (isset($_POST["permdelete"]) && isset($_POST["competencies"])) { //--------------------------Delete Competency--------------------
     $selectedCompetencies = $_POST["competencies"];
     foreach ($selectedCompetencies as $competencyid) {
         mysqli_query($conn, "DELETE FROM competencies WHERE CompetencyID = " . $competencyid); //Deletes if it exists
     }
-    header("location: ../competencyedit.php?error=none");
+    header("location: ../gcedit.php?error=none");
 } else {
-    header("location: ../competencyedit.php?error=invalidcall");
+    header("location: ../gcedit.php?error=invalidcall");
     exit();
 }

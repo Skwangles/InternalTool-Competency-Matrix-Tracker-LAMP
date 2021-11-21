@@ -17,6 +17,11 @@ session_start();
     <nav>
         <div class="wrapper">
             <ul>
+                <?php
+                if(isset($_SESSION["name"])){
+                echo "<p style=\"float:left;\"><b>User: ".$_SESSION["name"]."</b></p>";
+                }
+                ?>
                 <a href="index.php">Home</a>
                 <a href="singleview.php">Your Competencies</a>
 

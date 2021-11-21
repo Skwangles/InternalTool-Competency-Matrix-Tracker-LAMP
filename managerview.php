@@ -11,7 +11,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] == "1") {
 ?>
 <h2 class="centre">--Your Departments--</h2>
 <?php
-$groups = UserGroupFromUser($conn, $_SESSION["userid"]);
+$groups = UserGroupFromUserWhereManager($conn, $_SESSION["userid"]);
 while ($group = mysqli_fetch_array($groups)) {
 ?>
 

@@ -2,7 +2,7 @@
 require_once "dbh.inc.php";
 require_once "functions.inc.php";
 session_start(); //Allows access to $_SESSION for the roleUpdate
-if (isset($_POST["addG"])) { //If add group was selected - add group
+if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) { //If add group was selected - add group
     $users = $_POST["users"];
     $groups = $_POST["groups"];
     foreach ($groups as $groupid) { //Loops through entries in array to apply to multiple groups
@@ -18,7 +18,7 @@ if (isset($_POST["addG"])) { //If add group was selected - add group
     }
     header("location: ../staffedit.php?error=none");
     exit();
-} else if (isset($_POST["removeG"])) { //If remove group was selected - remove group
+} else if (isset($_POST["removeG"]) && isset($_POST["users"]) && isset($_POST["groups"])) { //If remove group was selected - remove group
     $selectedUsers = $_POST["users"];
     $selectedGroups = $_POST["groups"];
 
@@ -31,22 +31,18 @@ if (isset($_POST["addG"])) { //If add group was selected - add group
     } //--foreach end--
     header("location: ../staffedit.php?error=none");
     exit();
-} else if (isset($_POST["roleUpdate"])) { //If role update was selected - update role
+} else if (isset($_POST["roleUpdate"]) && isset($_POST["users"]) && isset($_POST["role"])) { //If role update was selected - update role
     $users = $_POST["users"];
+    $role = $_POST["role"];
     foreach ($users as $userid) { //Foreach user selected, update the Role to be the desired
         if ($userid == $_SESSION["userid"]) continue; //Cannot update own role. 
-
-        $oldRole =  mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = " . $userid))[0];
-        
-        mysqli_query($conn, "UPDATE Users SET URole = " . $_POST["role"] . " WHERE UserID = " . $userid); //Overwrites role with new one
-
-        addCompetenciesAssociatedWithRole($conn, $userid, CompetencyRolesFromRoles($conn, $_POST["role"]));
-        removeCompetenciesAssociatedWithRole($conn, CompetencyRolesFromRoles($conn, $oldRole), $userid, $oldRole);//removed after the change to ensure that any values shared between roles are preserved
+        mysqli_query($conn, "UPDATE Users SET URole = " . $role . " WHERE UserID = " . $userid); //Overwrites role with new one
+        managerRoleSwitch($conn, $userid);
     }
 
     header("location: ../staffedit.php?error=none");
     exit();
-} elseif (isset($_POST["delete"])) {
+} elseif (isset($_POST["delete"]) && isset($_POST["users"])) {
     $users = $_POST["users"];
     foreach ($users as $userid) {
         if ($userid == $_SESSION["userid"]) continue; //Cannot delete yourself. 

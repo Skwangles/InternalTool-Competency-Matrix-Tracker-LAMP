@@ -5,7 +5,7 @@ if (isset($_POST["add"])) {
         require_once 'dbh.inc.php';
         require_once 'functions.inc.php';
         if (emptyInputs($name, $name, $name)) {
-                header("location: ../admin.php?error=emptygroup");
+                header("location: ../gcedit.php?error=emptygroup");
                 exit();
         }
         addGroup($conn, $name);
@@ -21,10 +21,10 @@ if (isset($_POST["add"])) {
                         mysqli_query($conn, "DELETE FROM Groups WHERE GroupID =" . $groupid);
                 }
         }
-        header("location: ../groupedit.php?error=none");
+        header("location: ../gcedit.php?error=none");
         exit();
 } else {
 
-        header("location: ../index.php?error=invalidacess");
+        header("location: ../gcedit.php?error=invalidacess");
         exit();
 }

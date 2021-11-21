@@ -10,10 +10,10 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
 ?>
 
 <br>
-<form class="centre" action="staffedit.php" method="post"><button class="block" type="submit" name="submit">Modify Staff</button></form>
-<form class="centre" action="userdefinitions.php" method="post"><button class="block" type="submit" name="submit">Define User Competencies</button></form>
-<form class="centre" action="groupedit.php" method="post"><button class="block" type="submit" name="submit">Modify Groups</button></form>
-<form class="centre" action="competencyedit.php" method="post"><button class="block" type="submit" name="submit">Modify Competencies</button></form>
+<form class="centre" action="staffedit.php" method="post"><button class="block" type="submit" name="submit">Modify Staff Accounts</button></form>
+<form class="centre" action="uservalues.php" method="post"><button class="block" type="submit" name="submit">Modify Staff Values</button></form>
+<form class="centre" action="manageredit.php" method="post"><button class="block" type="submit" name="submit">Modify Managers</button></form>
+<form class="centre" action="gcedit.php" method="post"><button class="block" type="submit" name="submit">Modify Groups & Competencies</button></form>
 
 <?php
 include_once 'footer.php';

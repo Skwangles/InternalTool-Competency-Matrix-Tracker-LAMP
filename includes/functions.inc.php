@@ -300,6 +300,26 @@ WHERE
     `UserGroups`.`Users` = " . $userid); //Gets all groups the user is a part of
 }
 
+function IsManagerOfGroup($conn, $userid, $groupid)
+{
+    if (mysqli_fetch_row(mysqli_query($conn, "SELECT
+    isManager FROM UserGroups
+WHERE
+    Users = " . $userid . " AND Groups = " . $groupid))[0] == 1) return true; //if is manager, true
+    return false;
+}
+
+function UserGroupFromUserWhereManager($conn, $userid)
+{
+    return mysqli_query($conn, "SELECT
+    `Groups`.*
+FROM
+    `Groups`
+    JOIN `UserGroups` ON `Groups`.`GroupID` = `UserGroups`.`Groups`
+WHERE
+    `UserGroups`.`Users` = " . $userid . " AND `UserGroups`.`isManager` = 1"); //Gets all groups the user is a part of
+}
+
 function CompetencyGroupFromGroup($conn, $groupid)
 {
     return mysqli_query($conn, "SELECT
@@ -369,6 +389,11 @@ function UserCompetenciesFromUser($conn, $userid)
 //Roles & Ratings
 //
 
+function UpdateRoleCompetencies($conn, $userid, $role, $oldRole)
+{
+    addCompetenciesAssociatedWithRole($conn, $userid, CompetencyRolesFromRoles($conn, $role));
+    removeCompetenciesAssociatedWithRole($conn, CompetencyRolesFromRoles($conn, $oldRole), $userid, $oldRole); //removed after the change to ensure that any values shared between roles are preserved
+}
 
 function RoleFromUser($conn, $userid)
 { //Recieves competency ID and returns groups
@@ -399,5 +424,22 @@ function displayUserRatings($conn, $competency, $user)
         echo "<td>" . $ratingNames[$Rating["Rating"]] . "</td>"; //Gives the text versions of the names
     } else {
         echo "<td>N/A</td>"; //Gives empty
+    }
+}
+
+function managerRoleSwitch($conn, $userid)
+{ //For non-admin users, based on if they have any manager roles in any groups, role is alternated between 1 & 2
+    if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE Users = " . $userid . " AND isManager = 1"))) { //If users are a manager, give manager global role, otherwise strip role
+        $oldRole = mysqli_query($conn, "SELECT * FROM Users WHERE UserID = " . $userid . " AND URole = 1");
+        mysqli_query($conn, "UPDATE Users SET URole = 2 WHERE UserID = " . $userid . " AND URole = 1"); //If staff which has a mangerrole, give global manager role - ignore Admins
+        if (mysqli_fetch_row($oldRole)["URole"] == 1) { //Doesn't update Admins
+            UpdateRoleCompetencies($conn, $userid, 2, 1); //updates competencies associated with the user based on the role
+        }
+    } else {
+        $oldRole = mysqli_query($conn, "SELECT * WHERE UserID = " . $userid . " AND URole = 2");
+        mysqli_query($conn, "UPDATE Users SET URole = 1 WHERE UserID = " . $userid . " AND URole = 2"); //If manager without managing any managed groups, strip the manager role - ignore Admins
+        if (mysqli_fetch_row($oldRole)["URole"] == 2) { //Doesn't update admins
+            UpdateRoleCompetencies($conn, $userid, 1, 2); //updates competencies associated with the user based on the role
+        }
     }
 }

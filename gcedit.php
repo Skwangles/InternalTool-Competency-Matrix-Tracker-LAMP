@@ -5,19 +5,53 @@ include_once 'header.php';
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
-// if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
-//     header("location: index.php?error=invalidcall");
-//     exit();
-// }
-include_once "error.php";
+include_once 'error.php';
 
 include_once 'admin.php';
 ?>
-<!-- <form class="centre" action="admin.php" method="post"><button class="block" type="submit" name="submit">Go back</button></form> -->
 
+<!--
+//
+// GROUP CREATION AND DELETION
+//
+-->
+<section>
+<h3 class="centre">Add Department/Group</h3>
+<form class="centre" action="includes/actiongroups.inc.php" method="post">
+    <input type="text" name="groupname" placeholder="Group Name">
+    <button class="actionbuttons" type="submit" name="add">Add Group</button>
+</form>
+<h3 class="centre">Current Departments/Groups</h3>
 
+<form class="centre" action="includes/actiongroups.inc.php" method="post">
+<?php //list of Groups in a table
+$result = mysqli_query($conn, "SELECT * FROM groups");
 
+echo "<table border='1' class=\"centre\">
+<tr>
+<th>Select</th>
+<th>Name</th>
+</tr>";
+
+while ($row = mysqli_fetch_array($result)) {
+    echo "<tr>";
+    echo "<td>" . "<input type=\"checkbox\" name=\"groups[]\" value=\"" . $row["GroupID"] . "\">"."</td>"; //Creates Checkbox
+    echo "<td>" . $row['GName'] . "</td>"; //Gives name
+    echo "</tr>";
+}
+echo "</table>";
+?>
 <br>
+<button class="dangerous" type="submit" name="remove">Delete Selected PERMANENTLY</button>
+</form>
+</section>
+<!--
+//
+// COMPETENCY CREATION
+//
+-->
+<br>
+<section>
 <h3 class="centre">Create Competency</h3>
 <!--Gets name of a competency and allows the addition of it to the database-->
 <form class="centre" action="includes/actioncompetencies.inc.php" method="post">
@@ -26,9 +60,45 @@ include_once 'admin.php';
     <button class="actionbuttons" type="submit" name="submit">Add Competency</button>
 </form>
 
-<h3 class="centre"> Add Competencies To Groups, Roles and Users </h3>
+<!--
+//
+// COMPETENCY DELETION
+//
+-->
+<br>
 
+<h3 class="centre">Current Competencies</h3>
+<form class="centre" action="includes/actioncompetencies.inc.php" method="post">
+<?php //list of Groups in a table
+$result = mysqli_query($conn, "SELECT * FROM competencies");
+
+echo "<table border='1' class=\"centre\">
+<tr>
+<th>Select</th>
+<th>Name</th>
+</tr>";
+
+while ($row = mysqli_fetch_array($result)) {
+    echo "<tr>";
+    echo "<td>" . "<input type=\"checkbox\" name=\"competencies[]\" value=\"" . $row["CompetencyID"] . "\">"."</td>"; //Creates Checkbox
+    echo "<td>" . $row['CName'] . "</td>"; //Gives name
+    echo "</tr>";
+}
+echo "</table>";
+?>
+<br>
+<button class="dangerous" type="submit" name="permdelete">Delete Selected PERMANENTLY</button>
+</form>
+
+<h3 class="centre"> Add Competencies To Groups, Roles and Users </h3>
+</section>
+<!--
+//
+// COMPETENCY/GROUP ASSIGN
+//
+-->
 <!--Defines all groups, and what their assigned competencies are in a table-->
+<section>
 <form class="centre" action="includes/actioncompetencies.inc.php" method="post">
     <table border="1" class="centre">
         <tr>
@@ -98,16 +168,10 @@ include_once 'admin.php';
     ?>
     <button class="actionbuttons" type="submit" name="removeC">Remove Competency From Groups</button>
     <button class="actionbuttons" type="submit" name="addC">Add Competencies To Groups</button>
-    <br>
-    <br>
-    <br>
-    <button type="submit" name="permdelete" class="dangerous">DELETE SELECTED PERMANENTLY</button>
+    
 </form>
-<br>
-<br>
-<br>
+</section>
 <br>
 <?php
-//Handles error tags
-
 include_once 'footer.php';
+?>

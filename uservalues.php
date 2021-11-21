@@ -14,15 +14,22 @@ include_once 'error.php';
 include_once 'admin.php';
 ?>
 
-<!-- <form class="centre" action="admin.php" method="post"><button class="block" type="submit" name="submit">Go back</button></form> -->
+<!----
+//
+//COMPETENCY VALUES
+//
+//
+-->
 <br>
 <h3 class="centre">Change User Competency Values</h3>
 
-<form class="centre" action="includes/updateuserdefinitions.inc.php" method="post">
-    <?php
-    $allUsers = getUsers($conn);
-    while ($user = mysqli_fetch_array($allUsers)) {
-    ?>
+
+<?php
+$allUsers = getUsers($conn);
+while ($user = mysqli_fetch_array($allUsers)) {
+?>
+<section>
+    <form class="centre" action="includes/updateuserdefinitions.inc.php" method="post">
         <table border="1" class="centre">
             <tr>
                 <th><?php echo $user["UName"] ?></th>
@@ -36,20 +43,22 @@ include_once 'admin.php';
             <?php
             //Will list competencies by group
             $userComptencies = UserCompetenciesFromUser($conn, $user["UserID"]);
+            $isNull = true;//If the while fails to do a single loop - allows removal of button and showing of the "No Competencies" button
             while ($competencies = mysqli_fetch_assoc($userComptencies)) {
+                $isNull = false;
                 $groups = CompetencyGroupFromCompetency($conn, $competencies["CompetencyID"]); //Gets groups which contain the specific competency
                 echo "<tr><td>" . $competencies["CName"] . "</td>
             <td><ul>";
                 while ($group = mysqli_fetch_assoc($groups)) {
                     if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE Users = " . $user["UserID"] . " AND Groups = " . $group["GroupID"]))) { //only displays if user is in that group
-                        echo "<li>" . $group["GName"] . "</li>";
+                        echo "<li style=\"text-align:left;\">" . $group["GName"] . "</li>";
                     }
                 }
                 echo "</ul></td><td><ul>";
                 $roleCompetencies = CompetencyRolesFromCompetency($conn, $competencies["CompetencyID"]); //Get all roles attached to competency
                 while ($role = mysqli_fetch_assoc($roleCompetencies)) { //Loops through roles associated with competency - checks if any roles are possessed by the current user. 
                     if ($role["RoleID"] == $user["URole"]) {
-                        echo "<li>" . $role["RName"] . "</li>";
+                        echo "<li style=\"text-align:left;\">" . $role["RName"] . "</li>";
                     }
                 }
             ?>
@@ -58,7 +67,7 @@ include_once 'admin.php';
                 <td>
                     <?php
                     $valueIndex = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE Users = " . $user["UserID"] . " AND Competencies = " . $competencies["CompetencyID"]))["Rating"];
-                    echo "<select name=\"" . $user["UserID"] . "[]\">";
+                    echo "<select name=\"compVal[]\">";
                     ?>
                     <option value="0" <?php echo $valueIndex == 0 ? "selected" : ""; //Sets the default selected option 
                                         ?>>Not Trained</option>
@@ -66,26 +75,32 @@ include_once 'admin.php';
                     <option value="2" <?php echo $valueIndex == 2 ? "selected" : ""; ?>>Can demonstrate competency</option>
                     <option value="3" <?php echo $valueIndex == 3 ? "selected" : ""; ?>>Can train others</option>
                     </select>
-                    <input type="hidden" name="<?php echo $user["UserID"] ?>-id[]" value="<?php echo $competencies["CompetencyID"]; ?>">
+                    <input type="hidden" name="id[]" value="<?php echo $competencies["CompetencyID"]; ?>">
                 </td>
                 </tr>
             <?php
             }
+            if ($isNull) {
+                echo "<tr><td>No Competencies Found</td><td>-</td><td>-</td><td>-</td></tr>";
+            }
+
 
             ?>
         </table>
-        <button class="actionbuttons" type="submit" name="updateC" value="<?php echo $user["UserID"] //Will give processing form the id to update 
-                                                                            ?>">Update <?php echo $user["UName"] ?>'s Values</button>
+        <?php if (!$isNull) { ?>
+            <button class="actionbuttons" type="submit" name="updateC" value="<?php echo $user["UserID"] //Will give processing form the id to update 
+                                                                                ?>">Update <?php echo $user["UName"] ?>'s Values</button>
+        <?php } ?>
         <br>
         <br>
-    <?php
-    }
-
-    ?>
-
-</form>
+    </form>
+    </section>
 <?php
-//Handles error tags
+}
 
+?>
+
+
+<?php
 include_once 'footer.php';
 ?>

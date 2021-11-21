@@ -1,5 +1,5 @@
 <?php
-if (isset($_POST["submit"])) {
+if (isset($_POST["submit"]) && isset($_POST["username"]) && isset($_POST["pwd"])) {
     $username = $_POST["username"];
     $password = $_POST["pwd"];
 
@@ -23,6 +23,6 @@ if (isset($_POST["submit"])) {
         exit();
     }
 } else {
-    header("location: ../index.php?error=invalidcall");
+    header("location: ../index.php?error=incorrectlogin");
     exit();
 }
