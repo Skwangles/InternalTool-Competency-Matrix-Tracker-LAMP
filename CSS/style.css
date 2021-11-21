@@ -1,147 +1,219 @@
 body {
-    justify-content: center;
-    /* min-height: 100vh; */
-    display: block;
-    margin:0 auto;
-    background-color: #389E47;
-}
-.dangerous{
-    background-color: red;
+  justify-content: center;
+  /* min-height: 100vh; */
+  display: block;
+  margin: 0 auto;
+  background-color: #389E47;
 }
 
-.centre{
-    text-align: center;
-    margin-left: auto;
-    margin-right: auto;
+.dangerous {
+  background-color: red;
 }
+
+.centre {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 /* Style the navigation menu - from https://www.w3schools.com/howto/howto_css_topnav_equal_width.asp */
 nav {
-    width: 100%;
-    background-color: #05b43f;
-    overflow: hidden;
-    text-align: center;
-  }
-  
-  /* Navigation links */
+  width: 100%;
+  background-color: #05b43f;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Navigation links */
+nav a {
+  padding: 12px;
+  color: black;
+  text-decoration: none;
+  font-size: 17px;
+  width: 25%;
+  /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
+  text-align: center;
+  /* If you want the text to be centered */
+}
+
+/* Add a background color on mouse-over */
+nav a:hover {
+  background-color: #0b6d2c;
+}
+
+/* Add responsiveness - on screens less than 500px, make the navigation links appear on top of each other, instead of next to each other */
+@media screen and (max-width: 500px) {
   nav a {
-    padding: 12px;
-    color: black;
-    text-decoration: none;
-    font-size: 17px;
-    width: 25%; /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
-    text-align: center; /* If you want the text to be centered */
-  }
-  
-  /* Add a background color on mouse-over */
-  nav a:hover {
-    background-color: #0b6d2c;
-  }
-  
-  /* Add responsiveness - on screens less than 500px, make the navigation links appear on top of each other, instead of next to each other */
-  @media screen and (max-width: 500px) {
-    nav a {
-      float: none;
-      display: block;
-      width: 100%;
-      text-align: left; /* If you want the text to be left-aligned on small screens */
-    }
-  }
-
-  .block{
+    float: none;
     display: block;
     width: 100%;
-    border: none;
-    background-color: #04AA6D;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
+    text-align: left;
+    /* If you want the text to be left-aligned on small screens */
   }
+}
 
-  .block:hover{
-      background-color: #0d724d;
-  }
 
-  .actionbuttons{
-    display: block;
-    width: 30%;
-    border: none;
-    background-color: #29519b;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
-    margin-left: auto;
-    margin-right: auto;
-    text-align: center;
-  }
+/*
+-
+Button Styling
+-
+*/
+.block {
+  display: block;
+  width: 100%;
+  border: none;
+  background-color: #04AA6D;
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  text-align: center;
+}
 
-  .actionbuttons:hover{
-    background-color: #1f3968;
-  }
+.block:hover {
+  background-color: #0d724d;
+}
 
-  input[type=text], input[type=password] {
-    width: 20%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    border: 2px solid red;
-    border-radius: 4px;
-  }
+.addbuttons{
+  background-color: #2eb839;
+}
+.rembuttons{
+  background-color: #c01834;
+}
 
-  input[type=text]:focus{
-   background-color: lightblue;
-  }
+.addbuttons:hover {
+  background-color: #17551c;
+}
 
-  input[type=password]:focus{
-    background-color: lightblue;
-   }
+.rembuttons:hover{
+  background-color: #700d1e;
+}
 
-  select {
-    padding: 16px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #f1f1f1;
-  }
 
-  input[type=button], input[type=submit] {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 16px 32px;
-    text-decoration: none;
-    margin: 4px 2px;
-    cursor: pointer;
-  }
+.actionbuttons {
+  display: block;
+  width: 30%;
+  border: 1px;
+  
+  padding: 14px 28px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
 
-  td { 
-    padding: 10px;
+
+
+input[type=text],
+input[type=password] {
+  width: 20%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  box-sizing: border-box;
+  border: 2px solid red;
+  border-radius: 4px;
+}
+
+input[type=text]:focus {
+  background-color: lightblue;
+}
+
+input[type=password]:focus {
+  background-color: lightblue;
+}
+
+select {
+  padding: 16px 20px;
+  border: none;
+  border-radius: 4px;
+  background-color: #f1f1f1;
+}
+
+input[type=button],
+input[type=submit] {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 16px 32px;
+  text-decoration: none;
+  margin: 4px 2px;
+  cursor: pointer;
+}
+
+
+/*
+-
+Table Styling
+-
+*/
+td {
+  padding: 5px;
+  height: 100%;
+}
+
+label {
+  display: block;
+  /* border: 1px solid #f00; - I couldn't figure out how to make the label fill the entire TD heighwise */
+  min-height: 100%;
+  /* for the latest browsers which support min-height */
+  height: auto !important;
+  /* for newer IE versions */
+  height: 100%;
+  width:100%;
+  /* the only height-related attribute that IE6 does not ignore  */
+}
+
+
+/*
+-
+Error Styling
+-
+*/
+.error {
+  padding: 10px;
+  background: green;
+  color: white;
 }
 
 .error {
-    padding: 10px;
-    background: green;
-    color: white;
-  }
-  .error {
-    -moz-animation: cssAnimation 6s ease-in;
-    /* Firefox */
-    -webkit-animation: cssAnimation 6s ease-in;
-    /* Safari and Chrome */
-    -o-animation: cssAnimation 6s ease-in;
-    /* Opera */
-    animation: cssAnimation 6s ease-in;
-    -webkit-animation-fill-mode: forwards;
-    animation-fill-mode: forwards;
+  -moz-animation: cssAnimation 6s ease-in;
+  /* Firefox */
+  -webkit-animation: cssAnimation 6s ease-in;
+  /* Safari and Chrome */
+  -o-animation: cssAnimation 6s ease-in;
+  /* Opera */
+  animation: cssAnimation 6s ease-in;
+  -webkit-animation-fill-mode: forwards;
+  animation-fill-mode: forwards;
 }
-  
-  @keyframes cssAnimation {
-    0%   {opacity: 1;display:block;}
-    /* 60 sec : visible */
-    44%   {opacity: 1;display:block;}
-    /* 62 sec : start fading out */
-    55%   {opacity: 1;display:block;}
-    /* 63 sec : not visible */
-    60%   {opacity: 0;display:block;}
-    /* 64 sec */
-    100%   {opacity: 0;display:none;}
+
+@keyframes cssAnimation {
+  0% {
+    opacity: 1;
+    display: block;
   }
+
+  /* 60 sec : visible */
+  44% {
+    opacity: 1;
+    display: block;
+  }
+
+  /* 62 sec : start fading out */
+  55% {
+    opacity: 1;
+    display: block;
+  }
+
+  /* 63 sec : not visible */
+  60% {
+    opacity: 0;
+    display: block;
+  }
+
+  /* 64 sec */
+  100% {
+    opacity: 0;
+    display: none;
+  }
+}

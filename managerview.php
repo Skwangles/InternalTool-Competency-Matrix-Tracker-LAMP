@@ -63,7 +63,9 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 echo "<tr><td>" . $competency["CName"] . "</td>";
                 displayUserRatings($conn, $competency, $_SESSION["userid"]);
             }
-            emptyArrayError($isNull); //Prints out the "No Competency Found" tile, done like this incase wanting to change the format
+            if($isNull){
+             $isNull = emptyArrayError($isNull); //Prints out the "No Competency Found" tile, done like this incase wanting to change the format
+            }
         }
         ?>
     </table>
@@ -86,6 +88,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             <?php
             $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
             while ($competency = mysqli_fetch_array($competencies)) {
+                $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";
                 $users = UserGroupFromGroup($conn, $group["GroupID"]); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
                 while ($user = mysqli_fetch_array($users)) {
@@ -93,12 +96,16 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 }
                 echo "</tr>"; //Finishes the row after entering all User data
             }
+            if($isNull){
+                $isNull = emptyArrayError($isNull);
+                }
 
             ?>
         </table>
 
 <?php
     }
+    
 } //--End of group while loop
 include_once 'footer.php';
 ?>

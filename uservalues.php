@@ -28,7 +28,7 @@ include_once 'admin.php';
 $allUsers = getUsers($conn);
 while ($user = mysqli_fetch_array($allUsers)) {
 ?>
-<section>
+<section id="<?php echo $user["UserID"] ?>">
     <form class="centre" action="includes/actionuservalues.inc.php" method="post">
         <table border="1" class="centre">
             <tr>

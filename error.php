@@ -8,7 +8,7 @@ if (isset($_GET["error"])) {
     } else if ($_GET["error"] == "invaliduser") {
         echo "<p class=\"centre error \">Value must be alphanumeric!</p>";
     } else if ($_GET["error"] == "invalidcall") {
-        echo "<p class=\"centre error\">Page was accessed incorrectly!</p>";
+        echo "<p class=\"centre error\">Page did not have the required information!</p>";
     } else if ($_GET["error"] == "none") {
         echo "<p class=\"centre error\">Successfully Executed!</p>";
     } else if ($_GET["error"] == "usernametaken") {

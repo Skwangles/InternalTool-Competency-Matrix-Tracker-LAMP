@@ -16,7 +16,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
             }
         }
     }
-    header("location: ../staffedit.php?error=none");
+    header("location: ../staffedit.php?error=none$AddRemoveGR");
     exit();
 } else if (isset($_POST["removeG"]) && isset($_POST["users"]) && isset($_POST["groups"])) { //If remove group was selected - remove group
     $selectedUsers = $_POST["users"];
@@ -29,7 +29,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
             removeCompetenciesAssociatedWithGroup($conn, $itemsFromCG, $userid, $groupid);
         }
     } //--foreach end--
-    header("location: ../staffedit.php?error=none");
+    header("location: ../staffedit.php?error=none#AddRemoveGR");
     exit();
 } else if (isset($_POST["roleUpdate"]) && isset($_POST["users"]) && isset($_POST["role"])) { //If role update was selected - update role
     $users = $_POST["users"];
@@ -40,7 +40,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
         managerRoleSwitch($conn, $userid);
     }
 
-    header("location: ../staffedit.php?error=none");
+    header("location: ../staffedit.php?error=none#AddRemoveGR");
     exit();
 } elseif (isset($_POST["delete"]) && isset($_POST["users"])) {
     $users = $_POST["users"];
@@ -48,7 +48,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
         if ($userid == $_SESSION["userid"]) continue; //Cannot delete yourself. 
         mysqli_query($conn, "DELETE FROM Users WHERE UserID = " . $userid);
     }
-    header("location: ../staffedit.php?error=none");
+    header("location: ../staffedit.php?error=none#StaffManage");
     exit();
 } else {
     header("location: ../staffedit.php?error=invalidcall");
