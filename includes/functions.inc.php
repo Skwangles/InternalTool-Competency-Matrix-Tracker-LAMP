@@ -261,7 +261,7 @@ function removeCompetenciesAssociatedWithUser($conn, $competenciesWithUser, $use
 {
     $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = ". $userid))[0];
     while ($competency = mysqli_fetch_array($competenciesWithUser)) { //Deletes competencies associated with the group
-        if (!isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) && !isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid)) { //Checks if competency is associated with another group/role before removal
+        if (isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) === false && isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid) === false) { //Checks if competency is associated with another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
         }
     }
