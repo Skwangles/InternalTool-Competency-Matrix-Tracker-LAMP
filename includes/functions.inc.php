@@ -416,7 +416,6 @@ function displayUserRatings($conn, $competency, $user)
     } else {
         echo "<td>N/A</td>"; //Gives empty
     }
-    echo "</tr>";
 }
 
 function emptyArrayError($isNull)
@@ -441,9 +440,8 @@ function namePrint($sesh, $user)
 
 function updateUserCompetencies($conn, $userid) //Inefficent update process - but it works - can probably improve efficency of this
 {
-    $sqlString = "SELECT `Competencies`.`CompetencyID` FROM `competencies` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `usergroups` ON `usergroups`.`groups` = `competencygroups`.`Groups` LEFT JOIN `users` ON `users`.`UserID` = `usergroups`.`Users` WHERE `users`.`UserID` = " . $userid;
+    $sqlString = "SELECT `Competencies`.`CompetencyID` FROM `competencies` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `usergroups` ON `usergroups`.`groups` = `competencygroups`.`Groups` LEFT JOIN `users` ON `users`.`UserID` = `usergroups`.`Users` WHERE `users`.`UserID` = " . $userid . " OR `competencyRoles`.`Roles` = (SELECT URole FROM `users` WHERE `users`.`UserID` = " . $userid . ");";
     $updates = mysqli_query($conn, $sqlString);
-    echo var_dump($updates);
     while ($competency = mysqli_fetch_row($updates)) {
         if (mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency[0])) == false) { //Checks if the item already exists in the table
             mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency[0] . ")");

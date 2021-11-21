@@ -17,13 +17,15 @@ require_once "includes/functions.inc.php";
     //Individual User Display
     echo "<tr><td><b>Individual User Competencies</b></td></tr>";
     $competencies = IndUserCompetenciesFromUser($conn, $_SESSION["userid"]);
-    $isNull = true;//Determines if the while ended before the first loop
+    $isNull = true; //Determines if the while ended before the first loop
     while ($competency = mysqli_fetch_array($competencies)) {
         $isNull = false;
         echo "<tr><td>" . $competency["CName"] . "</td>";
         displayUserRatings($conn, $competency, $_SESSION["userid"]);
     }
-   $isNull = emptyArrayError($isNull);//Prints out the "No Competency Found" tile, done like this incase wanting to change the format
+    if ($isNull) {
+        $isNull = emptyArrayError($isNull); //Prints out the "No Competency Found" tile, done like this incase wanting to change the format
+    }
 
     //Role Display
     $role = mysqli_fetch_assoc(RoleFromUser($conn, $_SESSION["userid"]));
@@ -34,13 +36,16 @@ require_once "includes/functions.inc.php";
         $isNull = false;
         echo "<tr><td>" . $competency["CName"] . "</td>";
         displayUserRatings($conn, $competency, $_SESSION["userid"]);
+        echo "</tr>";
     }
-    $isNull = emptyArrayError($isNull);
+    if ($isNull) {
+        $isNull = emptyArrayError($isNull);
+    }
 
     //Group Display
     $groups = UserGroupFromUser($conn, $_SESSION["userid"]);
     while ($group = mysqli_fetch_array($groups)) {
-        
+
         echo "<tr><td><b>" . $group["GName"] . "</b></td></tr>";
         $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
         $isNull = true;
@@ -49,9 +54,11 @@ require_once "includes/functions.inc.php";
             echo "<tr><td>" . $competency["CName"] . "</td>";
             displayUserRatings($conn, $competency, $_SESSION["userid"]);
         }
-        $isNull = emptyArrayError($isNull);
+        if ($isNull) {
+            $isNull = emptyArrayError($isNull);
+        }
     }
-    
+
     ?>
 </table>
 <?php

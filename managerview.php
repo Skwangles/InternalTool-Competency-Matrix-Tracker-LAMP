@@ -36,7 +36,7 @@ while ($group = mysqli_fetch_array($groups)) {
             while ($user = mysqli_fetch_array($users)) {
                 displayUserRatings($conn, $competency, $user["UserID"]);
             }
-            echo "</tr>"; //Finishes the row after entering all User data
+            echo "</tr>";
         }
 
         ?>
@@ -62,10 +62,11 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";
                 displayUserRatings($conn, $competency, $_SESSION["userid"]);
+                echo "</tr>";
             }
-            if($isNull){
-             $isNull = emptyArrayError($isNull); //Prints out the "No Competency Found" tile, done like this incase wanting to change the format
-            }
+            if ($isNull) {
+                $isNull = emptyArrayError($isNull); //Prints out the "No Competency Found" tile, done like this incase wanting to change the format
+            } 
         }
         ?>
     </table>
@@ -94,18 +95,17 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 while ($user = mysqli_fetch_array($users)) {
                     displayUserRatings($conn, $competency, $user["UserID"]);
                 }
-                echo "</tr>"; //Finishes the row after entering all User data
+                 echo "</tr>"; //Finishes the row after entering all User data
             }
-            if($isNull){
+            if ($isNull) {
                 $isNull = emptyArrayError($isNull);
-                }
+            } 
 
             ?>
         </table>
 
 <?php
     }
-    
 } //--End of group while loop
 include_once 'footer.php';
 ?>
