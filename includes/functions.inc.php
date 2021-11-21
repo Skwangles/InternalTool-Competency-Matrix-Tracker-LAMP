@@ -239,8 +239,10 @@ function addCompetenciesAssociated($conn, $userid, $competencies)
 
 function removeCompetenciesAssociatedWithGroup($conn, $competenciesWithGroup, $userid, $groupid)
 {
+    $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = ". $userid))[0];
     while ($competency = mysqli_fetch_array($competenciesWithGroup)) { //Deletes competencies associated with the group
-        if (isCompInOtherGroup($conn, $competency["CompetencyID"], $groupid, $userid) === false && isCompInRole($conn, $competency["CompetencyID"], 0, $userid) === false && isCompInIndividualUser($conn, $competency["ComeptencyID"], $userid) === false) { //Checks if competency is associated with the user individually, or another group/role before removal
+        
+        if (isCompInOtherGroup($conn, $competency["CompetencyID"], $groupid, $userid) === false && isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid) === false && isCompInIndividualUser($conn, $competency["ComeptencyID"], $userid) === false) { //Checks if competency is associated with the user individually, or another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
         }
     }
@@ -257,8 +259,9 @@ function removeCompetenciesAssociatedWithRole($conn, $competenciesWithRole, $use
 
 function removeCompetenciesAssociatedWithUser($conn, $competenciesWithUser, $userid)
 {
+    $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = ". $userid))[0];
     while ($competency = mysqli_fetch_array($competenciesWithUser)) { //Deletes competencies associated with the group
-        if (!isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) && !isCompInRole($conn, $competency["CompetencyID"], 0, $userid)) { //Checks if competency is associated with another group/role before removal
+        if (!isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) && !isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid)) { //Checks if competency is associated with another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
         }
     }
