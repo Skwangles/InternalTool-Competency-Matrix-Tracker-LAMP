@@ -12,7 +12,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
             if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE users = " . $userid . " AND groups = " . $groupid))) { //If entry is not present, add to user groups, and add the associated competencies
                 mysqli_query($conn, "INSERT INTO UserGroups (Users, Groups) VALUES (" . $userid . ", " . $groupid . ")");
                 //Add competencies associated witht he groups to user
-                addCompetenciesAssociatedWithGroup($conn, $userid, $competencies);
+                addCompetenciesAssociated($conn, $userid, $competencies);
             }
         }
     }

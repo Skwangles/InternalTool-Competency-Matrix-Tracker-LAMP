@@ -14,6 +14,16 @@ require_once "includes/functions.inc.php";
         <th><?php echo $_SESSION["name"] . " (You)"; ?></th>
     </tr>
     <?php
+       
+        echo "<tr><td><b>Individual User Competencies</b></td></tr>";
+        $competencies = IndUserCompetenciesFromUser($conn, $_SESSION["userid"]);
+        while ($competency = mysqli_fetch_array($competencies)) {
+            echo "<tr><td>" . $competency["CName"] . "</td>";
+            displayUserRatings($conn, $competency, $_SESSION["userid"]);
+    }
+
+    ?>
+    <?php
         $role = mysqli_fetch_assoc(RoleFromUser($conn, $_SESSION["userid"]));
 
         echo "<tr><td><b>" . $role["RName"] . "</b></td></tr>";

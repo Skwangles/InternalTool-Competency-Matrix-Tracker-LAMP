@@ -228,10 +228,10 @@ function getCompetencies($conn) //Returns complete array of all departmanets
     mysqli_stmt_close($stmt);
 }
 
-function addCompetenciesAssociatedWithGroup($conn, $userid, $competencies)
+function addCompetenciesAssociated($conn, $userid, $competencies)
 {
     while ($competency = mysqli_fetch_assoc($competencies)) { //goes through list of competencies, finds ones which do not exist - and adds
-        if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"]))) {
+        if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"]))) {//Checks if the item already exists in the table
             mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency["CompetencyID"] . ")");
         }
     }
@@ -240,17 +240,8 @@ function addCompetenciesAssociatedWithGroup($conn, $userid, $competencies)
 function removeCompetenciesAssociatedWithGroup($conn, $competenciesWithGroup, $userid, $groupid)
 {
     while ($competency = mysqli_fetch_array($competenciesWithGroup)) { //Deletes competencies associated with the group
-        if (!isCompInOtherGroup($conn, $competency["CompetencyID"], $groupid, $userid) && !isCompInOtherRole($conn, $competency["CompetencyID"], 0, $userid)) { //Checks if competency is associated with another group/role before removal
+        if (isCompInOtherGroup($conn, $competency["CompetencyID"], $groupid, $userid) === false && isCompInRole($conn, $competency["CompetencyID"], 0, $userid) === false && isCompInIndividualUser($conn, $competency["ComeptencyID"], $userid) === false) { //Checks if competency is associated with the user individually, or another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
-        }
-    }
-}
-
-function addCompetenciesAssociatedWithRole($conn, $userid, $competenciesWithRole)
-{
-    while ($competency = mysqli_fetch_assoc($competenciesWithRole)) { //goes through list of competencies, finds ones which do not exist - and adds
-        if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"]))) {
-            mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency["CompetencyID"] . ")");
         }
     }
 }
@@ -258,20 +249,38 @@ function addCompetenciesAssociatedWithRole($conn, $userid, $competenciesWithRole
 function removeCompetenciesAssociatedWithRole($conn, $competenciesWithRole, $userid, $roleid)
 {
     while ($competency = mysqli_fetch_array($competenciesWithRole)) { //Deletes competencies associated with the group
-        if (!isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) && !isCompInOtherRole($conn, $competency["CompetencyID"], $roleid, $userid)) { //Checks if competency is associated with another group/role before removal
+        if (isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) === false && isCompInRole($conn, $competency["CompetencyID"], $roleid, $userid) !== false && isCompInIndividualUser($conn, $competency["ComeptencyID"], $userid) === false) { //Checks if competency is associated with the user individually, or another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
         }
     }
 }
 
-function isCompInOtherGroup($conn, $comp, $group, $user)
-{ //Check if there exists any groups that the competency already exists in. 
-    return mysqli_query($conn, "SELECT * FROM CompetencyGroups WHERE NOT Groups = " . $group . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM UserGroups WHERE `UserGroups`.Groups = `competencygroups`.`Groups` AND `usergroups`.`Users` = " . $user . ");");
+function removeCompetenciesAssociatedWithUser($conn, $competenciesWithUser, $userid)
+{
+    while ($competency = mysqli_fetch_array($competenciesWithUser)) { //Deletes competencies associated with the group
+        if (!isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) && !isCompInRole($conn, $competency["CompetencyID"], 0, $userid)) { //Checks if competency is associated with another group/role before removal
+            mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
+        }
+    }
 }
 
-function isCompInOtherRole($conn, $comp, $role, $user)
+//
+//User Competency Checking
+//
+
+function isCompInOtherGroup($conn, $comp, $group, $user)
+{ //Check if there exists any groups that the competency already exists in. 
+    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM CompetencyGroups WHERE NOT Groups = " . $group . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM UserGroups WHERE `UserGroups`.Groups = `competencygroups`.`Groups` AND `usergroups`.`Users` = " . $user . ");"));//Check if the item exists in another competency group, where the group is different to the one being removed, and the user must exist in that group that may have that comeptency. 
+}
+
+function isCompInRole($conn, $comp, $role, $user)
 { //Check if there exists any roles that the competency already exists in. 
-    return mysqli_query($conn, "SELECT * FROM CompetencyRoles WHERE NOT Roles = " . $role . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM UserRoles WHERE `UserRoles`.Roles = `competencyroles`.`Roles` AND `userroles`.`Users` = " . $user . ");");
+    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM CompetencyRoles WHERE Roles = " . $role . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM Users WHERE `UserID` = " . $user . " AND URole = ". $role.");"));//There is a competency which is associated witht he role, and the user exists being part of that role
+}
+
+function isCompInIndividualUser($conn, $comp, $userid)
+{ //Check if there exists any roles that the competency already exists in. 
+    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM IndividualUserCompetencies WHERE Users = " . $userid . " AND Competencies = " . $comp));//Check if the competency exists in the individual users table
 }
 
 //
@@ -385,13 +394,35 @@ function UserCompetenciesFromUser($conn, $userid)
   `usercompetencies`.`users` = " . $userid);
 }
 
+function IndUserCompetenciesFromCompetency($conn, $competencyid)
+{ //Recieves competency ID and returns groups
+    return mysqli_query($conn, "SELECT
+  `users`.*
+  FROM
+  `users`
+  JOIN `individualuserCompetencies` ON `users`.`UserID` = `individualuserCompetencies`.`users`
+  WHERE
+  `individualuserCompetencies`.`Competencies` = " . $competencyid);
+}
+
+function IndUserCompetenciesFromUser($conn, $userid)
+{ //Recieves competency ID and returns groups
+    return mysqli_query($conn, "SELECT
+  `Competencies`.*
+  FROM
+  `Competencies`
+  JOIN `individualuserCompetencies` ON `Competencies`.`CompetencyID` = `individualusercompetencies`.`Competencies`
+  WHERE
+  `individualusercompetencies`.`users` = " . $userid);
+}
+
 //
 //Roles & Ratings
 //
 
 function UpdateRoleCompetencies($conn, $userid, $role, $oldRole)
 {
-    addCompetenciesAssociatedWithRole($conn, $userid, CompetencyRolesFromRoles($conn, $role));
+    addCompetenciesAssociated($conn, $userid, CompetencyRolesFromRoles($conn, $role));
     removeCompetenciesAssociatedWithRole($conn, CompetencyRolesFromRoles($conn, $oldRole), $userid, $oldRole); //removed after the change to ensure that any values shared between roles are preserved
 }
 
