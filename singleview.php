@@ -11,7 +11,7 @@ require_once "includes/functions.inc.php";
 <table border="1" class="centre">
     <tr>
         <th></th>
-        <th><?php echo $_SESSION["name"]; ?></th>
+        <th><?php echo $_SESSION["name"] . " (You)"; ?></th>
     </tr>
     <?php
         $role = mysqli_fetch_assoc(RoleFromUser($conn, $_SESSION["userid"]));

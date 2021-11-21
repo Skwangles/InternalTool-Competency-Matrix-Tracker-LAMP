@@ -443,3 +443,8 @@ function managerRoleSwitch($conn, $userid)
         }
     }
 }
+
+
+function namePrint($sesh, $user){
+    return $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");
+}

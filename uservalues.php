@@ -29,10 +29,10 @@ $allUsers = getUsers($conn);
 while ($user = mysqli_fetch_array($allUsers)) {
 ?>
 <section>
-    <form class="centre" action="includes/updateuserdefinitions.inc.php" method="post">
+    <form class="centre" action="includes/actionuservalues.inc.php" method="post">
         <table border="1" class="centre">
             <tr>
-                <th><?php echo $user["UName"] ?></th>
+                <th><?php echo namePrint($_SESSION, $user) ?></th>
             </tr>
             <tr>
                 <th>Competency</th>
@@ -83,8 +83,6 @@ while ($user = mysqli_fetch_array($allUsers)) {
             if ($isNull) {
                 echo "<tr><td>No Competencies Found</td><td>-</td><td>-</td><td>-</td></tr>";
             }
-
-
             ?>
         </table>
         <?php if (!$isNull) { ?>

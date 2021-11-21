@@ -24,7 +24,7 @@ while ($group = mysqli_fetch_array($groups)) {
             <?php
             $users = UserGroupFromGroup($conn, $group["GroupID"]); //Gets all users in the current group
             while ($user = mysqli_fetch_array($users)) { //Gives a heading to all users
-                echo "<th>" . $user["UName"] . "</th>";
+                echo "<th>" . namePrint($_SESSION, $user) . "</th>";
             }
             ?>
         </tr>
@@ -62,7 +62,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 <?php
                 $users = UserGroupFromGroup($conn, $group["GroupID"]); //Gets all users in the current group
                 while ($user = mysqli_fetch_array($users)) { //Gives a heading to all users
-                    echo "<th>" . $user["UName"] . "</th>";
+                    echo "<th>" . namePrint($_SESSION, $user) . "</th>";
                 }
                 ?>
             </tr>
