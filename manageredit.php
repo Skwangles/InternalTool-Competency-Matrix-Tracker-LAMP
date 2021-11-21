@@ -29,7 +29,7 @@ while ($user = mysqli_fetch_array($allUsers)) {
             <?php
             //Will list competencies by group
             $userGroups = UserGroupFromUser($conn, $user["UserID"]);
-            $isNull = true;
+            $isNull = true;//Determines if the While loop has exited on its first loop
             while ($group = mysqli_fetch_assoc($userGroups)) {
                 $isNull = false;
             ?>
@@ -54,7 +54,7 @@ while ($user = mysqli_fetch_array($allUsers)) {
             <?php
             }
             if($isNull){
-            $isNull = emptyArrayError($isNull);
+            $isNull = emptyArrayError($isNull); //Prints out a "no competencies" row, then resets the IsNull to true for the next loop
             }
             ?>
         </table>

@@ -89,7 +89,7 @@ while ($user = mysqli_fetch_array($allUsers)) {
             ?>
         </table>
         <?php if (!$isNull) { ?>
-            <button class="actionbuttons" type="submit" name="updateC" value="<?php echo $user["UserID"] //Will give processing form the id to update 
+            <button class="actionbuttons addbuttons" type="submit" name="updateC" value="<?php echo $user["UserID"] //Will give processing form the id to update 
                                                                                 ?>">Update <?php echo $user["UName"] ?>'s Values</button>
         <?php } ?>
         <br>

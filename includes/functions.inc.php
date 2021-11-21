@@ -55,7 +55,6 @@ function createUser($conn, $name, $username, $password, $role) //Adds new user t
     mysqli_stmt_bind_param($stmt, "ssss", $name, $username, $hashedPwd, $role); //Binding prevents injection
     mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
-
 }
 
 function loginUser($conn, $username, $password) //Logs user in and sets session variables
@@ -225,8 +224,9 @@ function getCompetencies($conn) //Returns complete array of all departmanets
 
 function addCompetenciesAssociated($conn, $userid, $competencies)
 {
+    echo var_dump($competencies);
     while ($competency = mysqli_fetch_assoc($competencies)) { //goes through list of competencies, finds ones which do not exist - and adds
-        if (mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"]) == false) { //Checks if the item already exists in the table
+        if (mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"])) == false) { //Checks if the item already exists in the table
             mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency["CompetencyID"] . ")");
         }
     }
@@ -235,9 +235,8 @@ function addCompetenciesAssociated($conn, $userid, $competencies)
 function removeCompetenciesAssociatedWithGroup($conn, $competenciesWithGroup, $userid, $groupid)
 {
     $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = " . $userid))[0];
-    while ($competency = mysqli_fetch_array($competenciesWithGroup)) { //Deletes competencies associated with the group
-
-        if (isCompInOtherGroup($conn, $competency["CompetencyID"], $groupid, $userid) == false && isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid) == false && isCompInIndividualUser($conn, $competency["ComeptencyID"], $userid) == false) { //Checks if competency is associated with the user individually, or another group/role before removal
+    while ($competency = mysqli_fetch_assoc($competenciesWithGroup)) { //Deletes competencies associated with the group
+        if (isCompInOtherGroup($conn, $competency["CompetencyID"], $groupid, $userid) == false && isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid) == false && isCompInIndividualUser($conn, $competency["CompetencyID"], $userid) == false) { //Checks if competency is associated with the user individually, or another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
         }
     }
@@ -245,7 +244,7 @@ function removeCompetenciesAssociatedWithGroup($conn, $competenciesWithGroup, $u
 
 function removeCompetenciesAssociatedWithRole($conn, $competenciesWithRole, $userid, $roleid)
 {
-    while ($competency = mysqli_fetch_array($competenciesWithRole)) { //Deletes competencies associated with the group
+    while ($competency = mysqli_fetch_assoc($competenciesWithRole)) { //Deletes competencies associated with the group
         if (isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) == false && isCompInRole($conn, $competency["CompetencyID"], $roleid, $userid) != false && isCompInIndividualUser($conn, $competency["ComeptencyID"], $userid) == false) { //Checks if competency is associated with the user individually, or another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
         }
@@ -255,7 +254,7 @@ function removeCompetenciesAssociatedWithRole($conn, $competenciesWithRole, $use
 function removeCompetenciesAssociatedWithUser($conn, $competenciesWithUser, $userid)
 {
     $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = " . $userid))[0];
-    while ($competency = mysqli_fetch_array($competenciesWithUser)) { //Deletes competencies associated with the group
+    while ($competency = mysqli_fetch_assoc($competenciesWithUser)) { //Deletes competencies associated with the group
         if (isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) == false && isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid) == false) { //Checks if competency is associated with another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
         }
@@ -493,12 +492,18 @@ function namePrint($sesh, $user)
     return $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");
 }
 
-function updateUserCompetencies($conn, $userid){
-    $updates = mysqli_query($conn, "SELECT `competencies`.`competencyID` FROM `competencies` JOIN `usercompetencies` ON `usercompetencies`.`Competencies`= `competencies`.`CompetencyID` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = `competencies`.`CompetencyID` WHERE `usercompetencies`.`Users` = ".$userid."; ");
-    $firstLoop = $updates;
-    while($row = mysqli_fetch_row($firstLoop)){
-            
+function updateUserCompetencies($conn, $userid) //Inefficent update process - but it works - can probably improve efficency of this
+{
+    $sqlString = "SELECT `competencies`.`competencyID` FROM `competencies` JOIN `usercompetencies` ON `usercompetencies`.`Competencies`= `competencies`.`CompetencyID` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = `competencies`.`CompetencyID` WHERE `usercompetencies`.`Users` = " . $userid;
+    $updates = mysqli_query($conn, $sqlString); 
+    while ($competency = mysqli_fetch_row($updates)) {
+        if (mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency[0])) == false) { //Checks if the item already exists in the table
+            mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency[0] . ")");
+        }
     }
-    
-    
+    $userCompetencies = UserCompetenciesFromUser($conn, $userid);
+    while ($competency = mysqli_fetch_assoc($userCompetencies)) {
+        mysqli_query($conn, "DELETE FROM `usercompetencies` WHERE `usercompetencies`.`Users` = " . $userid . " AND `userCompetencies`.`Competencies` = " . $competency["CompetencyID"] . " AND NOT EXISTS (". $sqlString . " AND `userCompetencies`.`Competencies` = " . $competency["CompetencyID"] . ")"); //checks if it exists in one of the joining tables, otherwise deletes
+
     }
+}

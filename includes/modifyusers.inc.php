@@ -6,13 +6,12 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
     $users = $_POST["users"];
     $groups = $_POST["groups"];
     foreach ($groups as $groupid) { //Loops through entries in array to apply to multiple groups
-        $itemsFromCG = CompetencyGroupFromGroup($conn, $groupid);
         foreach ($users as $userid) {
             $competencies = $itemsFromCG; //Renews the array - can probably just store another value and then reset it to save queries - but I am going for reliability first...
             if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE users = " . $userid . " AND groups = " . $groupid))) { //If entry is not present, add to user groups, and add the associated competencies
                 mysqli_query($conn, "INSERT INTO UserGroups (Users, Groups) VALUES (" . $userid . ", " . $groupid . ")");
                 //Add competencies associated witht he groups to user
-                addCompetenciesAssociated($conn, $userid, $competencies);
+                addCompetenciesAssociated($conn, $userid, CompetencyGroupFromGroup($conn, $groupid));//Can save queries by making a reusable variable of the CompGroupfromGroup thingy, I couldn't get it to work. 
             }
         }
     }
