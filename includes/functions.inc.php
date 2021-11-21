@@ -124,7 +124,7 @@ function addGroup($conn, $name) //Adds Group to database
     $stmt = mysqli_stmt_init($conn); //Initates database connection
 
     if (!mysqli_stmt_prepare($stmt, $sql)) { //if sql fails, rejects with an error
-        header("location: ../groupedit.php?error=stmtfailure");
+        header("location: ../gcedit.php?error=stmtfailure");
         exit();
     }
 
@@ -133,7 +133,7 @@ function addGroup($conn, $name) //Adds Group to database
 
     mysqli_stmt_close($stmt);
 
-    header("location: ../groupedit.php?error=none"); //Returns back to page
+    header("location: ../gcedit.php?error=none"); //Returns back to page
     exit();
 }
 
@@ -171,7 +171,7 @@ function getCompetenciesFromName($conn, $name) //Allows retrieval of id, from na
     $stmt = mysqli_stmt_init($conn);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) { //if sql fails, rejects with error
-        header("location: ../competencyedit.php?error=stmtfailure");
+        header("location: ../gcedit.php?error=stmtfailure");
         exit();
     }
     mysqli_stmt_bind_param($stmt, "s", $name);
@@ -195,7 +195,7 @@ function addCompetency($conn, $name) //Adds name to competency table - does not 
     $stmt = mysqli_stmt_init($conn); //Initates database connection
 
     if (!mysqli_stmt_prepare($stmt, $sql)) { //if sql fails, rejects with an error
-        header("location: ../competencyedit.php?error=stmtfailure");
+        header("location: ../gcedit.php?error=stmtfailure");
         exit();
     }
 
@@ -211,7 +211,7 @@ function getCompetencies($conn) //Returns complete array of all departmanets
     $stmt = mysqli_stmt_init($conn);
 
     if (!mysqli_stmt_prepare($stmt, $sql)) { //if sql fails, rejects with error
-        header("location: ../competencyedit.php?error=stmtfailure");
+        header("location: ../gcedit.php?error=stmtfailure");
         exit();
     }
 
@@ -231,7 +231,7 @@ function getCompetencies($conn) //Returns complete array of all departmanets
 function addCompetenciesAssociated($conn, $userid, $competencies)
 {
     while ($competency = mysqli_fetch_assoc($competencies)) { //goes through list of competencies, finds ones which do not exist - and adds
-        if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"]))) {//Checks if the item already exists in the table
+        if (!mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"]))) { //Checks if the item already exists in the table
             mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency["CompetencyID"] . ")");
         }
     }
@@ -239,9 +239,9 @@ function addCompetenciesAssociated($conn, $userid, $competencies)
 
 function removeCompetenciesAssociatedWithGroup($conn, $competenciesWithGroup, $userid, $groupid)
 {
-    $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = ". $userid))[0];
+    $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = " . $userid))[0];
     while ($competency = mysqli_fetch_array($competenciesWithGroup)) { //Deletes competencies associated with the group
-        
+
         if (isCompInOtherGroup($conn, $competency["CompetencyID"], $groupid, $userid) === false && isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid) === false && isCompInIndividualUser($conn, $competency["ComeptencyID"], $userid) === false) { //Checks if competency is associated with the user individually, or another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
         }
@@ -259,7 +259,7 @@ function removeCompetenciesAssociatedWithRole($conn, $competenciesWithRole, $use
 
 function removeCompetenciesAssociatedWithUser($conn, $competenciesWithUser, $userid)
 {
-    $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = ". $userid))[0];
+    $userRole = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = " . $userid))[0];
     while ($competency = mysqli_fetch_array($competenciesWithUser)) { //Deletes competencies associated with the group
         if (isCompInOtherGroup($conn, $competency["CompetencyID"], 0, $userid) === false && isCompInRole($conn, $competency["CompetencyID"], $userRole, $userid) === false) { //Checks if competency is associated with another group/role before removal
             mysqli_query($conn, "DELETE FROM UserCompetencies WHERE Competencies = " . $competency["CompetencyID"] . " AND Users = " . $userid);
@@ -273,17 +273,17 @@ function removeCompetenciesAssociatedWithUser($conn, $competenciesWithUser, $use
 
 function isCompInOtherGroup($conn, $comp, $group, $user)
 { //Check if there exists any groups that the competency already exists in. 
-    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM CompetencyGroups WHERE NOT Groups = " . $group . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM UserGroups WHERE `UserGroups`.Groups = `competencygroups`.`Groups` AND `usergroups`.`Users` = " . $user . ");"));//Check if the item exists in another competency group, where the group is different to the one being removed, and the user must exist in that group that may have that comeptency. 
+    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM CompetencyGroups WHERE NOT Groups = " . $group . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM UserGroups WHERE `UserGroups`.Groups = `competencygroups`.`Groups` AND `usergroups`.`Users` = " . $user . ");")); //Check if the item exists in another competency group, where the group is different to the one being removed, and the user must exist in that group that may have that comeptency. 
 }
 
 function isCompInRole($conn, $comp, $role, $user)
 { //Check if there exists any roles that the competency already exists in. 
-    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM CompetencyRoles WHERE Roles = " . $role . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM Users WHERE `UserID` = " . $user . " AND URole = ". $role.");"));//There is a competency which is associated witht he role, and the user exists being part of that role
+    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM CompetencyRoles WHERE Roles = " . $role . " AND Competencies = " . $comp . " AND EXISTS (SELECT * FROM Users WHERE `UserID` = " . $user . " AND URole = " . $role . ");")); //There is a competency which is associated witht he role, and the user exists being part of that role
 }
 
 function isCompInIndividualUser($conn, $comp, $userid)
 { //Check if there exists any roles that the competency already exists in. 
-    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM IndividualUserCompetencies WHERE Users = " . $userid . " AND Competencies = " . $comp));//Check if the competency exists in the individual users table
+    return mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM IndividualUserCompetencies WHERE Users = " . $userid . " AND Competencies = " . $comp)); //Check if the competency exists in the individual users table
 }
 
 //
@@ -447,19 +447,7 @@ function getUserRatingsFromCompetency($conn, $userid, $competencyid)
     WHERE Users = " . $userid . " AND Competencies = " . $competencyid);
 }
 
-function displayUserRatings($conn, $competency, $user)
-{
-    //
-    //----If you want to get rid of the "Not trained" options, 1. Remove it from the select in the userdefinitions, 1. Change the default value of a competency to be 1/any
-    //
-    $ratingNames = array("Not Trained", "Trained", "Can demonstrate competency", "Can train others");
-    $Ratings = getUserRatingsFromCompetency($conn, $user, $competency["CompetencyID"]);
-    if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-        echo "<td>" . $ratingNames[$Rating["Rating"]] . "</td>"; //Gives the text versions of the names
-    } else {
-        echo "<td>N/A</td>"; //Gives empty
-    }
-}
+
 
 function managerRoleSwitch($conn, $userid)
 { //For non-admin users, based on if they have any manager roles in any groups, role is alternated between 1 & 2
@@ -478,7 +466,36 @@ function managerRoleSwitch($conn, $userid)
     }
 }
 
+//
+//Echo/Formatting Based Functions
+//
+function displayUserRatings($conn, $competency, $user)
+{
+    //
+    //----If you want to get rid of the "Not trained" options, 1. Remove it from the select in the uservalues, 1. Change the default value of a competency to be 1/any
+    //
+    $ratingNames = array("Not Trained", "Trained", "Can demonstrate competency", "Can train others");
+    $Ratings = getUserRatingsFromCompetency($conn, $user, $competency["CompetencyID"]);
+    if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
+        echo "<td>" . $ratingNames[$Rating["Rating"]] . "</td>"; //Gives the text versions of the names
+    } else {
+        echo "<td>N/A</td>"; //Gives empty
+    }
+    echo "</tr>";
+}
 
-function namePrint($sesh, $user){
+function emptyArrayError($isNull)
+{
+    if ($isNull) {
+        echo "<tr><td>No Competencies Found</td><td>-</td></tr>";
+        return $isNull;
+    } else {
+        $isNull = true;
+        return $isNull;
+    }
+}
+
+function namePrint($sesh, $user)
+{
     return $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");
 }

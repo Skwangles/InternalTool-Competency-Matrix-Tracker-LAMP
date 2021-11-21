@@ -24,7 +24,6 @@ include_once 'admin.php';
         <label for="role">Role select:</label>
         <select name="role" id="role">
             <option value="1">Staff</option>
-            <option value="2">Manager</option>
             <option value="3">Admin</option>
         </select>
         <button class="actionbuttons" type="submit" name="submit">Add User</button>

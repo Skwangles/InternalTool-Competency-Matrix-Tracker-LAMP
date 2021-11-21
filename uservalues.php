@@ -37,7 +37,7 @@ while ($user = mysqli_fetch_array($allUsers)) {
             <tr>
                 <th>Competency</th>
                 <th>Groups Associated</th>
-                <th>Roles Associated</th>
+                <th>Other Associations</th>
                 <th>Value</th>
             </tr>
             <?php
@@ -58,8 +58,11 @@ while ($user = mysqli_fetch_array($allUsers)) {
                 $roleCompetencies = CompetencyRolesFromCompetency($conn, $competencies["CompetencyID"]); //Get all roles attached to competency
                 while ($role = mysqli_fetch_assoc($roleCompetencies)) { //Loops through roles associated with competency - checks if any roles are possessed by the current user. 
                     if ($role["RoleID"] == $user["URole"]) {
-                        echo "<li style=\"text-align:left;\">" . $role["RName"] . "</li>";
+                        echo "<li style=\"text-align:left;\"> Role: " . $role["RName"] . "</li>";
                     }
+                }
+                if(mysqli_fetch_assoc(IndUserCompetenciesFromCompetency($conn, $competencies["CompetencyID"]))){
+                    echo "<li style=\"text-align:left;\">Individually Assigned</li>";
                 }
             ?>
                 </ul>
