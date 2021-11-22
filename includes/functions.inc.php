@@ -387,17 +387,9 @@ function getUserRatingsFromCompetency($conn, $userid, $competencyid)
 function managerRoleSwitch($conn, $userid)
 { //For non-admin users, based on if they have any manager roles in any groups, role is alternated between 1 & 2
     if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE Users = " . $userid . " AND isManager = 1"))) { //If users are a manager, give manager global role, otherwise strip role
-        $oldRole = mysqli_query($conn, "SELECT * FROM Users WHERE UserID = " . $userid . " AND URole = 1");
         mysqli_query($conn, "UPDATE Users SET URole = 2 WHERE UserID = " . $userid . " AND URole = 1"); //If staff which has a mangerrole, give global manager role - ignore Admins
-        // if (mysqli_fetch_row($oldRole)["URole"] == 1) { //Doesn't update Admins
-        //     UpdateRoleCompetencies($conn, $userid, 2, 1); //updates competencies associated with the user based on the role
-        // }
     } else {
-        $oldRole = mysqli_query($conn, "SELECT * WHERE UserID = " . $userid . " AND URole = 2");
         mysqli_query($conn, "UPDATE Users SET URole = 1 WHERE UserID = " . $userid . " AND URole = 2"); //If manager without managing any managed groups, strip the manager role - ignore Admins
-        // if (mysqli_fetch_row($oldRole)["URole"] == 2) { //Doesn't update admins
-        //     UpdateRoleCompetencies($conn, $userid, 1, 2); //updates competencies associated with the user based on the role
-        // }
     }
 }
 
@@ -440,7 +432,7 @@ function namePrint($sesh, $user)
 
 function updateUserCompetencies($conn, $userid) //Inefficent update process - but it works - can probably improve efficency of this
 {
-    $sqlString = "SELECT `Competencies`.`CompetencyID` FROM `competencies` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `usergroups` ON `usergroups`.`groups` = `competencygroups`.`Groups` LEFT JOIN `users` ON `users`.`UserID` = `usergroups`.`Users` WHERE `users`.`UserID` = " . $userid . " OR `individualusercompetencies`.`Users` = " . $userid . " OR `competencyRoles`.`Roles` = (SELECT URole FROM `users` WHERE `users`.`UserID` = " . $userid . ");";
+    $sqlString = "SELECT `Competencies`.`CompetencyID` FROM `competencies` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = `competencies`.`CompetencyID` LEFT JOIN `usergroups` ON `usergroups`.`groups` = `competencygroups`.`Groups` LEFT JOIN `users` ON `users`.`UserID` = `usergroups`.`Users` WHERE (`users`.`UserID` = " . $userid . " OR `individualusercompetencies`.`Users` = " . $userid . " OR `competencyRoles`.`Roles` = (SELECT URole FROM `users` WHERE `users`.`UserID` = " . $userid . "))";
     $updates = mysqli_query($conn, $sqlString);
     while ($competency = mysqli_fetch_row($updates)) {
         if (mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency[0])) == false) { //Checks if the item already exists in the table

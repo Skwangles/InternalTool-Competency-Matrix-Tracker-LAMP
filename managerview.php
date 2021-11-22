@@ -56,12 +56,12 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
         $users = getUsers($conn);
         while ($user = mysqli_fetch_assoc($users)) {
             echo "<tr><th>" . $user["UName"] . "</th></tr>";
-            $competencies = IndUserCompetenciesFromUser($conn, $_SESSION["userid"]);
+            $competencies = IndUserCompetenciesFromUser($conn, $user["UserID"]);
             $isNull = true; //Determines if the while ended before the first loop
             while ($competency = mysqli_fetch_array($competencies)) {
                 $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";
-                displayUserRatings($conn, $competency, $_SESSION["userid"]);
+                displayUserRatings($conn, $competency, $user["UserID"]);
                 echo "</tr>";
             }
             if ($isNull) {
@@ -70,6 +70,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
         }
         ?>
     </table>
+    <br>
     <?php
     while ($group = mysqli_fetch_array($groups)) {
     ?>
@@ -103,6 +104,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
 
             ?>
         </table>
+        <br>
 
 <?php
     }

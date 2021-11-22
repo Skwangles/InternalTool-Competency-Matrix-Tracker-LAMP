@@ -1,7 +1,7 @@
 <?php
 require_once 'dbh.inc.php';
 require_once 'functions.inc.php';
-if(isset($_POST["update"]) && isset($_POST["update"]) && isset($_POST["managerValue"]) && isset($_POST["gid"])){//Ensures all the required variables are present
+if(isset($_POST["update"]) && isset($_POST["managerValue"]) && isset($_POST["gid"])){//Ensures all the required variables are present
     $userid = $_POST["update"];
     $groupValues = $_POST["managerValue"];
     $groupIDs = $_POST["gid"];
@@ -12,6 +12,7 @@ if(isset($_POST["update"]) && isset($_POST["update"]) && isset($_POST["managerVa
         mysqli_query($conn,"UPDATE UserGroups SET isManager = ". $groupValues[$x]. " WHERE users = " . $userid . " AND groups = ". $groupIDs[$x]);
    }
    managerRoleSwitch($conn, $userid);
+   updateUserCompetencies($conn, $userid);
    header("location: ../manageredit.php?error=none");
    exit();
 }
