@@ -449,7 +449,7 @@ function updateUserCompetencies($conn, $userid) //Inefficent update process - bu
 
 // function addCompetenciesAssociated($conn, $userid, $competencies)
 // {
-//     echo var_dump($competencies);
+//     echo var_dump($competencies); 
 //     while ($competency = mysqli_fetch_assoc($competencies)) { //goes through list of competencies, finds ones which do not exist - and adds
 //         if (mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM UserCompetencies WHERE users = " . $userid . " AND competencies = " . $competency["CompetencyID"])) == false) { //Checks if the item already exists in the table
 //             mysqli_query($conn, "INSERT INTO UserCompetencies (Users, Competencies) VALUES (" . $userid . ", " . $competency["CompetencyID"] . ")");
