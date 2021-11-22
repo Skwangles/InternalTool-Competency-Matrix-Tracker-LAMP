@@ -115,6 +115,7 @@ include_once 'admin.php';
 
     </form>
 </section>
+<hr class="seperator">
 
 <!--
 //
@@ -122,7 +123,7 @@ include_once 'admin.php';
 //
 -->
 <section id="GroupManage">
-    <h3 class="centre">Add Department/Group</h3>
+    <h1 class="centre">Deparment/Group Editing</h1>
     <form class="centre" action="includes/actiongroups.inc.php" method="post">
         <input type="text" name="groupname" placeholder="Group Name">
         <button class="actionbuttons addbuttons" type="submit" name="add">Add Group</button>
@@ -151,6 +152,7 @@ include_once 'admin.php';
         <button class="dangerous centre" type="submit" name="remove">Delete Selected PERMANENTLY</button>
     </form>
 </section>
+<hr class="seperator">
 <!--
 //
 // COMPETENCY CREATION
@@ -158,12 +160,12 @@ include_once 'admin.php';
 -->
 <br>
 <section id="CompetencyManage">
-    <h3 class="centre">Create Competency</h3>
+    <h1 class="centre"><b>Competency Editing</b></h1>
     <!--Gets name of a competency and allows the addition of it to the database-->
     <form class="centre" action="includes/actioncompetencies.inc.php" method="post">
         <input type="text" name="competency" placeholder="Competency Name">
         <br>
-        <button class="actionbuttons addbuttons" type="submit" name="create">Add Competency</button>
+        <button class="actionbuttons addbuttons" type="submit" name="create">Create Competency</button>
     </form>
 
     <!--
@@ -173,7 +175,7 @@ include_once 'admin.php';
 -->
     <br>
 
-    <h3 class="centre">Current Competencies</h3>
+    <h3 class="centre"><b>Current Competencies</b></h3>
     <form class="centre" action="includes/actioncompetencies.inc.php" method="post">
         <?php //list of Groups in a table
         $result = mysqli_query($conn, "SELECT * FROM competencies");

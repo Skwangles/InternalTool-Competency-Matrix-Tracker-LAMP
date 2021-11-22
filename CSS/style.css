@@ -150,6 +150,9 @@ td {
   padding: 5px;
   height: 100%;
 }
+th{
+  background-color: #207928;
+}
 
 label {
   display: block;
@@ -163,6 +166,11 @@ label {
   /* the only height-related attribute that IE6 does not ignore  */
 }
 
+hr.seperator {
+  border-top: 8px solid rgb(32, 117, 47);
+  border-radius: 5px;
+  width: 60%;
+}
 
 /*
 -

@@ -60,9 +60,11 @@ while ($user = mysqli_fetch_array($allUsers)) {
         </table>
         <button class="actionbuttons addbuttons" type="submit" name="update" value="<?php echo $user["UserID"] //Will give processing form the id to update 
                                                                             ?>">Update <?php echo $user["UName"] ?>'s Values</button>
+        
         <br>
         <br>
     </form>
+   
     </section>
 <?php
 }

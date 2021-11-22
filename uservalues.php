@@ -21,7 +21,7 @@ include_once 'admin.php';
 //
 -->
 <br>
-<h3 class="centre">Change User Competency Values</h3>
+<h1 class="centre">Change User Competency Values</h1>
 
 
 <?php

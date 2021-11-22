@@ -9,7 +9,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] == "1") {
 }
 
 ?>
-<h2 class="centre">--Your Departments--</h2>
+<h2 class="centre">Your Departments</h2>
 <?php
 $groups = UserGroupFromUserWhereManager($conn, $_SESSION["userid"]);
 while ($group = mysqli_fetch_array($groups)) {
@@ -48,7 +48,8 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
     $groups = getGroups($conn);
 ?>
 
-    <h2 class="centre">--ALL groups--</h2>
+    <h2 class="centre">ALL groups & users</h2>
+    <hr class="seperator">
     <table border="1" class="centre">
         <?php
         echo "<tr><th><b>Individual User Competencies</b></th></tr>";

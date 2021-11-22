@@ -8,6 +8,7 @@ if (!isset($_SESSION["username"])) {
 require_once "includes/dbh.inc.php";
 require_once "includes/functions.inc.php";
 ?>
+<h1 class="centre">Your Personal Competencies</h1>
 <table border="1" class="centre">
     <tr>
         <th></th>

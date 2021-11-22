@@ -21,15 +21,16 @@ include_once 'admin.php';
         <input type="text" name="name" placeholder="Name">
         <input type="text" name="username" placeholder="Username">
         <input type="password" name="pwd" placeholder="password">
-        <label for="role">Role select:</label>
+        <label for="role">Account Type:</label>
         <select name="role" id="role">
-            <option value="1">Staff</option>
+            <option value="1">Non-Admin</option>
             <option value="3">Admin</option>
         </select>
         <button class="actionbuttons addbuttons" type="submit" name="submit">Add User</button>
     </form>
     <br>
 </section>
+<hr class="seperator">
 <!----
 //
 //STAFF GROUP ADDING
