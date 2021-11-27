@@ -56,17 +56,18 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
         //Individual User values
         $users = getUsers($conn);
         while ($user = mysqli_fetch_assoc($users)) {
-            echo "<tr><th>" . $user["UName"] . "</th></tr>";
+            
             $competencies = IndUserCompetenciesFromUser($conn, $user["UserID"]);
             $isNull = true; //Determines if the while ended before the first loop
             while ($competency = mysqli_fetch_array($competencies)) {
                 $isNull = false;
+                echo "<tr><th>" . $user["UName"] . "</th></tr>";//Displays user, only if they have an individual competency
                 echo "<tr><td>" . $competency["CName"] . "</td>";
                 displayUserRatings($conn, $competency, $user["UserID"]);
                 echo "</tr>";
             }
             if ($isNull) {
-                $isNull = emptyArrayError($isNull); //Prints out the "No Competency Found" tile, done like this incase wanting to change the format
+                $isNull = true; //doesn't display anything
             } 
         }
         ?>
@@ -90,6 +91,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             </tr>
             <?php
             $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
+            $isNull = true;
             while ($competency = mysqli_fetch_array($competencies)) {
                 $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";

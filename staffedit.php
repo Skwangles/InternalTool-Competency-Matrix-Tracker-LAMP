@@ -75,8 +75,7 @@ include_once 'admin.php';
             ?>
 
         </table>
-        <button class="centre dangerous" type="submit" name="delete">Delete Users PERMANENTLY</button>
-
+     
         <?php
         //list of Groups in a table
         $groups = getGroups($conn);
@@ -107,8 +106,59 @@ include_once 'admin.php';
             <option value="3">Admin</option>
         </select>
         <button class="centre actionbuttons addbuttons" type="submit" name="roleUpdate">Update Role</button>
+  
     </form>
 </section>
+<br>
+<br>
+
+<hr class="seperator">
+<section id="individualusers">
+    <h1 class="centre">Modify Specific Users</h1>
+    <form class="centre" action="includes/modifyusers.inc.php" method="post">
+        <table class="centre" border="1">
+            <tr>
+                <th>Select</th>
+                <th>Name</th>
+                <th>Username</th>
+            </tr>
+
+            <?php
+            $result = mysqli_query($conn, "SELECT * FROM users");
+            while ($row = mysqli_fetch_array($result)) {
+                echo "<tr>";
+                echo "<td>" . "<input type=\"radio\" id=\"" . $row["UserID"] . "-radio\" name=\"userradio\" value=\"" . $row["UserID"] . "\">" . "</td>";     //Creates Checkbox
+                echo "<td><label for=\"" . $row["UserID"] . "-radio\">" . namePrint($_SESSION, $row) . "</label></td>";   //Gives name
+                echo "<td><label for=\"" . $row["UserID"] . "-radio\">" . $row["UUsername"] . "</label></td>";
+                echo "</tr>";
+            }
+            ?>
+
+        </table>
+
+
+
+        <h3 class="centre">Change Name</h3>
+
+        <input type="text" name="nameChange">
+        <button class="centre actionbuttons addbuttons" type="submit" name="changeName">Update Name</button>
+
+        <h3 class="centre">Change Username</h3>
+
+        <input type="text" name="usernameChange">
+        <button class="centre actionbuttons addbuttons" type="submit" name="changeUsername">Update Username</button>
+
+        <h3 class="centre">Change Password</h3>
+
+        <input type="text" name="passwordChange">
+        <button class="centre actionbuttons addbuttons" type="submit" name="changePassword">Update Password</button>
+        <br>
+        <br>
+        <button class="centre dangerous" type="submit" name="delete">Delete User PERMANENTLY</button>
+        
+    </form>
+</section>
+
 <br>
 <br>
 <?php

@@ -42,6 +42,7 @@ session_start();
                 }
 
                 ?>
+                <a href="settings.php">Your Settings</a>
             </ul>
         </div>
     </nav>

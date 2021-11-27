@@ -33,6 +33,7 @@ require_once "includes/functions.inc.php";
 
     echo "<tr><td><b>" . $role["RName"] . "</b></td></tr>";
     $competencies = CompetencyRolesFromRoles($conn, $role["RoleID"]);
+    $isNull = true;
     while ($competency = mysqli_fetch_array($competencies)) {
         $isNull = false;
         echo "<tr><td>" . $competency["CName"] . "</td>";
