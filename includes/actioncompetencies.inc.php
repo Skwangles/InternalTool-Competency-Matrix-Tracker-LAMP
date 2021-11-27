@@ -100,12 +100,16 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
     }
     header("location: ../gcedit.php#AddRemoveCG");
     exit();
-} elseif (isset($_POST["permdelete"]) && isset($_POST["competencies"])) { //--------------------------Delete Competency--------------------
-    $selectedCompetencies = $_POST["competencies"];
-    foreach ($selectedCompetencies as $competencyid) {
-        mysqli_query($conn, "DELETE FROM competencies WHERE CompetencyID = " . $competencyid); //Deletes if it exists
-    }
+} elseif (isset($_POST["permdelete"]) && isset($_POST["competencyradio"])) { //--------------------------Delete Competency--------------------
+
+    mysqli_query($conn, "DELETE FROM competencies WHERE CompetencyID = " . $_POST["competencyradio"]); //Deletes if it exists
+
     header("location: ../gcedit.php?error=none#CompetencyManage");
+    exit();
+} elseif (isset($_POST["changeCName"]) && isset($_POST["cnameChange"]) && isset($_POST["competencyradio"])) {
+    changeCName($conn, $_POST["competencyradio"], $_POST["cnameChange"]);
+    header("location: ../gcedit.php?error=none#CompetencyManage");
+    exit();
 } else {
     header("location: ../gcedit.php?error=invalidcall");
     exit();

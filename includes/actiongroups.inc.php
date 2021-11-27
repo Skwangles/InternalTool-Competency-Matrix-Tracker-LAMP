@@ -28,7 +28,13 @@ if (isset($_POST["add"])) {
         }
         header("location: ../gcedit.php?error=none#GroupManage");
         exit();
-} else {
+} 
+elseif (isset($_POST["changeGName"]) && isset($_POST["gnameChange"]) && isset($_POST["groupradio"])) {
+changeGName($conn, $_POST["groupradio"], $_POST["gnameChange"]);
+header("location: ../gcedit.php?error=none#GroupManage");
+        exit();
+}
+else {
 
         header("location: ../gcedit.php?error=invalidacess");
         exit();

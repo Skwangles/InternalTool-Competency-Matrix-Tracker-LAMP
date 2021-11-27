@@ -225,3 +225,8 @@ Error Styling
     display: none;
   }
 }
+
+
+.blackout{
+  background-color: #0000;
+}

@@ -149,6 +149,11 @@ include_once 'admin.php';
         echo "</table>";
         ?>
         <br>
+
+    <h3 class="centre">Change Competency Name</h3>
+    <input type="text" name="gnameChange">
+    <button class="centre actionbuttons addbuttons" type="submit" name="changeGName">Update Group Name</button>
+
         <button class="dangerous centre" type="submit" name="remove">Delete Selected PERMANENTLY</button>
     </form>
 </section>
@@ -188,12 +193,18 @@ include_once 'admin.php';
 
         while ($row = mysqli_fetch_array($result)) {
             echo "<tr>";
-            echo "<td>" . "<input type=\"checkbox\" name=\"competencies[]\" value=\"" . $row["CompetencyID"] . "\">" . "</td>"; //Creates Checkbox
-            echo "<td>" . $row['CName'] . "</td>"; //Gives name
+            echo "<td>" . "<input type=\"radio\" id=\"" . $row["CompetencyID"] . "-radio\" name=\"competencyradio\" value=\"" . $row["CompetencyID"] . "\">" . "</td>"; //Creates Checkbox
+            echo "<td><label for=\"" . $row["CompetencyID"] . "-radio\">" . $row['CName'] . "</td>"; //Gives name
             echo "</tr>";
         }
         echo "</table>";
         ?>
+
+    <h3 class="centre">Change Competency Name</h3>
+    <input type="text" name="cnameChange">
+    <button class="centre actionbuttons addbuttons" type="submit" name="changeCName">Update Competency Name</button>
+
+
         <br>
         <button class="dangerous centre" type="submit" name="permdelete">Delete Selected PERMANENTLY</button>
     </form>

@@ -56,6 +56,16 @@ function changeName($conn, $userid, $name) //Adds new user to database
     mysqli_query($conn, "UPDATE users SET UName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database
 }
 
+function changeGName($conn, $groupid, $name) //Adds new user to database
+{
+    mysqli_query($conn, "UPDATE groups SET GName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE GroupID = '" . $groupid . "';"); //Sets up the add to database
+}
+
+function changeCName($conn, $competencyid, $name) //Adds new user to database
+{
+    mysqli_query($conn, "UPDATE competencies SET CName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE CompetencyID = '" . $competencyid . "';"); //Sets up the add to database
+}
+
 function loginUser($conn, $username, $password) //Logs user in and sets session variables
 {
     $uidExists = userExists($conn, $username); //checks if the username is in the database before processing

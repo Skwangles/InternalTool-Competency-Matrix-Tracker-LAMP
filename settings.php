@@ -8,10 +8,19 @@ require_once 'includes/functions.inc.php';
 include_once 'error.php';
 
 ?>
+<h1 class="centre"><b><?php echo $_SESSION["name"] ?></b></h1>
+<h2 class="centre">Your Username: <br><?php echo $_SESSION["username"] ?></h2>
 
+<br>
+<br>
+<form class="centre" action="includes/modifyusers.inc.php" method="post">
+    <h3 class="centre">Change Your Username</h3>
+    <input type="text" name="usernameChange">
+    <button class="centre actionbuttons addbuttons" type="submit" name="changeUsername">Update Username</button>
+</form>
 
 <form class="centre" action="includes/modifyusers.inc.php" method="post">
-    <h3 class="centre">Change Single User's Password</h3>
+    <h3 class="centre">Change Your Password</h3>
     <input type="text" name="passwordChange">
     <button class="centre actionbuttons addbuttons" type="submit" name="changePassword">Update Password</button>
 </form>
