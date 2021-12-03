@@ -19,4 +19,3 @@ include_once 'error.php';
 <?php
 include_once 'footer.php';
 ?>
-

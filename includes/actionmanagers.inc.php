@@ -9,7 +9,7 @@ if(isset($_POST["update"]) && isset($_POST["managerValue"]) && isset($_POST["gid
        echo $groupValues[$x];
        echo $groupIDs[$x];
        echo "<br>";
-        mysqli_query($conn,"UPDATE UserGroups SET isManager = ". $groupValues[$x]. " WHERE users = " . $userid . " AND groups = ". $groupIDs[$x]);
+        mysqli_query($conn,"UPDATE usergroups SET isManager = ". $groupValues[$x]. " WHERE Users = " . $userid . " AND Groups = ". $groupIDs[$x]);
    }
    managerRoleSwitch($conn, $userid);
    updateUserCompetencies($conn, $userid);

@@ -5,9 +5,9 @@ include_once 'header.php';
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
-include_once 'error.php';
+include_once 'error.php';//Adds error tags based on the url parameters
 
-include_once 'admin.php';
+include_once 'admin.php';//Adds the buttons & permission checks
 ?>
 <!--
 //
@@ -25,7 +25,7 @@ include_once 'admin.php';
                 <th>Competencies</th>
             </tr>
             <tr>
-                <th>Groups</th>
+                <th class="tabletitle">Groups</th>
             </tr>
             <?php
             $groups = mysqli_query($conn, "SELECT * FROM groups");
@@ -45,7 +45,7 @@ include_once 'admin.php';
             }
             ?>
             <tr>
-                <th>Roles</th>
+                <th class="tabletitle">Roles</th>
             </tr>
             <?php
 
@@ -69,10 +69,10 @@ include_once 'admin.php';
             }
             ?>
             <tr>
-                <th>Individuals</th>
+                <th class="tabletitle">Individuals</th>
             </tr>
             <?php
-            $users = mysqli_query($conn, "SELECT * FROM Users");
+            $users = mysqli_query($conn, "SELECT * FROM users");
             while ($row = mysqli_fetch_array($users)) {
                 echo "<tr>";
                 echo "<td>" . "<input type=\"checkbox\" name=\"users[]\" id=\"" . $row["UserID"] . "-cbu\" value=\"" . $row["UserID"] . "\">" . "</td>"; //Creates Checkbox with group ID
@@ -80,9 +80,8 @@ include_once 'admin.php';
                 echo "<td><ul>"; //Lists the competencies in a cell
 
                 $indUserCompetencies = IndUserCompetenciesFromUser($conn, $row["UserID"]);
-
                 while ($competency = mysqli_fetch_array($indUserCompetencies)) {
-                    echo "<li style=\"text-align:left;\"><p>" . $competency["CName"] . "</p></li>";
+                    echo "<li style=\"text-align:left;\">" . $competency["CName"] . "</li>";
                 }
                 echo "</ul></td>";
                 echo "</tr>";
@@ -125,7 +124,7 @@ include_once 'admin.php';
 <section id="GroupManage">
     <h1 class="centre">Deparment/Group Editing</h1>
     <form class="centre" action="includes/actiongroups.inc.php" method="post">
-        <input type="text" name="groupname" placeholder="Group Name">
+        <input type="text" name="groupname" placeholder="Group Name" maxlength="30">
         <button class="actionbuttons addbuttons" type="submit" name="add">Add Group</button>
     </form>
     <h3 class="centre">Current Departments/Groups</h3>
@@ -142,18 +141,18 @@ include_once 'admin.php';
 
         while ($row = mysqli_fetch_array($result)) {
             echo "<tr>";
-            echo "<td>" . "<input type=\"checkbox\" name=\"groups[]\" value=\"" . $row["GroupID"] . "\">" . "</td>"; //Creates Checkbox
-            echo "<td>" . $row['GName'] . "</td>"; //Gives name
+            echo "<td>" . "<input type=\"radio\" id=\"". $row["GroupID"]."-cb\" name=\"groupradio\" value=\"" . $row["GroupID"] . "\">" . "</td>"; //Creates Checkbox
+            echo "<td><label for=\"". $row["GroupID"]."-cb\">" . $row["GName"] . "</label></td>"; //Gives name
             echo "</tr>";
         }
         echo "</table>";
         ?>
         <br>
 
-    <h3 class="centre">Change Competency Name</h3>
-    <input type="text" name="gnameChange">
+    <h3 class="centre">Change Group Name</h3>
+    <input type="text" name="gnameChange" maxlength="30">
     <button class="centre actionbuttons addbuttons" type="submit" name="changeGName">Update Group Name</button>
-
+<br>
         <button class="dangerous centre" type="submit" name="remove">Delete Selected PERMANENTLY</button>
     </form>
 </section>
@@ -168,7 +167,7 @@ include_once 'admin.php';
     <h1 class="centre"><b>Competency Editing</b></h1>
     <!--Gets name of a competency and allows the addition of it to the database-->
     <form class="centre" action="includes/actioncompetencies.inc.php" method="post">
-        <input type="text" name="competency" placeholder="Competency Name">
+        <input type="text" name="competency" placeholder="Competency Name" maxlength="50">
         <br>
         <button class="actionbuttons addbuttons" type="submit" name="create">Create Competency</button>
     </form>
@@ -201,7 +200,7 @@ include_once 'admin.php';
         ?>
 
     <h3 class="centre">Change Competency Name</h3>
-    <input type="text" name="cnameChange">
+    <input type="text" name="cnameChange" maxlength="50">
     <button class="centre actionbuttons addbuttons" type="submit" name="changeCName">Update Competency Name</button>
 
 

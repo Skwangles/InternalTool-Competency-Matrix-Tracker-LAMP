@@ -40,7 +40,7 @@ while ($user = mysqli_fetch_array($allUsers)) {
                 </td>
                 <td>
                     <?php
-                    $valueIndex = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM UserGroups WHERE Users = " . $user["UserID"] . " AND Groups = " . $group["GroupID"]))["isManager"];
+                    $valueIndex = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = " . $user["UserID"] . " AND Groups = " . $group["GroupID"]))["isManager"];
                     echo "<select name=\"managerValue[]\">";
                     ?>
                     <option value="0" <?php echo $valueIndex == 0 ? "selected" : ""; //Sets the default selected option 

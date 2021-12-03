@@ -30,7 +30,6 @@ require_once "includes/functions.inc.php";
 
     //Role Display
     $role = mysqli_fetch_assoc(RoleFromUser($conn, $_SESSION["userid"]));
-
     echo "<tr><td><b>" . $role["RName"] . "</b></td></tr>";
     $competencies = CompetencyRolesFromRoles($conn, $role["RoleID"]);
     $isNull = true;

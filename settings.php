@@ -13,15 +13,15 @@ include_once 'error.php';
 
 <br>
 <br>
-<form class="centre" action="includes/modifyusers.inc.php" method="post">
+<form class="centre" action="includes/settings.inc.php" method="post">
     <h3 class="centre">Change Your Username</h3>
-    <input type="text" name="usernameChange">
+    <input type="text" name="usernameChange" maxlength="20">
     <button class="centre actionbuttons addbuttons" type="submit" name="changeUsername">Update Username</button>
 </form>
 
-<form class="centre" action="includes/modifyusers.inc.php" method="post">
+<form class="centre" action="includes/settings.inc.php" method="post">
     <h3 class="centre">Change Your Password</h3>
-    <input type="text" name="passwordChange">
+    <input type="text" name="passwordChange" maxlength="25">
     <button class="centre actionbuttons addbuttons" type="submit" name="changePassword">Update Password</button>
 </form>
 

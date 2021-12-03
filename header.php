@@ -35,7 +35,7 @@ session_start();
                         <a class="dropbtn" href="admin.php">Admin Panel</a>   
                 <?php
                     }
-                    echo "<a href=\"settings.php\">Your Settings</a>";
+                    echo "<a href=\"settings.php\">Settings</a>";
                     echo "<a href=\"includes/logout.inc.php\">Logout</a>";
                 } else {
 
@@ -43,7 +43,6 @@ session_start();
                 }
 
                 ?>
-                
             </ul>
         </div>
     </nav>

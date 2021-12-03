@@ -11,28 +11,6 @@ include_once 'admin.php';
 ?>
 <!----
 //
-// USER SIGNUP
-//
-//
--->
-<section id="StaffManage">
-    <h3 class="centre">Add Staff Login</h3>
-    <form class="centre" action="includes/signup.inc.php" method="post">
-        <input type="text" name="name" placeholder="Name">
-        <input type="text" name="username" placeholder="Username">
-        <input type="password" name="pwd" placeholder="password">
-        <label for="role">Account Type:</label>
-        <select name="role" id="role">
-            <option value="1">Non-Admin</option>
-            <option value="3">Admin</option>
-        </select>
-        <button class="actionbuttons addbuttons" type="submit" name="submit">Add User</button>
-    </form>
-    <br>
-</section>
-<hr class="seperator">
-<!----
-//
 //STAFF GROUP ADDING
 //
 //
@@ -140,23 +118,45 @@ include_once 'admin.php';
 
         <h3 class="centre">Change Name</h3>
 
-        <input type="text" name="nameChange">
+        <input type="text" name="nameChange" maxlength="20">
         <button class="centre actionbuttons addbuttons" type="submit" name="changeName">Update Name</button>
 
         <h3 class="centre">Change Username</h3>
 
-        <input type="text" name="usernameChange">
+        <input type="text" name="usernameChange" maxlength="20">
         <button class="centre actionbuttons addbuttons" type="submit" name="changeUsername">Update Username</button>
 
         <h3 class="centre">Change Password</h3>
 
-        <input type="text" name="passwordChange">
+        <input type="text" name="passwordChange" maxlength="25">
         <button class="centre actionbuttons addbuttons" type="submit" name="changePassword">Update Password</button>
         <br>
         <br>
         <button class="centre dangerous" type="submit" name="delete">Delete User PERMANENTLY</button>
         
     </form>
+</section>
+<!--
+//
+// USER SIGNUP
+//
+//
+-->
+<hr class="seperator">
+<section id="StaffManage">
+    <h3 class="centre">Add Staff Login</h3>
+    <form class="centre" action="includes/signup.inc.php" method="post">
+        <input type="text" name="name" placeholder="Name" maxlength="20">
+        <input type="text" name="username" placeholder="Username" maxlength="20">
+        <input type="password" name="pwd" placeholder="password" maxlength="25">
+        <label for="role">Account Type:</label>
+        <select name="role" id="role">
+            <option value="1">Non-Admin</option>
+            <option value="3">Admin</option>
+        </select>
+        <button class="actionbuttons addbuttons" type="submit" name="submit">Add User</button>
+    </form>
+    <br>
 </section>
 
 <br>

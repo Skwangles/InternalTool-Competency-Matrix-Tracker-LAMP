@@ -32,14 +32,23 @@ function userExists($conn, $username) //Confirms if a matching username is found
 
 function createUser($conn, $name, $username, $password, $role) //Adds new user to database
 {
-    $hashedPwd = password_hash(mysqli_real_escape_string($conn, $password), PASSWORD_DEFAULT); //Stores passwords securely
+    $hashedPwd = password_hash(mysqli_real_escape_string($conn,$password), PASSWORD_DEFAULT); //Stores passwords securely
     mysqli_query($conn, "INSERT INTO users (uname, uusername, upassword, urole) VALUES ('" . mysqli_real_escape_string($conn, $name) . "', '" . mysqli_real_escape_string($conn, $username) . "', '" . $hashedPwd . "', '" . mysqli_real_escape_string($conn, $role) . "');"); //Sets up the add to database
+}
+
+function updateSession($conn, $userid){
+    session_start();
+    $user = mysqli_query($conn, "SELECT * FROM users WHERE UserID = '".$userid."';");
+    $uservariables = mysqli_fetch_assoc($user);
+    $_SESSION["username"] = $uservariables["UUsername"];
+    $_SESSION["name"] = $uservariables["UName"];
 }
 
 function changePassword($conn, $userid, $password) //Adds new user to database
 {
-    $hashedPwd = password_hash(mysqli_real_escape_string($conn, $password), PASSWORD_DEFAULT); //Stores passwords securely
-    mysqli_query($conn, "UPDATE users SET UPassword = '" . $hashedPwd . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database
+    $hashedPwd = password_hash(mysqli_real_escape_string($conn,$password), PASSWORD_DEFAULT); //Stores passwords securely
+   return mysqli_query($conn, "UPDATE users SET UPassword = '" . $hashedPwd . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database - returns false if failed
+    
 }
 
 function changeUsername($conn, $userid, $username) //Adds new user to database
@@ -116,7 +125,7 @@ function getGroups($conn) //Returns complete array of all departmanets
 
 function addGroup($conn, $name) //Adds Group to database
 {
-    $sql = "INSERT INTO groups (gname) VALUES (" . mysqli_real_escape_string($conn, $name) . ");";
+   return mysqli_query($conn, "INSERT INTO groups (gname) VALUES ('" . mysqli_real_escape_string($conn, $name) . "');");
 }
 
 function getGroupsFromName($conn, $name) //Returns the groupIDs of the different groups in the group table
@@ -281,9 +290,9 @@ function IndUserCompetenciesFromCompetency($conn, $competencyid)
   users.*
   FROM
   users
-  JOIN individualusercompetencies ON users.UserID = individualuserCompetencies.users
+  JOIN individualusercompetencies ON users.UserID = individualusercompetencies.users
   WHERE
-  individualuserCompetencies.Competencies = '" . $competencyid."';");
+  individualusercompetencies.Competencies = '" . $competencyid."';");
 }
 
 function IndUserCompetenciesFromUser($conn, $userid)
@@ -292,7 +301,7 @@ function IndUserCompetenciesFromUser($conn, $userid)
   competencies.*
   FROM
   competencies
-  JOIN `individualuserCompetencies` ON competencies.CompetencyID = individualusercompetencies.Competencies
+  JOIN `individualusercompetencies` ON competencies.CompetencyID = individualusercompetencies.Competencies
   WHERE
   individualusercompetencies.Users = '" . $userid."';");
 }
@@ -301,21 +310,16 @@ function IndUserCompetenciesFromUser($conn, $userid)
 //Roles & Ratings
 //
 
-// function UpdateRoleCompetencies($conn, $userid, $role, $oldRole)
-// {
-//     addCompetenciesAssociated($conn, $userid, CompetencyRolesFromRoles($conn, $role));
-//     removeCompetenciesAssociatedWithRole($conn, CompetencyRolesFromRoles($conn, $oldRole), $userid, $oldRole); //removed after the change to ensure that any values shared between roles are preserved
-// }
 
 function RoleFromUser($conn, $userid)
 { //Recieves competency ID and returns groups
     return mysqli_query($conn, "SELECT
-  `Roles`.*
+  `roles`.*
   FROM
-  `Roles`
-  JOIN `users` ON `Roles`.`RoleID` = `users`.`URole`
+  `roles`
+  JOIN `users` ON `roles`.`RoleID` = `users`.`URole`
   WHERE
-  `Users`.`UserID` = '" . $userid."';");
+  `users`.`UserID` = '" . $userid."';");
 }
 
 function getUserRatingsFromCompetency($conn, $userid, $competencyid)
@@ -328,9 +332,9 @@ function getUserRatingsFromCompetency($conn, $userid, $competencyid)
 function managerRoleSwitch($conn, $userid)
 { //For non-admin users, based on if they have any manager roles in any groups, role is alternated between 1 & 2
     if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = " . $userid . " AND isManager = 1"))) { //If users are a manager, give manager global role, otherwise strip role
-        mysqli_query($conn, "UPDATE Users SET URole = 2 WHERE UserID = '" . $userid . "' AND URole = 1"); //If staff which has a mangerrole, give global manager role - ignore Admins
+        mysqli_query($conn, "UPDATE users SET URole = 2 WHERE UserID = '" . $userid . "' AND URole = 1"); //If staff which has a mangerrole, give global manager role - ignore Admins
     } else {
-        mysqli_query($conn, "UPDATE Users SET URole = 1 WHERE UserID = '" . $userid . "' AND URole = 2"); //If manager without managing any managed groups, strip the manager role - ignore Admins
+        mysqli_query($conn, "UPDATE users SET URole = 1 WHERE UserID = '" . $userid . "' AND URole = 2"); //If manager without managing any managed groups, strip the manager role - ignore Admins
     }
 }
 
@@ -382,7 +386,7 @@ function updateUserCompetencies($conn, $userid) //Inefficent update process - bu
     }
     $userCompetencies = UserCompetenciesFromUser($conn, $userid);
     while ($competency = mysqli_fetch_assoc($userCompetencies)) {
-        mysqli_query($conn, "DELETE FROM `usercompetencies` WHERE `usercompetencies`.`Users` = '" . $userid . "' AND `usercompetencies`.`Competencies` = '" . $competency["CompetencyID"] . "' AND NOT EXISTS ('" . $sqlString . "' AND `competencies`.`CompetencyID` = '" . $competency["CompetencyID"] . "')"); //checks if it exists in one of the joining tables, otherwise deletes
+        mysqli_query($conn, "DELETE FROM `usercompetencies` WHERE `usercompetencies`.`Users` = '" . $userid . "' AND `usercompetencies`.`Competencies` = '" . $competency["CompetencyID"] . "' AND NOT EXISTS (" . $sqlString . " AND `competencies`.`CompetencyID` = '" . $competency["CompetencyID"] . "')"); //checks if it exists in one of the joining tables, otherwise deletes
     }
 }
 

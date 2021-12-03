@@ -6,7 +6,7 @@ if(isset($_POST["updateC"]) && isset($_POST["compVal"]) && isset($_POST["id"])){
     $competencyValues = $_POST["compVal"];
     $competencyIDs = $_POST["id"];
    for($x = 0; $x < count($competencyIDs); $x++){
-    mysqli_query($conn,"UPDATE UserCompetencies SET Rating = ". $competencyValues[$x]. " WHERE users = " . $userid . " AND competencies = ". $competencyIDs[$x]);
+    mysqli_query($conn,"UPDATE usercompetencies SET Rating = ". $competencyValues[$x]. " WHERE Users = " . $userid . " AND Competencies = ". $competencyIDs[$x]);
    }
    header("location: ../uservalues.php?error=none#".$userid);
    exit();

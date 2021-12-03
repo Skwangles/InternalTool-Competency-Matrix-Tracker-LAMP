@@ -28,8 +28,8 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
         echo var_dump($selectedCompetencies);
         foreach ($selectedGroups as $groupid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competencyid) {
-                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM CompetencyGroups WHERE Competencies = " . $competencyid . " AND Groups = " . $groupid)) == false) { //If no value is found, then insert
-                    mysqli_query($conn, "INSERT INTO CompetencyGroups (Competencies, Groups) VALUES (" . $competencyid . ", " . $groupid . ")");
+                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM competencygroups WHERE Competencies = " . $competencyid . " AND Groups = " . $groupid)) == false) { //If no value is found, then insert
+                    mysqli_query($conn, "INSERT INTO competencygroups (Competencies, Groups) VALUES ('" . $competencyid . "', '" . $groupid . "')");
                 }
             }
         }
@@ -38,8 +38,8 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
         $selectedRoles = $_POST["roles"];
         foreach ($selectedRoles as $roleid) { //Loops through entries in array to apply to multiple roles
             foreach ($selectedCompetencies as $competencyid) {
-                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM CompetencyRoles WHERE Competencies = " . $competencyid . " AND Roles = " . $roleid)) == false) {
-                    mysqli_query($conn, "INSERT INTO CompetencyRoles (Competencies, Roles) VALUES (" . $competencyid . ", " . $roleid . ")");
+                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM competencyroles WHERE Competencies = " . $competencyid . " AND Roles = " . $roleid)) == false) {
+                    mysqli_query($conn, "INSERT INTO competencyroles (Competencies, Roles) VALUES ('" . $competencyid . "', '" . $roleid . "')");
                 }
             }
         }
@@ -48,8 +48,8 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
         $users = $_POST["users"];
         foreach ($users as $userid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competencyid) {
-                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM IndividualUserCompetencies WHERE Competencies = " . $competencyid . " AND Users = " . $userid)) == false) {
-                    mysqli_query($conn, "INSERT INTO IndividualUserCompetencies (Competencies, Users) VALUES (" . $competencyid . ", " . $userid . ")");
+                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM individualusercompetencies WHERE Competencies = '" . $competencyid . "' AND Users = '" . $userid."';")) == false) {
+                    mysqli_query($conn, "INSERT INTO individualusercompetencies (Competencies, Users) VALUES ('" . $competencyid . "', '" . $userid . "')");
                 }
             }
         }
@@ -71,7 +71,7 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
         $selectedGroups = $_POST["groups"];
         foreach ($selectedGroups as $groupid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competencyid) {
-                mysqli_query($conn, "DELETE FROM CompetencyGroups WHERE Competencies = " . $competencyid . " AND Groups = " . $groupid); //Deletes every occurence of the groups and competency together
+                mysqli_query($conn, "DELETE FROM competencygroups WHERE Competencies = " . $competencyid . " AND Groups = " . $groupid); //Deletes every occurence of the groups and competency together
             }
         }
     }
@@ -79,7 +79,7 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
         $roles = $_POST["roles"];
         foreach ($roles as $roleid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competency) {
-                mysqli_query($conn, "DELETE FROM Competencyroles WHERE Competencies = " . $competency . " AND roles = " . $roleid); //Deletes every occurence of the rioles and competency together
+                mysqli_query($conn, "DELETE FROM competencyroles WHERE Competencies = " . $competency . " AND roles = " . $roleid); //Deletes every occurence of the rioles and competency together
             }
         }
     }
@@ -87,7 +87,7 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
         $users = $_POST["users"];
         foreach ($users as $userid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competency) {
-                mysqli_query($conn, "DELETE FROM IndividualUserCompetencies WHERE Competencies = " . $competency . " AND Users = " . $userid); //Deletes every occurence of the rioles and competency together
+                mysqli_query($conn, "DELETE FROM individualusercompetencies WHERE Competencies = " . $competency . " AND Users = " . $userid); //Deletes every occurence of the rioles and competency together
             }
         }
     }
@@ -102,15 +102,24 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
     exit();
 } elseif (isset($_POST["permdelete"]) && isset($_POST["competencyradio"])) { //--------------------------Delete Competency--------------------
 
-    mysqli_query($conn, "DELETE FROM competencies WHERE CompetencyID = " . $_POST["competencyradio"]); //Deletes if it exists
-
+        mysqli_query($conn, "DELETE FROM competencies WHERE CompetencyID = " . $_POST["competencyradio"]); //Deletes if it exists
+        
+     $users = getUsers($conn);
+            while($user = mysqli_fetch_assoc($users)){//Updates all user's values
+                updateUserCompetencies($conn, $user["UserID"]);
+                
+            }
     header("location: ../gcedit.php?error=none#CompetencyManage");
     exit();
-} elseif (isset($_POST["changeCName"]) && isset($_POST["cnameChange"]) && isset($_POST["competencyradio"])) {
+} 
+elseif (isset($_POST["changeCName"]) && isset($_POST["cnameChange"]) && isset($_POST["competencyradio"])) {
+     if($_POST["cnameChange"] != ""){
     changeCName($conn, $_POST["competencyradio"], $_POST["cnameChange"]);
+     }
     header("location: ../gcedit.php?error=none#CompetencyManage");
     exit();
-} else {
+}
+else {
     header("location: ../gcedit.php?error=invalidcall");
     exit();
 }

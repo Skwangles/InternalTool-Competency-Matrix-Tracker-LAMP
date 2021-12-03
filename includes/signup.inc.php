@@ -9,21 +9,21 @@ if (isset($_POST["submit"])) {
     require_once 'functions.inc.php';
 
     if (emptyInputs($username, $password, $name) !== false) { //checks for empty values
-        header("location: ../staffedit.php?error=emptyinput");
+        header("location: ../staffedit.php?error=emptyinput#StaffManage");
         exit();
     }
     if (invalidUser($username) !== false) { //checks for non-alphanumerics
-        header("location: ../staffedit.php?error=invaliduser");
+        header("location: ../staffedit.php?error=invaliduser#StaffManage");
         exit();
     }
     if (userExists($conn, $username) !== false) { //checks if username is already taken
-        header("location: ../staffedit.php?error=usernametaken");
+        header("location: ../staffedit.php?error=usernametaken#StaffManage");
         exit();
     }
     createUser($conn, $name, $username, $password, $role); //Adds user to database
-    header("location: ../staffedit.php?error=none"); //Sends back success message
+    header("location: ../staffedit.php?error=none#StaffManage"); //Sends back success message
     exit();
 } else {
-    header("location: ../staffedit.php?error=invalidcall");
+    header("location: ../staffedit.php?error=invalidcall#StaffManage");
     exit();
 }
