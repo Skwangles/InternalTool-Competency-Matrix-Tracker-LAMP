@@ -22,7 +22,7 @@ require_once "includes/functions.inc.php";
     while ($competency = mysqli_fetch_array($competencies)) {
         $isNull = false;
         echo "<tr><td>" . $competency["CName"] . "</td>";
-        displayUserRatings($conn, $competency, $_SESSION["userid"]);
+        displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
     }
     if ($isNull) {
         $isNull = emptyArrayError($isNull); //Prints out the "No Competency Found" tile, done like this incase wanting to change the format
@@ -36,7 +36,7 @@ require_once "includes/functions.inc.php";
     while ($competency = mysqli_fetch_array($competencies)) {
         $isNull = false;
         echo "<tr><td>" . $competency["CName"] . "</td>";
-        displayUserRatings($conn, $competency, $_SESSION["userid"]);
+        displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
         echo "</tr>";
     }
     if ($isNull) {
@@ -53,7 +53,7 @@ require_once "includes/functions.inc.php";
         while ($competency = mysqli_fetch_array($competencies)) {
             $isNull = false;
             echo "<tr><td>" . $competency["CName"] . "</td>";
-            displayUserRatings($conn, $competency, $_SESSION["userid"]);
+            displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
         }
         if ($isNull) {
             $isNull = emptyArrayError($isNull);

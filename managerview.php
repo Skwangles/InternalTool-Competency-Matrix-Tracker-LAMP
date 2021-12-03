@@ -34,7 +34,7 @@ while ($group = mysqli_fetch_array($groups)) {
             echo "<tr><td>" . $competency["CName"] . "</td>";
             $users = UserGroupFromGroup($conn, $group["GroupID"]); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
             while ($user = mysqli_fetch_array($users)) {
-                displayUserRatings($conn, $competency, $user["UserID"]);
+                displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
             }
             echo "</tr>";
         }
@@ -53,33 +53,44 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
     <table border="1" class="centre">
         <?php
         echo "<tr><th class=\"tabletitle\"><b>Individual User Competencies</b></th></tr>";
+        //
         //Individual User values
-        $users = getUsers($conn);
-  
-        while ($user = mysqli_fetch_assoc($users)) {
-            $competencies = IndUserCompetenciesFromUser($conn, $user["UserID"]);
-            $isNull = true; //Determines if the while ended before the first loop
-            while ($competency = mysqli_fetch_array($competencies)) {
-                $isNull = false;
-                echo "<tr><th>" . $user["UName"] . "</th></tr>"; //Displays user, only if they have an individual competency
-                echo "<tr><td>" . $competency["CName"] . "</td>";
-                displayUserRatings($conn, $competency, $user["UserID"]);
-                echo "</tr>";
-            }
-            //If empty, doesn't display the user at all
-        }
-       
+        //
         ?>
-  
-    <br>
-    <?php
-    //
-    //All role summaries
-    //
-    $roles = mysqli_query($conn, "SELECT * FROM roles");
-      while ($role = mysqli_fetch_array($roles)) {
-    ?>
-       
+
+        
+        <?php
+        $competencies = mysqli_query($conn, "SELECT DISTINCT CompetencyID, CName FROM individualusercompetencies JOIN competencies ON individualusercompetencies.Competencies = competencies.CompetencyID;");//It is possible that DISTINCT means that two competencies with the same name are rejected
+        $isNull = true;
+        while ($competency = mysqli_fetch_assoc($competencies)) {
+            $isNull = false;
+            echo "<tr><th>-</th>";
+            $users = IndUserCompetenciesFromCompetency($conn, $competency["CompetencyID"]);
+            while ($user = mysqli_fetch_array($users)) { //Gives a heading to all users
+                echo "<th>" . namePrint($_SESSION, $user) . "</th>"; //If empty, will give "none found" otherwise will print out
+            }
+            echo "</tr><tr><td>" . $competency["CName"] . "</td>";
+            mysqli_data_seek($users, 0);
+            while ($user = mysqli_fetch_array($users)) { //Gives a heading to all users
+                displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
+            }
+            echo "</tr>";
+        }
+        if ($isNull) {
+            $isNull = emptyArrayError($isNull);
+        }
+
+        ?>
+
+        <br>
+        <?php
+        //
+        //All role summaries
+        //
+        $roles = mysqli_query($conn, "SELECT * FROM roles");
+        while ($role = mysqli_fetch_array($roles)) {
+        ?>
+
             <tr>
                 <th class="tabletitle"><?php echo $role["RName"] ?></th>
             </tr>
@@ -88,7 +99,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 <?php
                 $users = mysqli_query($conn, "SELECT * FROM users WHERE URole = '" . $role["RoleID"] . "';"); //Gets all users in the current role
                 while ($user = mysqli_fetch_array($users)) { //Gives a heading to all users
-                    echo "<th>" . namePrint($_SESSION, $user) . "</th>";//If empty, will give "none found" otherwise will print out
+                    echo "<th>" . namePrint($_SESSION, $user) . "</th>"; //If empty, will give "none found" otherwise will print out
                 }
                 ?>
             </tr>
@@ -98,29 +109,29 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             while ($competency = mysqli_fetch_array($competencies)) {
                 $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";
-                 $users = mysqli_query($conn, "SELECT * FROM users WHERE URole = '" . $role["RoleID"] . "';"); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
+                $users = mysqli_query($conn, "SELECT * FROM users WHERE URole = '" . $role["RoleID"] . "';"); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
                 while ($user = mysqli_fetch_array($users)) {
-                    displayUserRatings($conn, $competency, $user["UserID"]);
+                    displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
                 }
-                 echo "</tr>"; //Finishes the row after entering all User data
+                echo "</tr>"; //Finishes the row after entering all User data
             }
             if ($isNull) {
                 $isNull = emptyArrayError($isNull);
-            } 
+            }
 
             ?>
-        <br>
+            <br>
 
-<?php
-    }//--End of role while loop
+        <?php
+        } //--End of role while loop
 
 
-    //
-    //All groups
-    //
-    while ($group = mysqli_fetch_array($groups)) {
-    ?>
-       
+        //
+        //All groups
+        //
+        while ($group = mysqli_fetch_array($groups)) {
+        ?>
+
             <tr>
                 <th class="tabletitle"><?php echo $group["GName"] ?></th>
             </tr>
@@ -141,23 +152,23 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 echo "<tr><td>" . $competency["CName"] . "</td>";
                 $users = UserGroupFromGroup($conn, $group["GroupID"]); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
                 while ($user = mysqli_fetch_array($users)) {
-                    displayUserRatings($conn, $competency, $user["UserID"]);
+                    displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
                 }
-                 echo "</tr>"; //Finishes the row after entering all User data
+                echo "</tr>"; //Finishes the row after entering all User data
             }
             if ($isNull) {
                 $isNull = emptyArrayError($isNull);
-            } 
+            }
 
             ?>
-        <br>
+            <br>
 
-<?php
-    }//--End of group while loop
-} 
-?>
+    <?php
+        } //--End of group while loop
+    }
+    ?>
 
-  </table>
-  <?php
-include_once 'footer.php';
-?>
+    </table>
+    <?php
+    include_once 'footer.php';
+    ?>

@@ -4,6 +4,8 @@ body {
   display: block;
   margin: 0 auto;
   background-color: #389E47;
+  font-family: Arial, Helvetica, sans-serif;
+ 
 }
 
 .dangerous {
@@ -226,7 +228,10 @@ Error Styling
   }
 }
 
+.tabletitle{
+    background-color: darkcyan;
+}
 
-.blackout{
-  background-color: #0000;
+.tableentry{
+    background-color:cyan;
 }

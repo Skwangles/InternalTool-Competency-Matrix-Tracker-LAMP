@@ -341,13 +341,13 @@ function managerRoleSwitch($conn, $userid)
 //
 //Echo/Formatting Based Functions
 //
-function displayUserRatings($conn, $competency, $user)
+function displayUserRatings($conn, $competencyid, $userid)
 {
     //
     //----If you want to get rid of the "Not trained" options, 1. Remove it from the select in the uservalues, 1. Change the default value of a competency to be 1/any
     //
     $ratingNames = array("Not Trained", "Trained", "Can demonstrate competency", "Can train others");
-    $Ratings = getUserRatingsFromCompetency($conn, $user, $competency["CompetencyID"]);
+    $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
     if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
         echo "<td>" . $ratingNames[$Rating["Rating"]] . "</td>"; //Gives the text versions of the names
     } else {
