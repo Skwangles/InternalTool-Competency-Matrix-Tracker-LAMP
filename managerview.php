@@ -109,7 +109,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             while ($competency = mysqli_fetch_array($competencies)) {
                 $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";
-                $users = mysqli_query($conn, "SELECT * FROM users WHERE URole = '" . $role["RoleID"] . "';"); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
+                mysqli_data_seek($users, 0); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
                 while ($user = mysqli_fetch_array($users)) {
                     displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
                 }
@@ -150,7 +150,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             while ($competency = mysqli_fetch_array($competencies)) {
                 $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";
-                $users = UserGroupFromGroup($conn, $group["GroupID"]); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
+                mysqli_data_seek($users, 0);//---------------------Can try save another call to users, by creating a variable upon first call and re-using it
                 while ($user = mysqli_fetch_array($users)) {
                     displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
                 }
