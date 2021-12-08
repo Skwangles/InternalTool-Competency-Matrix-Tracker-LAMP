@@ -1,5 +1,5 @@
 <?php
-if (isset($_POST["submit"])) {
+if (isset($_POST["createUser"]) && isset($_POST["name"]) && isset($_POST["username"]) && isset($_POST["pwd"]) && isset($_POST["role"])) {
     $name = $_POST["name"];
     $username = $_POST["username"];
     $password = $_POST["pwd"];
@@ -22,8 +22,5 @@ if (isset($_POST["submit"])) {
     }
     createUser($conn, $name, $username, $password, $role); //Adds user to database
     header("location: ../staffedit.php?error=none#StaffManage"); //Sends back success message
-    exit();
-} else {
-    header("location: ../staffedit.php?error=invalidcall#StaffManage");
     exit();
 }

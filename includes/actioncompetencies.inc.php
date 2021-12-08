@@ -2,7 +2,7 @@
 require_once 'dbh.inc.php';
 require_once 'functions.inc.php';
 
-if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------Create Competency----------------
+if (isset($_POST["createC"]) && isset($_POST["competency"])) { //----------------Create Competency----------------
     $name = $_POST["competency"]; //This is where the name of the competency is stored
     if (emptyInputs($name, $name, $name)) {
         header("location: ../gcedit.php?error=emptyinput");
@@ -12,8 +12,7 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
         header("location: ../gcedit.php?error=emptyinput#CompetencyManage");
         exit();
     }
-
-    addCompetency($conn, $name); //Adds competency to the database
+    addCompetency($conn, $name, isset($_POST["description"]) ? $_POST["description"] : ""); //Adds competency to the database - alsong with description
 
     header("location: ../gcedit.php?error=none#CompetencyManage"); //Returns back to edit page - success
     exit();
@@ -78,16 +77,16 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
     if (isset($_POST["roles"])) { //Only if some roles are selected
         $roles = $_POST["roles"];
         foreach ($roles as $roleid) { //Loops through entries in array to apply to multiple groups
-            foreach ($selectedCompetencies as $competency) {
-                mysqli_query($conn, "DELETE FROM competencyroles WHERE Competencies = " . $competency . " AND roles = " . $roleid); //Deletes every occurence of the rioles and competency together
+            foreach ($selectedCompetencies as $competencyid) {
+                mysqli_query($conn, "DELETE FROM competencyroles WHERE Competencies = " . $competencyid . " AND roles = " . $roleid); //Deletes every occurence of the rioles and competency together
             }
         }
     }
     if (isset($_POST["users"])) { //Only if some roles are selected
         $users = $_POST["users"];
         foreach ($users as $userid) { //Loops through entries in array to apply to multiple groups
-            foreach ($selectedCompetencies as $competency) {
-                mysqli_query($conn, "DELETE FROM individualusercompetencies WHERE Competencies = " . $competency . " AND Users = " . $userid); //Deletes every occurence of the rioles and competency together
+            foreach ($selectedCompetencies as $competencyid) {
+                mysqli_query($conn, "DELETE FROM individualusercompetencies WHERE Competencies = " . $competencyid . " AND Users = " . $userid); //Deletes every occurence of the rioles and competency together
             }
         }
     }
@@ -100,7 +99,7 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
     }
     header("location: ../gcedit.php#AddRemoveCG");
     exit();
-} elseif (isset($_POST["permdelete"]) && isset($_POST["competencyradio"])) { //--------------------------Delete Competency--------------------
+} elseif (isset($_POST["permdeleteC"]) && isset($_POST["competencyradio"])) { //--------------------------Delete Competency--------------------
 
         mysqli_query($conn, "DELETE FROM competencies WHERE CompetencyID = " . $_POST["competencyradio"]); //Deletes if it exists
         
@@ -112,14 +111,15 @@ if (isset($_POST["create"]) && isset($_POST["competency"])) { //----------------
     header("location: ../gcedit.php?error=none#CompetencyManage");
     exit();
 } 
-elseif (isset($_POST["changeCName"]) && isset($_POST["cnameChange"]) && isset($_POST["competencyradio"])) {
+elseif (isset($_POST["changeCNameC"]) && isset($_POST["cnameChange"]) && isset($_POST["competencyradio"])) {
      if($_POST["cnameChange"] != ""){
     changeCName($conn, $_POST["competencyradio"], $_POST["cnameChange"]);
      }
     header("location: ../gcedit.php?error=none#CompetencyManage");
     exit();
 }
-else {
-    header("location: ../gcedit.php?error=invalidcall");
-    exit();
+elseif (isset($_POST["changeCDescriptionC"]) && isset($_POST["description"]) && isset($_POST["competencyradio"])) {
+   changeCDescription($conn, $_POST["competencyradio"], $_POST["description"]);
+   header("location: ../gcedit.php?error=none#CompetencyManage");
+   exit();
 }

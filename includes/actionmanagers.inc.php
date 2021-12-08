@@ -16,7 +16,3 @@ if(isset($_POST["update"]) && isset($_POST["managerValue"]) && isset($_POST["gid
    header("location: ../manageredit.php?error=none");
    exit();
 }
-else{
-    header("location: ../manageredit.php?error=invalidcall");
-   exit();
-}

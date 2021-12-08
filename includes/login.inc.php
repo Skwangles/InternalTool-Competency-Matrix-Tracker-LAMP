@@ -22,7 +22,4 @@ if (isset($_POST["submit"]) && isset($_POST["username"]) && isset($_POST["pwd"])
         header("location: ../login.php?error=incorrectlogin");
         exit();
     }
-} else {
-    header("location: ../index.php?error=incorrectlogin");
-    exit();
-}
+} 

@@ -60,8 +60,15 @@ require_once "includes/functions.inc.php";
         }
     }
 
+    
+
     ?>
 </table>
 <?php
+    //
+    //Table Key
+    //
+    displayNumberKey();
+
 include_once 'footer.php';
 ?>

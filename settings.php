@@ -5,21 +5,22 @@ include_once 'header.php';
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
-include_once 'error.php';
+include_once 'includes/settings.inc.php';
 
+include_once 'error.php';
 ?>
 <h1 class="centre"><b><?php echo $_SESSION["name"] ?></b></h1>
 <h2 class="centre">Your Username: <br><?php echo $_SESSION["username"] ?></h2>
 
 <br>
 <br>
-<form class="centre" action="includes/settings.inc.php" method="post">
+<form class="centre" action="settings.php" method="post">
     <h3 class="centre">Change Your Username</h3>
     <input type="text" name="usernameChange" maxlength="20">
     <button class="centre actionbuttons addbuttons" type="submit" name="changeUsername">Update Username</button>
 </form>
 
-<form class="centre" action="includes/settings.inc.php" method="post">
+<form class="centre" action="settings.php" method="post">
     <h3 class="centre">Change Your Password</h3>
     <input type="text" name="passwordChange" maxlength="25">
     <button class="centre actionbuttons addbuttons" type="submit" name="changePassword">Update Password</button>

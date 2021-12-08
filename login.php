@@ -1,5 +1,6 @@
 <?php
 include_once 'header.php';
+include_once 'includes/login.inc.php';
 ?>
 
 
@@ -19,7 +20,7 @@ if (isset($_GET["error"])) {
     }
 }
 ?>
-<form class="centre" action="includes/login.inc.php" method="post">
+<form class="centre" action="" method="post">
     <input type="text" name="username" placeholder="Username">
     <br>
     <input type="password" name="pwd" placeholder="password">

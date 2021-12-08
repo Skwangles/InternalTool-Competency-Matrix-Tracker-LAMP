@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once 'dbh.inc.php';
 require_once 'functions.inc.php';
 
@@ -18,7 +17,4 @@ if (isset($_POST["changePassword"]) && isset($_POST["passwordChange"])) {
     }
     header("location: ../settings.php?error=none");
     exit();
-} else {
-    header("location: ../settings.php?error=invalidcall");
-    exit();
-}
+} 

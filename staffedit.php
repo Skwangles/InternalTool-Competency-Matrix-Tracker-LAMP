@@ -8,6 +8,8 @@ require_once 'includes/functions.inc.php';
 include_once 'error.php';
 
 include_once 'admin.php';
+include_once 'includes/modifyusers.inc.php';
+include_once 'includes/signup.inc.php';
 ?>
 <!----
 //
@@ -22,7 +24,7 @@ include_once 'admin.php';
     $result = mysqli_query($conn, "SELECT * FROM users");
     //Table is inside a form
     ?>
-    <form class="centre" action="includes/modifyusers.inc.php" method="post">
+    <form class="centre" action="staffedit.php" method="post">
         <table class="centre" border="1">
             <tr>
                 <th>Select</th>
@@ -93,7 +95,7 @@ include_once 'admin.php';
 <hr class="seperator">
 <section id="individualusers">
     <h1 class="centre">Modify Specific Users</h1>
-    <form class="centre" action="includes/modifyusers.inc.php" method="post">
+    <form class="centre" action="staffedit.php" method="post">
         <table class="centre" border="1">
             <tr>
                 <th>Select</th>
@@ -145,7 +147,7 @@ include_once 'admin.php';
 <hr class="seperator">
 <section id="StaffManage">
     <h3 class="centre">Add Staff Login</h3>
-    <form class="centre" action="includes/signup.inc.php" method="post">
+    <form class="centre" action="staffedit.php" method="post">
         <input type="text" name="name" placeholder="Name" maxlength="20">
         <input type="text" name="username" placeholder="Username" maxlength="20">
         <input type="password" name="pwd" placeholder="password" maxlength="25">
@@ -154,7 +156,7 @@ include_once 'admin.php';
             <option value="1">Non-Admin</option>
             <option value="3">Admin</option>
         </select>
-        <button class="actionbuttons addbuttons" type="submit" name="submit">Add User</button>
+        <button class="actionbuttons addbuttons" type="submit" name="createUser">Add User</button>
     </form>
     <br>
 </section>

@@ -37,7 +37,6 @@ function createUser($conn, $name, $username, $password, $role) //Adds new user t
 }
 
 function updateSession($conn, $userid){
-    session_start();
     $user = mysqli_query($conn, "SELECT * FROM users WHERE UserID = '".$userid."';");
     $uservariables = mysqli_fetch_assoc($user);
     $_SESSION["username"] = $uservariables["UUsername"];
@@ -75,6 +74,11 @@ function changeCName($conn, $competencyid, $name) //Adds new user to database
     mysqli_query($conn, "UPDATE competencies SET CName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE CompetencyID = '" . $competencyid . "';"); //Sets up the add to database
 }
 
+function changeCDescription($conn, $competencyid, $description) //Adds new user to database
+{
+    mysqli_query($conn, "UPDATE competencies SET CDescription = '" . mysqli_real_escape_string($conn, $description) . "' WHERE CompetencyID = '" . $competencyid . "';"); //Sets up the add to database
+}
+
 function loginUser($conn, $username, $password) //Logs user in and sets session variables
 {
     $uidExists = userExists($conn, $username); //checks if the username is in the database before processing
@@ -90,7 +94,6 @@ function loginUser($conn, $username, $password) //Logs user in and sets session 
         header("location: ../login.php?error=incorrectlogin");
         exit();
     } elseif ($checkPwd == true) {
-        session_start(); //allows saving session variables
         $_SESSION["userid"] = $uidExists["UserID"];
         $_SESSION["username"] = $uidExists["UUsername"];
         $_SESSION["name"] = $uidExists["UName"];
@@ -154,11 +157,12 @@ function getCompetenciesFromName($conn, $name) //Allows retrieval of id, from na
     } else {
         return false;
     }
+
 }
 
-function addCompetency($conn, $name) //Adds name to competency table - does not check for duplicates
+function addCompetency($conn, $name, $description) //Adds name to competency table - does not check for duplicates
 {
-    $resultData = mysqli_query($conn, "INSERT IGNORE INTO competencies (cname) VALUES ('" . mysqli_real_escape_string($conn, $name) . "');"); //Sets up the add to database
+    mysqli_query($conn, "INSERT IGNORE INTO competencies (CName, CDescription) VALUES ('" . mysqli_real_escape_string($conn, $name) . "', '" . mysqli_real_escape_string($conn, $description) . "');"); //Sets up the add to database
 }
 
 function getCompetencies($conn) //Returns complete array of all departmanets
@@ -343,13 +347,9 @@ function managerRoleSwitch($conn, $userid)
 //
 function displayUserRatings($conn, $competencyid, $userid)
 {
-    //
-    //----If you want to get rid of the "Not trained" options, 1. Remove it from the select in the uservalues, 1. Change the default value of a competency to be 1/any
-    //
-    $ratingNames = array("Not Trained", "Trained", "Can demonstrate competency", "Can train others");
     $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
     if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-        echo "<td>" . $ratingNames[$Rating["Rating"]] . "</td>"; //Gives the text versions of the names
+        echo "<td>" . $Rating["Rating"] . "</td>"; //Gives the text versions of the names
     } else {
         echo "<td>N/A</td>"; //Gives empty
     }
@@ -371,6 +371,19 @@ function namePrint($sesh, $user)
     return $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");
 }
 
+function displayNumberKey(){//Displays the meaning of the numbers in English.
+    echo "<h4 class=\"centre\">Table Key</h4><table class=\"centre\" style='font-size:70%' border=\"1\"><tr><th>Number</th><th>Meaning</th></tr><tr><td>0</td><td>Not Trained</td></tr><tr><td>1</td><td>Trained</td></tr><tr><td>2</td><td>Can Demonstrate Competency</td></tr><tr><td>3</td><td>Can Train Others</td></tr></table>";
+}
+
+function console_log($output, $with_script_tags = true) {
+    $js_code = 'console.log(' . json_encode($output, JSON_HEX_TAG) . 
+');';
+    if ($with_script_tags) {
+        $js_code = '<script>' . $js_code . '</script>';
+    }
+    echo $js_code;
+}
+
 //
 // Updating User Competency list
 //
@@ -378,6 +391,7 @@ function namePrint($sesh, $user)
 function updateUserCompetencies($conn, $userid) //Inefficent update process - but it works - can probably improve efficency of this
 {
     $sqlString = "SELECT competencies.CompetencyID FROM `competencies` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = competencies.CompetencyID LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = competencies.CompetencyID LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = competencies.CompetencyID LEFT JOIN `usergroups` ON `usergroups`.`groups` = `competencygroups`.`Groups` LEFT JOIN `users` ON `users`.`UserID` = `usergroups`.`Users` WHERE (`users`.`UserID` = '".$userid."' OR `individualusercompetencies`.`Users` = '".$userid."' OR competencyroles.Roles = (SELECT URole FROM `users` WHERE `users`.`UserID` = '".$userid."'))";
+    
     $updates = mysqli_query($conn, $sqlString);
     while ($competency = mysqli_fetch_row($updates)) {
         if (mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM usercompetencies WHERE Users = '" . $userid . "' AND Competencies = '" . $competency[0]."';")) == false) { //Checks if the item already exists in the table
@@ -409,3 +423,4 @@ function isCompInIndividualUser($conn, $comp, $userid)
 { //Check if there exists any roles that the competency already exists in. 
     return mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM individualusercompetencies WHERE Users = '" . $userid . "' AND Competencies = '" . $comp."';")); //Check if the competency exists in the individual users table
 }
+

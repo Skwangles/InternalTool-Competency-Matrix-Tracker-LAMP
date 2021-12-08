@@ -5,6 +5,10 @@ include_once 'header.php';
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
+// if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
+//     header("location: index.php?error=invalidcall");
+//     exit();
+// }
 include_once 'error.php';
 
 include_once 'admin.php';
@@ -47,7 +51,7 @@ while ($user = mysqli_fetch_array($allUsers)) {
                 echo "<tr><td>" . $competencies["CName"] . "</td>
             <td><ul>";
                 while ($group = mysqli_fetch_assoc($groups)) {
-                    if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = " . $user["UserID"] . " AND Groups = " . $group["GroupID"]))) { //only displays if user is in that group
+                    if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = " . $user["UserID"] . " AND Groups = " . $group["GroupID"]))) { //only displays if user is in the current group
                         echo "<li style=\"text-align:left;\">" . $group["GName"] . "</li>";
                     }
                 }

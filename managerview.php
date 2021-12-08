@@ -32,7 +32,7 @@ while ($group = mysqli_fetch_array($groups)) {
         $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
         while ($competency = mysqli_fetch_array($competencies)) {
             echo "<tr><td>" . $competency["CName"] . "</td>";
-            $users = UserGroupFromGroup($conn, $group["GroupID"]); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
+             mysqli_data_seek($users, 0); //resets the pointer to 0
             while ($user = mysqli_fetch_array($users)) {
                 displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
             }
@@ -44,6 +44,13 @@ while ($group = mysqli_fetch_array($groups)) {
 
 <?php
 } //--End of group while loop
+
+    //
+    //Table Key
+    //
+    displayNumberKey();
+
+
 if ($_SESSION["role"] == 3) { //Admin can see all groups
     $groups = getGroups($conn);
 ?>
@@ -70,14 +77,14 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 echo "<th>" . namePrint($_SESSION, $user) . "</th>"; //If empty, will give "none found" otherwise will print out
             }
             echo "</tr><tr><td>" . $competency["CName"] . "</td>";
-            mysqli_data_seek($users, 0);
-            while ($user = mysqli_fetch_array($users)) { //Gives a heading to all users
+            mysqli_data_seek($users, 0);//Resets the user loop to the start
+            while ($user = mysqli_fetch_array($users)) { //Gets competency value of each user and displays it
                 displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
             }
             echo "</tr>";
         }
         if ($isNull) {
-            $isNull = emptyArrayError($isNull);
+            $isNull = emptyArrayError($isNull);//Give "none found" if it breaks on the first loop
         }
 
         ?>
@@ -109,7 +116,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             while ($competency = mysqli_fetch_array($competencies)) {
                 $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";
-                mysqli_data_seek($users, 0); //---------------------Can try save another call to users, by creating a variable upon first call and re-using it
+                mysqli_data_seek($users, 0); //resets the pointer to 0 
                 while ($user = mysqli_fetch_array($users)) {
                     displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
                 }
@@ -150,7 +157,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             while ($competency = mysqli_fetch_array($competencies)) {
                 $isNull = false;
                 echo "<tr><td>" . $competency["CName"] . "</td>";
-                mysqli_data_seek($users, 0);//---------------------Can try save another call to users, by creating a variable upon first call and re-using it
+                mysqli_data_seek($users, 0); //resets the pointer to 0
                 while ($user = mysqli_fetch_array($users)) {
                     displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
                 }

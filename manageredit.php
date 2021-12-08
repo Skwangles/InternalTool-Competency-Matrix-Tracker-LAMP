@@ -7,6 +7,8 @@ require_once 'includes/functions.inc.php';
 include_once 'error.php';
 
 include_once 'admin.php'; //Adds the navigation, and checks the user has the right permissions.
+
+include_once 'includes/actionmanagers.inc.php';
 ?>
 <br>
 <h3 class="centre">Change User Competency Values</h3>
@@ -17,7 +19,7 @@ $allUsers = getUsers($conn);
 while ($user = mysqli_fetch_array($allUsers)) {
 ?>
 <section>
-    <form class="centre" action="includes/actionmanagers.inc.php" method="post">
+    <form class="centre" action="manageredit.php" method="post">
         <table border="1" class="centre">
             <tr>
                 <th><?php echo $user["UName"] ?></th>

@@ -36,7 +36,7 @@ session_start();
                 <?php
                     }
                     echo "<a href=\"settings.php\">Settings</a>";
-                    echo "<a href=\"includes/logout.inc.php\">Logout</a>";
+                    echo "<a href=\"logout.php\">Logout</a>";
                 } else {
 
                     echo "<a href=\"login.php\">Log In</a>";

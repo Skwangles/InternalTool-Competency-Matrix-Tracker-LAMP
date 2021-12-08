@@ -5,9 +5,12 @@ include_once 'header.php';
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
-include_once 'error.php';//Adds error tags based on the url parameters
+include_once 'includes/actiongroups.inc.php';//Adds actions for check upon reload
+include_once 'includes/actioncompetencies.inc.php';
 
-include_once 'admin.php';//Adds the buttons & permission checks
+include_once 'error.php'; //Adds error tags based on the url parameters
+
+include_once 'admin.php'; //Adds the buttons & permission checks
 ?>
 <!--
 //
@@ -17,7 +20,7 @@ include_once 'admin.php';//Adds the buttons & permission checks
 <!--Defines all groups, and what their assigned competencies are in a table-->
 <section id="AddRemoveCG">
     <h3 class="centre"> Add Competencies To Groups, Roles and Users </h3>
-    <form class="centre" action="includes/actioncompetencies.inc.php" method="post">
+    <form class="centre" action="gcedit.php" method="post">
         <table border="1" class="centre">
             <tr>
                 <th>Select</th>
@@ -123,13 +126,13 @@ include_once 'admin.php';//Adds the buttons & permission checks
 -->
 <section id="GroupManage">
     <h1 class="centre">Deparment/Group Editing</h1>
-    <form class="centre" action="includes/actiongroups.inc.php" method="post">
+    <form class="centre" action="gcedit.php" method="post">
         <input type="text" name="groupname" placeholder="Group Name" maxlength="30">
-        <button class="actionbuttons addbuttons" type="submit" name="add">Add Group</button>
+        <button class="actionbuttons addbuttons" type="submit" name="createG">Create Group</button>
     </form>
     <h3 class="centre">Current Departments/Groups</h3>
 
-    <form class="centre" action="includes/actiongroups.inc.php" method="post">
+    <form class="centre" action="gcedit.php" method="post">
         <?php //list of Groups in a table
         $result = mysqli_query($conn, "SELECT * FROM groups");
 
@@ -141,19 +144,19 @@ include_once 'admin.php';//Adds the buttons & permission checks
 
         while ($row = mysqli_fetch_array($result)) {
             echo "<tr>";
-            echo "<td>" . "<input type=\"radio\" id=\"". $row["GroupID"]."-cb\" name=\"groupradio\" value=\"" . $row["GroupID"] . "\">" . "</td>"; //Creates Checkbox
-            echo "<td><label for=\"". $row["GroupID"]."-cb\">" . $row["GName"] . "</label></td>"; //Gives name
+            echo "<td>" . "<input type=\"radio\" id=\"" . $row["GroupID"] . "-cb\" name=\"groupradio\" value=\"" . $row["GroupID"] . "\">" . "</td>"; //Creates Checkbox
+            echo "<td><label for=\"" . $row["GroupID"] . "-cb\">" . $row["GName"] . "</label></td>"; //Gives name
             echo "</tr>";
         }
         echo "</table>";
         ?>
         <br>
 
-    <h3 class="centre">Change Group Name</h3>
-    <input type="text" name="gnameChange" maxlength="30">
-    <button class="centre actionbuttons addbuttons" type="submit" name="changeGName">Update Group Name</button>
-<br>
-        <button class="dangerous centre" type="submit" name="remove">Delete Selected PERMANENTLY</button>
+        <h3 class="centre">Change Group Name</h3>
+        <input type="text" name="gnameChange" maxlength="30">
+        <button class="centre actionbuttons addbuttons" type="submit" name="changeGNameG">Update Group Name</button>
+        <br>
+        <button class="dangerous centre" type="submit" name="permdeleteG">Delete Selected PERMANENTLY</button>
     </form>
 </section>
 <hr class="seperator">
@@ -166,46 +169,52 @@ include_once 'admin.php';//Adds the buttons & permission checks
 <section id="CompetencyManage">
     <h1 class="centre"><b>Competency Editing</b></h1>
     <!--Gets name of a competency and allows the addition of it to the database-->
-    <form class="centre" action="includes/actioncompetencies.inc.php" method="post">
+    <form class="centre" action="gcedit.php" method="post">
         <input type="text" name="competency" placeholder="Competency Name" maxlength="50">
         <br>
-        <button class="actionbuttons addbuttons" type="submit" name="create">Create Competency</button>
+        <textarea name="description" cols="40" rows="5" placeholder="Competency Description"></textarea>
+        <button class="actionbuttons addbuttons" type="submit" name="createC">Create Competency</button>
     </form>
 
     <!--
 //
-// COMPETENCY DELETION
+// COMPETENCY Management
 //
 -->
     <br>
 
     <h3 class="centre"><b>Current Competencies</b></h3>
-    <form class="centre" action="includes/actioncompetencies.inc.php" method="post">
+    <form class="centre" action="gcedit.php" method="post">
         <?php //list of Groups in a table
         $result = mysqli_query($conn, "SELECT * FROM competencies");
 
         echo "<table border='1' class=\"centre\">
-<tr>
-<th>Select</th>
-<th>Name</th>
-</tr>";
+                <tr>
+                <th>Select</th>
+                <th>Name</th>
+                <th>Description</th>
+                </tr>";
 
         while ($row = mysqli_fetch_array($result)) {
             echo "<tr>";
             echo "<td>" . "<input type=\"radio\" id=\"" . $row["CompetencyID"] . "-radio\" name=\"competencyradio\" value=\"" . $row["CompetencyID"] . "\">" . "</td>"; //Creates Checkbox
             echo "<td><label for=\"" . $row["CompetencyID"] . "-radio\">" . $row['CName'] . "</td>"; //Gives name
+            echo "<td style=\"word-wrap: break-word;
+            max-width: 300px;\">" . $row["CDescription"] . "</td>"; //Limited width of the colum to avoid becoming unnessecarily wide
             echo "</tr>";
         }
         echo "</table>";
         ?>
 
-    <h3 class="centre">Change Competency Name</h3>
-    <input type="text" name="cnameChange" maxlength="50">
-    <button class="centre actionbuttons addbuttons" type="submit" name="changeCName">Update Competency Name</button>
-
+        <h3 class="centre">Change Competency Name</h3>
+        <input type="text" name="cnameChange" maxlength="50">
+        <button class="centre actionbuttons addbuttons" type="submit" name="changeCNameC">Update Competency Name</button>
+        <h3 class="centre">Change Competency Description</h3>
+        <textarea name="description" cols="40" rows="5" placeholder="Competency Description"></textarea>
+        <button class="centre actionbuttons addbuttons" type="submit" name="changeCDescriptionC">Update Competency Description</button>
 
         <br>
-        <button class="dangerous centre" type="submit" name="permdelete">Delete Selected PERMANENTLY</button>
+        <button class="dangerous centre" type="submit" name="permdeleteC">Delete Selected PERMANENTLY</button>
     </form>
 </section>
 
