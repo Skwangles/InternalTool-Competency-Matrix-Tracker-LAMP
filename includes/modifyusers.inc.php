@@ -4,7 +4,6 @@ require_once "functions.inc.php";
 if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) { //If add group was selected - add group
     $users = $_POST["users"];
     $groups = $_POST["groups"];
-    echo "add group change detected";
     foreach ($groups as $groupid) { //Loops through entries in array to apply to multiple groups
         foreach ($users as $userid) {
             if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = '" . $userid . "' AND Groups = '" . $groupid . "';")) == false) { //If entry is not present, add to user groups, and add the associated competencies
@@ -19,7 +18,6 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
 } else if (isset($_POST["removeG"]) && isset($_POST["users"]) && isset($_POST["groups"])) { //If remove group was selected - remove group
     $selectedUsers = $_POST["users"];
     $selectedGroups = $_POST["groups"];
-    echo "group removal change detected";
     foreach ($selectedGroups as $groupid) { //Loops through every entry
         foreach ($selectedUsers as $userid) {
             mysqli_query($conn, "DELETE FROM usergroups WHERE Groups = '" . $groupid . "' AND Users = '" . $userid . "';"); //If it is in the table, add, otherwise skip
@@ -29,8 +27,6 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
     header("location: ../staffedit.php?error=none#AddRemoveGR");
     exit();
 } else if (isset($_POST["roleUpdate"]) && isset($_POST["users"]) && isset($_POST["role"])) { //If role update was selected - update role
-    
-    echo "role change detected";
     $users = $_POST["users"];
     $role = $_POST["role"];
     foreach ($users as $userid) { //Foreach user selected, update the Role to be the desired
@@ -49,7 +45,6 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
 //
 //
 elseif (isset($_POST["delete"]) && isset($_POST["userradio"])) {
-    echo "delete detected";
     if ($_POST["userradio"] != $_SESSION["userid"]) { //Cannot delete yourself. 
         mysqli_query($conn, "DELETE FROM users WHERE UserID = '" . $_POST["userradio"] . "';"); //Deletes user from the system
         header("location: ../staffedit.php?error=none#individualusers");
@@ -58,7 +53,6 @@ elseif (isset($_POST["delete"]) && isset($_POST["userradio"])) {
     header("location: ../staffedit.php?error=invalidcall#individualusers"); //Returns error
     exit();
 } else if (isset($_POST["changePassword"]) && isset($_POST["passwordChange"]) && isset($_POST["userradio"])) { //Updates all selected user's passwords 
-    echo "password change detected";
     if ($_POST["passwordChange"] != "" && changePassword($conn, $_POST["userradio"], $_POST["passwordChange"])) { //Calls the change password method, which returns if it succeeds - first checks the value for an empty string
         header("location: ../staffedit.php?error=none#individualusers");
         exit();
@@ -68,7 +62,6 @@ elseif (isset($_POST["delete"]) && isset($_POST["userradio"])) {
 } else if (isset($_POST["changeName"]) && isset($_POST["nameChange"]) && isset($_POST["userradio"])) { //Updates all selected user's passwords
     $userid = $_POST["userradio"];
     $name = $_POST["nameChange"];
-echo "name change detected";
     if ($name != "" && changeName($conn, $userid, $name)) { //Makes sure the value is not empty, then calls the function which returns success or failure
         updateSession($conn, $_SESSION["userid"]); //Makes sure if the user is updated, that they would have correct variables
         header("location: ../staffedit.php?error=none#individualusers");
@@ -76,12 +69,9 @@ echo "name change detected";
     } //Updates the user's password, to whatever is defined
     header("location: ../staffedit.php?error=invalidcall#individualusers");
     exit(); //Updates the user's password, to whatever is defined
-
 } else if (isset($_POST["changeUsername"]) && isset($_POST["usernameChange"]) && isset($_POST["userradio"])) { //Updates all selected user's passwords
     $userid = $_POST["userradio"];
     $username = $_POST["usernameChange"];
-    console_log("Username updated");
-
     if ($username != "" && changeUsername($conn, $userid, $username)) { //if true, then success, else failure - first checks the value for an empty string
         updateSession($conn, $_SESSION["userid"]); //Makes sure if the user is updated, that they would have correct variables
         header("location: ../staffedit.php?error=none#individualusers");
