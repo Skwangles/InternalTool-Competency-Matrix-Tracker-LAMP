@@ -12,6 +12,9 @@ function updateValue(userid, competencyid, value, callerid) {
                 document.getElementById(callerid).value = res;
                 return; //updates the value to what the internal value is. 
             } else {
+                if (document.getElementById(callerid).value != "") { //If not empty, the input must be false
+                    document.getElementById(callerid).value = "";
+                }
                 console.log("AJAX Success, Processing failure");
             }
         },
