@@ -7,13 +7,13 @@ if(isset($_POST['UserID']) && isset($_POST['CompetencyID']) && isset($_POST['Val
     $CompetencyID = json_decode($_POST['CompetencyID']);
     $Value = json_decode($_POST['Value']);
 
-    if($updatedValue = updateUserValue($conn, $UserID, $CompetencyID, $Value) !== false){
-        error_log("Success: " . $Value . " AND " . $updatedValue);
-        echo "Success";
+    if($updatedValue = updateUserValue($conn, $UserID, $CompetencyID, $Value)){
+        echo json_encode(array("status"=>"ok", "uv"=>$updatedValue[0]));
     }
     else{
-        error_log("Fail");
-        echo "Fail";
+        echo json_encode(array("status"=>"fail"));
     }
-
+}
+else{
+    echo json_encode(array("status"=>"fail"));
 }

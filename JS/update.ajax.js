@@ -5,20 +5,18 @@ function updateValue(userid, competencyid, value, callerid) {
         data: { UserID: userid, CompetencyID: competencyid, Value: value },
         dataType: 'JSON',
         success: function(response) {
-            console.log(response);
-            //var status = response.status;
-            //var res = response.uv;
-            if (response == "ok") {
-                console.log("Change Succeeded");
-                //document.getElementById(callerid).innerHTML = res;
+            //console.log(response);
+            var status = response.status;
+            if (status == "ok") {
+                var res = response.uv;
+                document.getElementById(callerid).value = res;
                 return; //updates the value to what the internal value is. 
             } else {
-                console.log("Change Failed");
+                console.log("AJAX Success, Processing failure");
             }
         },
         error: function(xhr, error) {
-            console.debug(xhr);
-            console.debug(error);
+            console.log("AJAX Failure")
         }
     });
 }

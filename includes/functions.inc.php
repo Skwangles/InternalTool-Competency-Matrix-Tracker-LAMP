@@ -122,15 +122,11 @@ function deleteUser($conn, $POST, $SESSION)
 function updateUserValue($conn, $userid, $competencyid, $value)
 { //Uses userid, competency id and the value, then after checking validity updates the table
     if ($value == '0' || $value == '1' || $value == '2' || $value == '3') {
-        mysqli_query($conn, "UPDATE usercompetencies SET Rating = " . mysqli_real_escape_string($conn, $value) . " WHERE Users = " . mysqli_real_escape_string($conn, $userid) . " AND Competencies = " . mysqli_real_escape_string($conn, $competencyid));
-        return mysqli_fetch_row(mysqli_query($conn, "SELECT Rating from usercompetencies WHERE Users = '" . mysqli_real_escape_string($conn, $userid) . "' AND Competencies = '" . mysqli_real_escape_string($conn, $competencyid) . "';"));//If successful, returns the updated value
-    }
-    else if($value > 3){//Returns the values to in bound if a too large, or too little number is given
-        return "3";
-    }
-    else if($value < 0){
-        return "0";
-    }
+        mysqli_query($conn, "UPDATE usercompetencies SET Rating = '" . mysqli_real_escape_string($conn, $value) . "' WHERE Users = '" . mysqli_real_escape_string($conn, $userid) . "' AND Competencies = '" . mysqli_real_escape_string($conn, $competencyid) . "';");
+        return mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competencyid)); //If successful, returns the updated value
+    } else if ($value > 3 || $value < 0) { //Returns the values to in bound if a too large, or too little number is given
+        return mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competencyid));
+    } 
     return false;
 }
 //
@@ -364,7 +360,7 @@ function displayUserRatings($conn, $competencyid, $userid)
     if ($_SESSION["role"] == 3) {
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-            echo "<td><input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\"  onInput=\"updateValue(".$userid.", ".$competencyid.", this.value, this.id)\"></td>"; //Gives the text versions of the names - limits it to the numbers
+            echo "<td><input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"".$userid."-".$competencyid."-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value, this.id)\"></td>"; //Gives the text versions of the names - limits it to the numbers
         } else {
             echo "<td>N/A</td>"; //Gives empty
         }
