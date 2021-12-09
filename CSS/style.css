@@ -143,7 +143,6 @@ input[type=number] {
     width: max-content;
     padding: 0px 12px;
     box-sizing: border-box;
-    border: 2px solid red;
     border-radius: 4px;
 }
 
