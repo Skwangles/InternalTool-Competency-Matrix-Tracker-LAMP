@@ -134,6 +134,26 @@ textarea:focus {
     background-color: lightblue;
 }
 
+
+/*
+For Admin edit textboxes
+*/
+
+input[type=number] {
+    width: max-content;
+    padding: 0px 12px;
+    box-sizing: border-box;
+    border: 2px solid red;
+    border-radius: 4px;
+}
+
+input[type=number]:focus {
+    background-color: lightblue;
+}
+
+
+/*End of admin textbox*/
+
 select {
     padding: 16px 20px;
     border: none;

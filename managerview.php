@@ -176,6 +176,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
     ?>
 
     </table>
+    
     <?php
     include_once 'footer.php';
     ?>

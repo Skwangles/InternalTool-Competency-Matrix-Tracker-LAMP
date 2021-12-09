@@ -9,6 +9,8 @@ session_start();
     <meta charset="utf-8">
     <title>Competency Charts</title>
     <link rel="stylesheet" href="CSS/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="JS/update.ajax.js"></script>
 </head>
 
 <body>

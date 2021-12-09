@@ -11,7 +11,6 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
 
 <br>
 <form class="centre" action="staffedit.php" method="post"><button class="block" type="submit" name="submit">Modify Staff Accounts</button></form>
-<form class="centre" action="uservalues.php" method="post"><button class="block" type="submit" name="submit">Modify Staff Values</button></form>
 <form class="centre" action="gcedit.php" method="post"><button class="block" type="submit" name="submit">Modify Groups & Competencies</button></form>
 <form class="centre" action="manageredit.php" method="post"><button class="block" type="submit" name="submit">Modify Managers</button></form>
 
