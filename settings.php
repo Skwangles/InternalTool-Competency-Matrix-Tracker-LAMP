@@ -25,8 +25,7 @@ include_once 'error.php';
     <input type="text" name="passwordChange" maxlength="25">
     <button class="centre actionbuttons addbuttons" type="submit" name="changePassword">Update Password</button>
 </form>
-
-
+<br>
 <?php
 //Handles error tags
 

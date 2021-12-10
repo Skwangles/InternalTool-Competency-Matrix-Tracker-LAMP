@@ -99,6 +99,7 @@ function loginUser($conn, $username, $password) //Logs user in and sets session 
         $_SESSION["username"] = $uidExists["UUsername"];
         $_SESSION["name"] = $uidExists["UName"];
         $_SESSION["role"] = $uidExists["URole"];
+        $_SESSION["editMode"] = "1";
     }
 }
 
@@ -357,7 +358,7 @@ function managerRoleSwitch($conn, $userid)
 //
 function displayUserRatings($conn, $competencyid, $userid)
 {
-    if ($_SESSION["role"] == 3) {
+    if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
             echo "<td><input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"".$userid."-".$competencyid."-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value, this.id)\"></td>"; //Gives the text versions of the names - limits it to the numbers

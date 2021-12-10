@@ -7,6 +7,7 @@ if (!isset($_SESSION["username"])) {
 
 require_once "includes/dbh.inc.php";
 require_once "includes/functions.inc.php";
+include_once "admin-inwindow-controls.php";//gives ability to switch between edit and read-only mode
 ?>
 <h1 class="centre">Your Personal Competencies</h1>
 <table border="1" class="centre">

@@ -7,7 +7,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] == "1") {
     header("location: index.php?error=invalidcall"); //If doesn't have the correct perms, kicks out
     exit();
 }
-
+include_once "admin-inwindow-controls.php";//Gives the ability to change between edit mode and read-only mode
 ?>
 <h2 class="centre">Your Departments</h2>
 <?php

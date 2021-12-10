@@ -1,4 +1,4 @@
-function updateValue(userid, competencyid, value, callerid) {
+function updateValue(userid, competencyid, value, callerid) { //Updates the user values when changing the textbox
     $.ajax({
         type: 'POST',
         url: "values.ajax.php",
@@ -19,7 +19,23 @@ function updateValue(userid, competencyid, value, callerid) {
             }
         },
         error: function(xhr, error) {
-            console.log("AJAX Failure")
+            console.log("AJAX Failure");
         }
     });
+}
+
+function switchEditMode() { //Updates the edit mode for Admins from edit everything, to just READ-ONLY
+    $.ajax({
+        type: 'POST',
+        url: "editmode.ajax.php",
+        dataType: 'JSON',
+        success: function(response) {
+            console.log(response);
+            if (response.status == "ok") {
+                window.location.reload();
+            }
+        },
+        error: function(xhr, error) {}
+    });
+
 }
