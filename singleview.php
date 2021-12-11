@@ -64,9 +64,6 @@ include_once "admin-inwindow-controls.php"; //gives ability to switch between ed
     ?></th></tr>
 </table>
 <?php
-if($_SESSION["role"] == '3' && $_SESSION["editMode"] == '1'){
-    echo "<button style=\"margin-left:auto;margin-right:auto;display:block;\" onclick=\"location.reload()\">Update Summary Value</button>";
-}
 //
 //Table Key
 //
