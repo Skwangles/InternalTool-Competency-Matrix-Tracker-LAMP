@@ -7,7 +7,7 @@ if (!isset($_SESSION["username"])) {
 
 require_once "includes/dbh.inc.php";
 require_once "includes/functions.inc.php";
-include_once "admin-inwindow-controls.php";//gives ability to switch between edit and read-only mode
+include_once "admin-inwindow-controls.php"; //gives ability to switch between edit and read-only mode
 ?>
 <h1 class="centre">Your Personal Competencies</h1>
 <table border="1" class="centre">
@@ -19,29 +19,27 @@ include_once "admin-inwindow-controls.php";//gives ability to switch between edi
     //Individual User Display
     echo "<tr><td><b>Individual User Competencies</b></td></tr>";
     $competencies = IndUserCompetenciesFromUser($conn, $_SESSION["userid"]);
-    $isNull = true; //Determines if the while ended before the first loop
+    if (mysqli_num_rows($competencies) <= 0) {//Determines if the array is empty
+        emptyArrayError();
+    } else {
     while ($competency = mysqli_fetch_array($competencies)) {
-        $isNull = false;
-        echo "<tr><td>" . $competency["CName"] . "</td>";
+        echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
         displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
     }
-    if ($isNull) {
-        $isNull = emptyArrayError($isNull); //Prints out the "No Competency Found" tile, done like this incase wanting to change the format
-    }
+}
 
     //Role Display
     $role = mysqli_fetch_assoc(RoleFromUser($conn, $_SESSION["userid"]));
     echo "<tr><td><b>" . $role["RName"] . "</b></td></tr>";
     $competencies = CompetencyRolesFromRoles($conn, $role["RoleID"]);
-    $isNull = true;
-    while ($competency = mysqli_fetch_array($competencies)) {
-        $isNull = false;
-        echo "<tr><td>" . $competency["CName"] . "</td>";
-        displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
-        echo "</tr>";
-    }
-    if ($isNull) {
-        $isNull = emptyArrayError($isNull);
+    if (mysqli_num_rows($competencies) <= 0) {
+        emptyArrayError();
+    } else {
+        while ($competency = mysqli_fetch_array($competencies)) { //loops through all competencies
+            echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
+            displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
+            echo "</tr>";
+        }
     }
 
     //Group Display
@@ -50,26 +48,25 @@ include_once "admin-inwindow-controls.php";//gives ability to switch between edi
 
         echo "<tr><td><b>" . $group["GName"] . "</b></td></tr>";
         $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
-        $isNull = true;
-        while ($competency = mysqli_fetch_array($competencies)) {
-            $isNull = false;
-            echo "<tr><td>" . $competency["CName"] . "</td>";
-            displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
-        }
-        if ($isNull) {
-            $isNull = emptyArrayError($isNull);
+        if (mysqli_num_rows($competencies) <= 0) {
+            emptyArrayError();
+        } else {
+            while ($competency = mysqli_fetch_array($competencies)) {
+                echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
+                displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
+            }
         }
     }
 
-    
+
 
     ?>
 </table>
 <?php
-    //
-    //Table Key
-    //
-    displayNumberKey();
+//
+//Table Key
+//
+displayNumberKey();
 
 include_once 'footer.php';
 ?>

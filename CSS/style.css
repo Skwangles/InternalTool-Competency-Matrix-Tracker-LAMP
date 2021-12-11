@@ -264,3 +264,37 @@ Error Styling
 .tableentry {
     background-color: cyan;
 }
+
+
+/*
+
+Tool tip text - shows competency description
+Modified from https://www.w3schools.com/css/css_tooltip.asp
+
+*/
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: max-content;
+    word-wrap: break-word;
+    max-width: 300px;
+    background-color: rgb(0, 0, 0);
+    opacity: 70%;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 5px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1000;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}

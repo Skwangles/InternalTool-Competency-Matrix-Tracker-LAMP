@@ -6,10 +6,7 @@ if(isset($_POST["update"]) && isset($_POST["managerValue"]) && isset($_POST["gid
     $groupValues = $_POST["managerValue"];
     $groupIDs = $_POST["gid"];
    for($x = 0; $x < count($groupIDs); $x++){
-       echo $groupValues[$x];
-       echo $groupIDs[$x];
-       echo "<br>";
-        mysqli_query($conn,"UPDATE usergroups SET isManager = ". $groupValues[$x]. " WHERE Users = " . $userid . " AND Groups = ". $groupIDs[$x]);
+        updateGroupManager($conn, $userid, $groupIDs[$x], $groupValues[$x]);
    }
    managerRoleSwitch($conn, $userid);
    updateUserCompetencies($conn, $userid);

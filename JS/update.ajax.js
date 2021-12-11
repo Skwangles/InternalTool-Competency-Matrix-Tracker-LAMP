@@ -19,7 +19,7 @@ function updateValue(userid, competencyid, value, callerid) { //Updates the user
             }
         },
         error: function(xhr, error) {
-            console.log("AJAX Failure");
+            //showError("Value update failed, please try again later...");
         }
     });
 }
@@ -27,15 +27,37 @@ function updateValue(userid, competencyid, value, callerid) { //Updates the user
 function switchEditMode() { //Updates the edit mode for Admins from edit everything, to just READ-ONLY
     $.ajax({
         type: 'POST',
-        url: "editmode.ajax.php",
+        url: "ajax/editmode.ajax.php",
         dataType: 'JSON',
         success: function(response) {
-            console.log(response);
             if (response.status == "ok") {
-                window.location.reload();
+                window.location.reload(); //updates all values on the page
             }
         },
-        error: function(xhr, error) {}
+        error: function(xhr, error) {
+            //showError("Mode switch failed, please try again later...");
+        }
     });
 
+}
+
+function updateManager(userid, groupid, value) {
+    $.ajax({
+        type: 'POST',
+        url: "ajax/manager.ajax.php",
+        data: { UserID: userid, GroupID: groupid, Value: value },
+        dataType: 'JSON',
+        success: function(response) {
+            var status = response.status;
+            if (status == "ok") {
+                var id = userid + "-" + groupid + "-select";
+                document.getElementById(id).value = response.Value; //updates the value to what the internal value is. 
+                //showError("Update successful");
+                return;
+            }
+        },
+        error: function(xhr, error) {
+            // showError("Manager update failed, please try again later...");
+        }
+    });
 }

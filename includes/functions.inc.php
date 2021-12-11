@@ -127,7 +127,17 @@ function updateUserValue($conn, $userid, $competencyid, $value)
         return mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competencyid)); //If successful, returns the updated value
     } else if ($value > 3 || $value < 0) { //Returns the values to in bound if a too large, or too little number is given
         return mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competencyid));
-    } 
+    }
+    return false;
+}
+
+function updateGroupManager($conn, $userid, $groupid, $value)
+{
+    error_log($value);
+    if ($value == '0' || $value == '1') {
+        mysqli_query($conn, "UPDATE usergroups SET isManager = '" . $value . "' WHERE Users = '" . $userid . "' AND Groups = '" . $groupid . "';");
+        return mysqli_fetch_row(mysqli_query($conn, "SELECT isManager FROM usergroups WHERE Users = '" . $userid . "' AND Groups = '" . $groupid . "';")); //For certainty, checks the actual database value, rather than just passing back the user selected variable.
+    }
     return false;
 }
 //
@@ -361,7 +371,7 @@ function displayUserRatings($conn, $competencyid, $userid)
     if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-            echo "<td><input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"".$userid."-".$competencyid."-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value, this.id)\"></td>"; //Gives the text versions of the names - limits it to the numbers
+            echo "<td><input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"" . $userid . "-" . $competencyid . "-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value, this.id)\"></td>"; //Gives the text versions of the names - limits it to the numbers
         } else {
             echo "<td>N/A</td>"; //Gives empty
         }
@@ -375,15 +385,17 @@ function displayUserRatings($conn, $competencyid, $userid)
     }
 }
 
-function emptyArrayError($isNull)
-{
-    if ($isNull) {
-        echo "<tr><td>None Found</td><td>-</td></tr>";
-        return $isNull;
-    } else {
-        $isNull = true;
-        return $isNull;
+function displayCompetencyName($competency)
+{ //Allows competencies to recieve a tooltip for their description
+    if ($competency["CDescription"] == "") { //If empty, don't give a tooltip
+        return $competency["CName"];
     }
+    return "<div class=\"tooltip\">" . $competency["CName"] . "<span class=\"tooltiptext\">" . $competency["CDescription"] . "</span>";
+}
+
+function emptyArrayError()
+{
+    echo "<tr><td>None Found</td><td>-</td></tr>";
 }
 
 function namePrint($sesh, $user)
@@ -435,4 +447,61 @@ function isCompInRole($conn, $comp, $role, $user)
 function isCompInIndividualUser($conn, $comp, $userid)
 { //Check if there exists any roles that the competency already exists in. 
     return mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM individualusercompetencies WHERE Users = '" . $userid . "' AND Competencies = '" . $comp . "';")); //Check if the competency exists in the individual users table
+}
+
+
+//
+//User Summary
+//
+
+function getUserGroupSummary($conn, $userid)
+{ //------gets the sum of all ratings for the user's groups------
+    $value = 0;
+    $groups = UserGroupFromUser($conn, $userid);
+    while ($group = mysqli_fetch_assoc($groups)) {
+        $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
+        while ($competency = mysqli_fetch_assoc($competencies)) {
+            if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
+                $value = $value + $rating[0];
+            }; //Adds the rating to the value if it exists
+        }
+    }
+    return $value; //Returns the completed sum
+}
+
+function getInvidiualUserSummary($conn, $userid)
+{ //---gets the sum of all rating for the user's individually assigned roles --------
+    $value = 0;
+    $competencies = IndUserCompetenciesFromUser($conn, $userid);
+    while ($competency = mysqli_fetch_assoc($competencies)) {
+        if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
+            $value = $value + $rating[0];
+        }; //Adds the rating to the value if it exists
+    }
+    return $value; //Returns the completed sum
+}
+
+function getUserRoleSummary($conn, $userid)
+{ //---Gets sum of all ratings for the user's Role -------
+    $value = 0;
+    $userEntry = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = '" . mysqli_real_escape_string($conn, $userid) . "';")); //Gets the user profile
+    $competencies = CompetencyRolesFromRoles($conn, $userEntry[0]);
+    while ($competency = mysqli_fetch_assoc($competencies)) {
+        if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
+            $value = $value + $rating[0];
+        }; //Adds the rating to the value if it exists
+    }
+    return $value; //Returns the completed sum
+}
+
+function getUserSingleGroupSummary($conn, $userid, $groupid)
+{ //-----gets the sum of all ratings for *one* of the user's groups
+    $value = 0;
+    $competencies = CompetencyGroupFromGroup($conn, $groupid);
+    while ($competency = mysqli_fetch_assoc($competencies)) {
+        if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
+            $value = $value + $rating[0];
+        }; //Adds the rating to the value if it exists
+    }
+    return $value;
 }

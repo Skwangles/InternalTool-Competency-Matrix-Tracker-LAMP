@@ -31,9 +31,11 @@ while ($user = mysqli_fetch_array($allUsers)) {
             <?php
             //Will list competencies by group
             $userGroups = UserGroupFromUser($conn, $user["UserID"]);
-            $isNull = true;//Determines if the While loop has exited on its first loop
+            if (mysqli_num_rows($userGroups) <= 0) {
+                emptyArrayError();
+            } else {
             while ($group = mysqli_fetch_assoc($userGroups)) {
-                $isNull = false;
+                
             ?>
                 <td>
                     <?php
@@ -43,7 +45,7 @@ while ($user = mysqli_fetch_array($allUsers)) {
                 <td>
                     <?php
                     $valueIndex = mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = " . $user["UserID"] . " AND Groups = " . $group["GroupID"]))["isManager"];
-                    echo "<select name=\"managerValue[]\">";
+                    echo "<select id=\"".$user["UserID"]."-".$group["GroupID"]."-select\" onChange=\"updateManager(".$user["UserID"].", ". $group["GroupID"].", this.value)\" name=\"managerValue[]\">";//Creates select with specific id, for the ajax request, and a call to the ajax function
                     ?>
                     <option value="0" <?php echo $valueIndex == 0 ? "selected" : ""; //Sets the default selected option 
                                         ?>>Staff</option>
@@ -55,13 +57,11 @@ while ($user = mysqli_fetch_array($allUsers)) {
                 </tr>
             <?php
             }
-            if($isNull){
-            $isNull = emptyArrayError($isNull); //Prints out a "no competencies" row, then resets the IsNull to true for the next loop
-            }
+        }
             ?>
         </table>
-        <button class="actionbuttons addbuttons" type="submit" name="update" value="<?php echo $user["UserID"] //Will give processing form the id to update 
-                                                                            ?>">Update <?php echo $user["UName"] ?>'s Values</button>
+        <!-- <button class="actionbuttons addbuttons" type="submit" name="update" value="<?php echo $user["UserID"] //Will give processing form the id to update 
+                                                                            ?>">Update <?php echo $user["UName"] ?>'s Values</button> -->
         
         <br>
         <br>
