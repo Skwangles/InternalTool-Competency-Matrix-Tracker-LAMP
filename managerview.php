@@ -17,7 +17,7 @@ while ($group = mysqli_fetch_array($groups)) {
 
     <table border="1" class="centre">
         <tr>
-            <th class="tabletitle"><?php echo $group["GName"] ?></th>
+            <th class="tabletitle" colspan="100%"><?php echo $group["GName"] ?></th>
         </tr>
         <tr>
             <th>-</th>
@@ -32,6 +32,7 @@ while ($group = mysqli_fetch_array($groups)) {
         $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
         while ($competency = mysqli_fetch_array($competencies)) {
             echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
+
             mysqli_data_seek($users, 0); //resets the pointer to 0
             while ($user = mysqli_fetch_array($users)) {
                 displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
@@ -39,6 +40,12 @@ while ($group = mysqli_fetch_array($groups)) {
             echo "</tr>";
         }
 
+        mysqli_data_seek($users, 0); //Resets array pointer
+        echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
+        while ($user = mysqli_fetch_assoc($users)) {
+            echo "<th>" . getUserSingleGroupSummary($conn, $user["UserID"], $group["GroupID"]) . "</th>";//Gives the summary of each group
+        }
+        echo "</tr>";
         ?>
     </table>
 
@@ -59,7 +66,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
     <hr class="seperator">
     <table border="1" class="centre">
         <?php
-        echo "<tr><th class=\"tabletitle\"><b>Individual User Competencies</b></th></tr>";
+        echo "<tr><th colspan=\"100%\" class=\"tabletitle\"><b>Individual User Competencies</b></th></tr>";
         //
         //Individual User values
         //
@@ -84,6 +91,13 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 }
                 echo "</tr>";
             }
+
+            mysqli_data_seek($users, 0); //Resets array pointer
+            echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
+            while ($user = mysqli_fetch_assoc($users)) {
+                echo "<th>" . getInvidiualUserSummary($conn, $user["UserID"]) . "</th>";//Gives the summaries of each user's individual competencies
+            }
+            echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>";
         }
 
         ?>
@@ -98,7 +112,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
         ?>
 
             <tr>
-                <th class="tabletitle"><?php echo $role["RName"] ?></th>
+                <th class="tabletitle" colspan="100%"><?php echo $role["RName"] ?></th>
             </tr>
             <tr>
                 <th>-</th>
@@ -122,6 +136,13 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                     }
                     echo "</tr>"; //Finishes the row after entering all User data
                 }
+
+                mysqli_data_seek($users, 0); //Resets array pointer
+                echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
+                while ($user = mysqli_fetch_assoc($users)) {
+                    echo "<th>" . getUserRoleSummary($conn, $user["UserID"]) . "</th>";//Gives the summaries of each role
+                }
+                echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>";
             }
 
             ?>
@@ -138,13 +159,13 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
         ?>
 
             <tr>
-                <th class="tabletitle"><?php echo $group["GName"] ?></th>
+                <th class="tabletitle" colspan="100%"><?php echo $group["GName"] ?></th>
             </tr>
             <tr>
                 <th>-</th>
                 <?php
                 $users = UserGroupFromGroup($conn, $group["GroupID"]); //Gets all users in the current group
-                while ($user = mysqli_fetch_array($users)) { //Gives a heading to all users
+                while ($user = mysqli_fetch_assoc($users)) { //Gives a heading to all users
                     echo "<th>" . namePrint($_SESSION, $user) . "</th>";
                 }
                 ?>
@@ -154,16 +175,22 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             if (mysqli_num_rows($competencies) <= 0) {
                 emptyArrayError();
             } else {
-                while ($competency = mysqli_fetch_array($competencies)) {
+                while ($competency = mysqli_fetch_assoc($competencies)) {
                     echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
                     mysqli_data_seek($users, 0); //resets the pointer to 0
-                    while ($user = mysqli_fetch_array($users)) {
+                    while ($user = mysqli_fetch_assoc($users)) {
                         displayUserRatings($conn, $competency["CompetencyID"], $user["UserID"]);
                     }
                     echo "</tr>"; //Finishes the row after entering all User data
                 }
-            }
 
+                mysqli_data_seek($users, 0); //Resets array pointer
+                echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
+                while ($user = mysqli_fetch_assoc($users)) {
+                    echo "<th>" . getUserSingleGroupSummary($conn, $user["UserID"], $group["GroupID"]) . "</th>";//Gives the summary of each group
+                }
+                echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>";
+            }
             ?>
             <br>
 

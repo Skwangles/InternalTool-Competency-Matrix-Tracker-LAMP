@@ -187,6 +187,17 @@ th {
     background-color: #207928;
 }
 
+.blank_row {
+    height: 5px !important;
+    /* overwrites any other rules */
+    background-color: #000000;
+}
+
+.blank_td {
+    background-color: #000000;
+    height: 1px !important;
+}
+
 label {
     display: block;
     /* border: 1px solid #f00; - I couldn't figure out how to make the label fill the entire TD heighwise */

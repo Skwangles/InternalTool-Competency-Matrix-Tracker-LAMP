@@ -505,3 +505,12 @@ function getUserSingleGroupSummary($conn, $userid, $groupid)
     }
     return $value;
 }
+
+
+function getCompleteUserSummary($conn, $userid){//Gets the sums from Individual, Group and Roles - returns a single number for the single view
+    $value = 0;
+    $value = $value + getUserGroupSummary($conn, $userid);
+    $value = $value + getUserRoleSummary($conn, $userid);
+    $value = $value + getInvidiualUserSummary($conn, $userid);
+    return $value;
+}

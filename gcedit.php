@@ -111,8 +111,8 @@ include_once 'admin.php'; //Adds the buttons & permission checks
         echo "</table>";
         ?>
         <br>
-        <button class="actionbuttons addbuttons" type="submit" name="addC">Add Competencies To Groups</button>
-        <button class="actionbuttons rembuttons" type="submit" name="removeC">Remove Competency From Groups</button>
+        <button class="actionbuttons addbuttons" type="submit" name="addC">Add Selected Competencies To Groups</button>
+        <button class="actionbuttons rembuttons" type="submit" name="removeC">Remove Selected Competencies From Groups</button>
 
 
     </form>
@@ -130,13 +130,15 @@ include_once 'admin.php'; //Adds the buttons & permission checks
         <input type="text" name="groupname" placeholder="Group Name" maxlength="30">
         <button class="actionbuttons addbuttons" type="submit" name="createG">Create Group</button>
     </form>
+    <br>
+    <br>
     <h3 class="centre">Current Departments/Groups</h3>
-
     <form class="centre" action="gcedit.php" method="post">
         <?php //list of Groups in a table
         $result = mysqli_query($conn, "SELECT * FROM groups");
 
         echo "<table border='1' class=\"centre\">
+        
 <tr>
 <th>Select</th>
 <th>Name</th>
@@ -152,9 +154,9 @@ include_once 'admin.php'; //Adds the buttons & permission checks
         ?>
         <br>
 
-        <h3 class="centre">Change Group Name</h3>
+        <h4 class="centre">Change Selected Group's Name</h4>
         <input type="text" name="gnameChange" maxlength="30">
-        <button class="centre actionbuttons addbuttons" type="submit" name="changeGNameG">Update Group Name</button>
+        <button class="centre actionbuttons addbuttons" type="submit" name="changeGNameG">Update Selected Group's Name</button>
         <br>
         <button class="dangerous centre" type="submit" name="permdeleteG">Delete Selected PERMANENTLY</button>
     </form>
@@ -206,10 +208,10 @@ include_once 'admin.php'; //Adds the buttons & permission checks
         echo "</table>";
         ?>
 
-        <h3 class="centre">Change Competency Name</h3>
+        <h4 class="centre">Change Selected Competency's Name</h4>
         <input type="text" name="cnameChange" maxlength="50">
         <button class="centre actionbuttons addbuttons" type="submit" name="changeCNameC">Update Competency Name</button>
-        <h3 class="centre">Change Competency Description</h3>
+        <h4 class="centre">Change Selected Competency's Description</h4>
         <textarea name="description" cols="40" rows="5" placeholder="Competency Description"></textarea>
         <button class="centre actionbuttons addbuttons" type="submit" name="changeCDescriptionC">Update Competency Description</button>
 

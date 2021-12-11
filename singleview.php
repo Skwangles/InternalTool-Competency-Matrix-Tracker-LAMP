@@ -54,13 +54,12 @@ include_once "admin-inwindow-controls.php"; //gives ability to switch between ed
             while ($competency = mysqli_fetch_array($competencies)) {
                 echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
                 displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
+                echo "</tr>";
             }
         }
     }
-
-
-
     ?>
+    <tr><td>--</td><th><?php echo getCompleteUserSummary($conn, $_SESSION["userid"]); ?></th></tr>
 </table>
 <?php
 //
