@@ -201,7 +201,7 @@ function getCompetencies($conn) //Returns complete array of all departmanets
 //
 //JOINING TABLE PROCESSING
 //
-
+#region Joining Tables
 function UserGroupFromGroup($conn, $groupid)
 {
     return mysqli_query($conn, "SELECT
@@ -330,7 +330,7 @@ function IndUserCompetenciesFromUser($conn, $userid)
   WHERE
   individualusercompetencies.Users = '" . $userid . "';");
 }
-
+#endregion
 //
 //Roles & Ratings
 //
@@ -366,12 +366,13 @@ function managerRoleSwitch($conn, $userid)
 //
 //Echo/Formatting Based Functions
 //
+
 function displayUserRatings($conn, $competencyid, $userid)
 {
     if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-            echo "<td><input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"" . $userid . "-" . $competencyid . "-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value, this.id)\"></td>"; //Gives the text versions of the names - limits it to the numbers
+            echo "<td><input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"" . $userid . "-" . $competencyid . "-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value)\"></td>"; //Gives the text versions of the names - limits it to the numbers
         } else {
             echo "<td>N/A</td>"; //Gives empty
         }
@@ -406,6 +407,10 @@ function namePrint($sesh, $user)
 function displayNumberKey()
 { //Displays the meaning of the numbers in English.
     echo "<h4 class=\"centre\">Table Key</h4><table class=\"centre\" style='font-size:70%' border=\"1\"><tr><th>Number</th><th>Meaning</th></tr><tr><td>0</td><td>Not Trained</td></tr><tr><td>1</td><td>Trained</td></tr><tr><td>2</td><td>Can Demonstrate Competency</td></tr><tr><td>3</td><td>Can Train Others</td></tr></table>";
+}
+
+function formatPercent($summaryInfo){
+    return  number_format(($summaryInfo["value"]/$summaryInfo["items"]) * 100, 2) . "%";
 }
 
 
@@ -451,31 +456,35 @@ function isCompInIndividualUser($conn, $comp, $userid)
 
 
 //
-//User Summary
+//User Summaries
 //
 
 function getUserGroupSummary($conn, $userid)
 { //------gets the sum of all ratings for the user's groups------
-    $value = 0;
+    $value = array("value" => 0, "items" => 0);
     $groups = UserGroupFromUser($conn, $userid);
     while ($group = mysqli_fetch_assoc($groups)) {
         $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
         while ($competency = mysqli_fetch_assoc($competencies)) {
             if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
-                $value = $value + $rating[0];
+                $value["value"] = $value["value"] + $rating[0];
+                $value["items"] = $value["items"] + 3;
             }; //Adds the rating to the value if it exists
         }
     }
     return $value; //Returns the completed sum
 }
 
+
+
 function getInvidiualUserSummary($conn, $userid)
 { //---gets the sum of all rating for the user's individually assigned roles --------
-    $value = 0;
+    $value = array("value" => 0, "items" => 0);
     $competencies = IndUserCompetenciesFromUser($conn, $userid);
     while ($competency = mysqli_fetch_assoc($competencies)) {
         if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
-            $value = $value + $rating[0];
+            $value["value"] = $value["value"] + $rating[0];
+            $value["items"] = $value["items"] + 3;
         }; //Adds the rating to the value if it exists
     }
     return $value; //Returns the completed sum
@@ -483,12 +492,13 @@ function getInvidiualUserSummary($conn, $userid)
 
 function getUserRoleSummary($conn, $userid)
 { //---Gets sum of all ratings for the user's Role -------
-    $value = 0;
+    $value = array("value" => 0, "items" => 0);
     $userEntry = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = '" . mysqli_real_escape_string($conn, $userid) . "';")); //Gets the user profile
     $competencies = CompetencyRolesFromRoles($conn, $userEntry[0]);
     while ($competency = mysqli_fetch_assoc($competencies)) {
         if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
-            $value = $value + $rating[0];
+            $value["value"] = $value["value"] + $rating[0];
+            $value["items"] = $value["items"] + 3;
         }; //Adds the rating to the value if it exists
     }
     return $value; //Returns the completed sum
@@ -496,21 +506,29 @@ function getUserRoleSummary($conn, $userid)
 
 function getUserSingleGroupSummary($conn, $userid, $groupid)
 { //-----gets the sum of all ratings for *one* of the user's groups
-    $value = 0;
+    $value = array("value" => 0, "items" => 0);
     $competencies = CompetencyGroupFromGroup($conn, $groupid);
     while ($competency = mysqli_fetch_assoc($competencies)) {
         if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
-            $value = $value + $rating[0];
+            $value["value"] = $value["value"] + $rating[0];
+            $value["items"] = $value["items"] + 3;
         }; //Adds the rating to the value if it exists
     }
     return $value;
 }
 
 
-function getCompleteUserSummary($conn, $userid){//Gets the sums from Individual, Group and Roles - returns a single number for the single view
-    $value = 0;
-    $value = $value + getUserGroupSummary($conn, $userid);
-    $value = $value + getUserRoleSummary($conn, $userid);
-    $value = $value + getInvidiualUserSummary($conn, $userid);
+function getCompleteUserSummary($conn, $userid)
+{ //Gets the sums from Individual, Group and Roles - returns a single number for the single view
+    $value = array("value" => 0, "items" => 0);
+    $value = updateSummaryValues(getUserGroupSummary($conn, $userid), $value);
+    $value = updateSummaryValues(getUserRoleSummary($conn, $userid), $value);
+    $value = updateSummaryValues(getInvidiualUserSummary($conn, $userid), $value);
     return $value;
+}
+
+function updateSummaryValues($in, $global){
+    $global["value"] = $global["value"] + $in["value"];
+    $global["items"] = $global["items"] + $in["items"];
+    return $global;
 }

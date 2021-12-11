@@ -1,7 +1,7 @@
-function updateValue(userid, competencyid, value, callerid) { //Updates the user values when changing the textbox
+function updateValue(userid, competencyid, value) { //Updates the user values when changing the textbox
     $.ajax({
         type: 'POST',
-        url: "values.ajax.php",
+        url: "ajax/values.ajax.php",
         data: { UserID: userid, CompetencyID: competencyid, Value: value },
         dataType: 'JSON',
         success: function(response) {
@@ -9,7 +9,7 @@ function updateValue(userid, competencyid, value, callerid) { //Updates the user
             var status = response.status;
             if (status == "ok") {
                 var res = response.uv;
-                document.getElementById(callerid).value = res;
+                document.getElementById(userid + "-" + competencyid + "-tb").value = res;
                 return; //updates the value to what the internal value is. 
             } else {
                 if (document.getElementById(callerid).value != "") { //If not empty, the input must be false

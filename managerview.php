@@ -43,7 +43,9 @@ while ($group = mysqli_fetch_array($groups)) {
         mysqli_data_seek($users, 0); //Resets array pointer
         echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
         while ($user = mysqli_fetch_assoc($users)) {
-            echo "<th>" . getUserSingleGroupSummary($conn, $user["UserID"], $group["GroupID"]) . "</th>";//Gives the summary of each group
+            $summaryInfo = getUserSingleGroupSummary($conn, $user["UserID"], $group["GroupID"]); 
+            echo "<th>" . 
+            number_format(($summaryInfo["value"]/$summaryInfo["items"]) * 100, 2) . "%" . "</th>";//Gives the summary of each group
         }
         echo "</tr>";
         ?>
@@ -63,6 +65,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
 ?>
 
     <h2 class="centre">ALL groups & users</h2>
+    
     <hr class="seperator">
     <table border="1" class="centre">
         <?php
@@ -95,7 +98,9 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             mysqli_data_seek($users, 0); //Resets array pointer
             echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
             while ($user = mysqli_fetch_assoc($users)) {
-                echo "<th>" . getInvidiualUserSummary($conn, $user["UserID"]) . "</th>";//Gives the summaries of each user's individual competencies
+                $summaryInfo = getInvidiualUserSummary($conn, $user["UserID"]); 
+            echo "<th>" . 
+            formatPercent($summaryInfo) . "</th>";//Gives the summaries of each user's individual competencies
             }
             echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>";
         }
@@ -140,7 +145,9 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 mysqli_data_seek($users, 0); //Resets array pointer
                 echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
                 while ($user = mysqli_fetch_assoc($users)) {
-                    echo "<th>" . getUserRoleSummary($conn, $user["UserID"]) . "</th>";//Gives the summaries of each role
+                    $summaryInfo = getUserRoleSummary($conn, $user["UserID"]); 
+            echo "<th>" . 
+            formatPercent($summaryInfo) . "</th>";//Gives the summaries of each role
                 }
                 echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>";
             }
@@ -187,7 +194,9 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 mysqli_data_seek($users, 0); //Resets array pointer
                 echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
                 while ($user = mysqli_fetch_assoc($users)) {
-                    echo "<th>" . getUserSingleGroupSummary($conn, $user["UserID"], $group["GroupID"]) . "</th>";//Gives the summary of each group
+                    $summaryInfo = getUserSingleGroupSummary($conn, $user["UserID"], $group["GroupID"]); 
+                    echo "<th>" . 
+                    formatPercent($summaryInfo) . "</th>";//Gives the summary of each group
                 }
                 echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>";
             }

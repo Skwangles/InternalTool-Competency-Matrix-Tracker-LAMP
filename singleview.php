@@ -59,9 +59,14 @@ include_once "admin-inwindow-controls.php"; //gives ability to switch between ed
         }
     }
     ?>
-    <tr><td>--</td><th><?php echo getCompleteUserSummary($conn, $_SESSION["userid"]); ?></th></tr>
+    <tr><td>--</td><th><?php $summaryInfo = getCompleteUserSummary($conn, $_SESSION["userid"]); 
+        echo formatPercent($summaryInfo);
+    ?></th></tr>
 </table>
 <?php
+if($_SESSION["role"] == '3' && $_SESSION["editMode"] == '1'){
+    echo "<button style=\"margin-left:auto;margin-right:auto;display:block;\" onclick=\"location.reload()\">Update Summary Value</button>";
+}
 //
 //Table Key
 //

@@ -309,3 +309,20 @@ Modified from https://www.w3schools.com/css/css_tooltip.asp
 .tooltip:hover .tooltiptext {
     visibility: visible;
 }
+
+.inwindow-buttons {
+    width: 50%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    display: block;
+}
+
+.inwindow {
+    width: 200px;
+    margin: 0 auto;
+    text-align: center;
+    display: inline;
+    background-color: darkcyan;
+    width: max-content;
+}
