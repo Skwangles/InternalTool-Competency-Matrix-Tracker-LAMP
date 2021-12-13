@@ -52,34 +52,4 @@ elseif (isset($_POST["delete"]) && isset($_POST["userradio"])) {
     }
     header("location: ../staffedit.php?error=invalidcall#individualusers"); //Returns error
     exit();
-} else if (isset($_POST["changePassword"]) && isset($_POST["passwordChange"]) && isset($_POST["userradio"])) { //Updates all selected user's passwords 
-    if ($_POST["passwordChange"] != "" && changePassword($conn, $_POST["userradio"], $_POST["passwordChange"])) { //Calls the change password method, which returns if it succeeds - first checks the value for an empty string
-        header("location: ../staffedit.php?error=none#individualusers");
-        exit();
-    } //Updates the user's password, to whatever is defined
-    header("location: ../staffedit.php?error=invalidcall#individualusers");
-    exit();
-} else if (isset($_POST["changeName"]) && isset($_POST["nameChange"]) && isset($_POST["userradio"])) { //Updates all selected user's passwords
-    $userid = $_POST["userradio"];
-    $name = $_POST["nameChange"];
-    if ($name != "" && changeName($conn, $userid, $name)) { //Makes sure the value is not empty, then calls the function which returns success or failure
-        updateSession($conn, $_SESSION["userid"]); //Makes sure if the user is updated, that they would have correct variables
-        header("location: ../staffedit.php?error=none#individualusers");
-        exit();
-    } //Updates the user's password, to whatever is defined
-    header("location: ../staffedit.php?error=invalidcall#individualusers");
-    exit(); //Updates the user's password, to whatever is defined
-} else if (isset($_POST["changeUsername"]) && isset($_POST["usernameChange"]) && isset($_POST["userradio"])) { //Updates all selected user's passwords
-    $userid = $_POST["userradio"];
-    $username = $_POST["usernameChange"];
-    if ($username != "" && changeUsername($conn, $userid, $username)) { //if true, then success, else failure - first checks the value for an empty string
-        updateSession($conn, $_SESSION["userid"]); //Makes sure if the user is updated, that they would have correct variables
-        header("location: ../staffedit.php?error=none#individualusers");
-        exit();
-    } //Updates the user's password, to whatever is defined
-    header("location: ../staffedit.php?error=invalidcall#individualusers");
-    exit(); //Updates the user's password, to whatever is defined
-}
-else{
-
 }

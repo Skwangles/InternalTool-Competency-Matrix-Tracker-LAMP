@@ -122,33 +122,34 @@ textarea {
     border-radius: 4px;
 }
 
-input[type=text]:focus {
-    background-color: lightblue;
-}
-
-input[type=password]:focus {
-    background-color: lightblue;
-}
-
-textarea:focus {
+input[type=text]:focus,
+input[type=password]:focus,
+textarea:focus,
+input[type=number]:focus,
+.editbox:focus {
     background-color: lightblue;
 }
 
 
 /*
 For Admin edit textboxes
+-important so it overrides unneeded css
 */
 
-input[type=number] {
-    width: max-content;
-    padding: 0px 12px;
-    box-sizing: border-box;
-    border-radius: 4px;
+input[type=number],
+.editbox {
+    width: max-content !important;
+    padding: 0px 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 4px !important;
+    border: none !important;
 }
 
-input[type=number]:focus {
+
+/* input[type=number]:focus,
+.editbox:focus {
     background-color: lightblue;
-}
+} */
 
 
 /*End of admin textbox*/

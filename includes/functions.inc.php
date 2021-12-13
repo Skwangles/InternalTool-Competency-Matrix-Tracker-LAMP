@@ -55,7 +55,7 @@ function changeUsername($conn, $userid, $username) //Adds new user to database
 {
     if (userExists($conn, $username) == false && !invalidUser($username)) { //make sure that the username given is not already taken or is not applicable
         mysqli_query($conn, "UPDATE users SET UUsername = '" . mysqli_real_escape_string($conn, $username) . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database
-        return true;
+        return mysqli_fetch_assoc(mysqli_query($conn, "SELECT UUsername FROM users WHERE UserID = '" . $userid . "';"));
     }
     return false; //returns false if it failed
 }
@@ -63,6 +63,7 @@ function changeUsername($conn, $userid, $username) //Adds new user to database
 function changeName($conn, $userid, $name) //Adds new user to database
 {
     mysqli_query($conn, "UPDATE users SET UName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database
+    return mysqli_fetch_assoc(mysqli_query($conn, "SELECT UName FROM users WHERE UserID = '" . $userid . "';"));
 }
 
 function changeGName($conn, $groupid, $name) //Adds new user to database
@@ -409,8 +410,9 @@ function displayNumberKey()
     echo "<h4 class=\"centre\">Table Key</h4><table class=\"centre\" style='font-size:70%' border=\"1\"><tr><th>Number</th><th>Meaning</th></tr><tr><td>0</td><td>Not Trained</td></tr><tr><td>1</td><td>Trained</td></tr><tr><td>2</td><td>Can Demonstrate Competency</td></tr><tr><td>3</td><td>Can Train Others</td></tr></table>";
 }
 
-function formatPercent($summaryInfo){
-    return  number_format(($summaryInfo["value"]/$summaryInfo["items"]) * 100, 2) . "%";
+function formatPercent($summaryInfo)
+{
+    return  number_format(($summaryInfo["value"] / $summaryInfo["items"]) * 100, 2) . "%";
 }
 
 
@@ -493,7 +495,7 @@ function getInvidiualUserSummary($conn, $userid)
 function getUserRoleSummary($conn, $userid)
 { //---Gets sum of all ratings for the user's Role -------
     $value = array("value" => 0, "items" => 0);
-    $userEntry = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM Users WHERE UserID = '" . mysqli_real_escape_string($conn, $userid) . "';")); //Gets the user profile
+    $userEntry = mysqli_fetch_row(mysqli_query($conn, "SELECT URole FROM users WHERE UserID = '" . mysqli_real_escape_string($conn, $userid) . "';")); //Gets the user profile
     $competencies = CompetencyRolesFromRoles($conn, $userEntry[0]);
     while ($competency = mysqli_fetch_assoc($competencies)) {
         if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
@@ -527,8 +529,27 @@ function getCompleteUserSummary($conn, $userid)
     return $value;
 }
 
-function updateSummaryValues($in, $global){
+function updateSummaryValues($in, $global)
+{
     $global["value"] = $global["value"] + $in["value"];
     $global["items"] = $global["items"] + $in["items"];
     return $global;
+}
+
+
+function makeUserOrder($conn){//Makes the ordered Array which determines the ordering of users in ManagerView(Admin section)
+    $resultData = mysqli_query($conn, "SELECT UserID FROM users");
+    $result = array();
+    while($row = mysqli_fetch_array($resultData)){
+        $result[] = $row[0];//Adds the user ID to the order array
+    }
+    return $result;
+}
+
+function findIndexInUserOrder($conn, $userid, $result){//Finds which x-pos the user is
+    for($index = 0; $index < count($result); $index++){
+        if($userid == $result[$index]){
+            return $index;
+        }
+    }
 }

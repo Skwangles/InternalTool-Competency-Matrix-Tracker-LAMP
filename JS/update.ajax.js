@@ -52,12 +52,59 @@ function updateManager(userid, groupid, value) {
             if (status == "ok") {
                 var id = userid + "-" + groupid + "-select";
                 document.getElementById(id).value = response.Value; //updates the value to what the internal value is. 
-                //showError("Update successful");
-                return;
+                //showError("Update successful");  
             }
+            return;
         },
         error: function(xhr, error) {
             // showError("Manager update failed, please try again later...");
+        }
+    });
+}
+
+
+function UpdateUserValues() {
+    var datastring = $("#userinfoform").serialize();
+
+    $.ajax({
+        url: 'ajax/updateuserinfo.ajax.php',
+        type: 'POST',
+        data: datastring,
+        dataType: 'JSON',
+        success: function(response) {
+            console.log(response);
+            var status = response.status;
+            if (status != "ok") {
+                //failure message here
+            }
+            return;
+        },
+        error: function(xhr, error) {
+            // showError("Manager update failed, please try again later...");
+            console.log(response);
+        }
+    });
+}
+
+function UpdatePassword() { //Updates the selected user's password
+    var datastring = $("#userinfoform").serialize();
+
+    $.ajax({
+        url: 'ajax/updatepassword.ajax.php',
+        type: 'POST',
+        data: datastring,
+        dataType: 'JSON',
+        success: function(response) {
+            console.log(response);
+            var status = response.status;
+            if (status == "ok") {
+                document.getElementById("changePassword").value = ""; //Sets to empty to indicate it was successful
+            }
+            return;
+        },
+        error: function(xhr, error) {
+            // showError("Manager update failed, please try again later...");
+            console.log(response);
         }
     });
 }

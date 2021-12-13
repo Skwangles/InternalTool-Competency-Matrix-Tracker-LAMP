@@ -95,8 +95,17 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
                 echo "</tr>";
             }
 
+            //
+            //---Prints individual competency User summaries
+            //
             mysqli_data_seek($users, 0); //Resets array pointer
             echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
+            while ($user = mysqli_fetch_assoc($users)) {
+            echo "<th>" . namePrint($_SESSION, $user) . "</th>";//Gives the summaries of each user's individual competencies
+            }
+
+            mysqli_data_seek($users, 0); //Resets array pointer
+            echo "<tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
             while ($user = mysqli_fetch_assoc($users)) {
                 $summaryInfo = getInvidiualUserSummary($conn, $user["UserID"]); 
             echo "<th>" . 
