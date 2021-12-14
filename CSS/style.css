@@ -188,6 +188,14 @@ th {
     background-color: #207928;
 }
 
+.tabletitle {
+    background-color: darkcyan;
+}
+
+.tableentry {
+    background-color: cyan;
+}
+
 .blank_row {
     height: 5px !important;
     /* overwrites any other rules */
@@ -267,14 +275,6 @@ Error Styling
         opacity: 0;
         display: none;
     }
-}
-
-.tabletitle {
-    background-color: darkcyan;
-}
-
-.tableentry {
-    background-color: cyan;
 }
 
 

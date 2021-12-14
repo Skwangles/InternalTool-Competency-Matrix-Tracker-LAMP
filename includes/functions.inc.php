@@ -36,50 +36,7 @@ function createUser($conn, $name, $username, $password, $role) //Adds new user t
     mysqli_query($conn, "INSERT INTO users (uname, uusername, upassword, urole) VALUES ('" . mysqli_real_escape_string($conn, $name) . "', '" . mysqli_real_escape_string($conn, $username) . "', '" . $hashedPwd . "', '" . mysqli_real_escape_string($conn, $role) . "');"); //Sets up the add to database
 }
 
-function updateSession($conn, $userid)
-{
-    $user = mysqli_query($conn, "SELECT * FROM users WHERE UserID = '" . $userid . "';");
-    $uservariables = mysqli_fetch_assoc($user);
-    $_SESSION["username"] = $uservariables["UUsername"];
-    $_SESSION["name"] = $uservariables["UName"];
-}
 
-function changePassword($conn, $userid, $password) //Adds new user to database
-{
-    $hashedPwd = password_hash(mysqli_real_escape_string($conn, $password), PASSWORD_DEFAULT); //Stores passwords securely
-    return mysqli_query($conn, "UPDATE users SET UPassword = '" . $hashedPwd . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database - returns false if failed
-
-}
-
-function changeUsername($conn, $userid, $username) //Adds new user to database
-{
-    if (userExists($conn, $username) == false && !invalidUser($username)) { //make sure that the username given is not already taken or is not applicable
-        mysqli_query($conn, "UPDATE users SET UUsername = '" . mysqli_real_escape_string($conn, $username) . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database
-        return mysqli_fetch_assoc(mysqli_query($conn, "SELECT UUsername FROM users WHERE UserID = '" . $userid . "';"));
-    }
-    return false; //returns false if it failed
-}
-
-function changeName($conn, $userid, $name) //Adds new user to database
-{
-    mysqli_query($conn, "UPDATE users SET UName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database
-    return mysqli_fetch_assoc(mysqli_query($conn, "SELECT UName FROM users WHERE UserID = '" . $userid . "';"));
-}
-
-function changeGName($conn, $groupid, $name) //Adds new user to database
-{
-    mysqli_query($conn, "UPDATE groups SET GName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE GroupID = '" . $groupid . "';"); //Sets up the add to database
-}
-
-function changeCName($conn, $competencyid, $name) //Adds new user to database
-{
-    mysqli_query($conn, "UPDATE competencies SET CName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE CompetencyID = '" . $competencyid . "';"); //Sets up the add to database
-}
-
-function changeCDescription($conn, $competencyid, $description) //Adds new user to database
-{
-    mysqli_query($conn, "UPDATE competencies SET CDescription = '" . mysqli_real_escape_string($conn, $description) . "' WHERE CompetencyID = '" . $competencyid . "';"); //Sets up the add to database
-}
 
 function loginUser($conn, $username, $password) //Logs user in and sets session variables
 {
@@ -104,12 +61,12 @@ function loginUser($conn, $username, $password) //Logs user in and sets session 
     }
 }
 
-function getUsers($conn) //Returns the names of the different groups in the group table
+function getUsers($conn) //Returns all the Users in the database & their values. 
 {
     return mysqli_query($conn, "SELECT * FROM users;"); //gets users
 }
 
-function deleteUser($conn, $POST, $SESSION)
+function deleteUser($conn, $POST, $SESSION) //Permanently deletes the user from the Database
 {
     $values = mysqli_query($conn, "SELECT * FROM users");
     foreach ($values as $value) {
@@ -132,10 +89,9 @@ function updateUserValue($conn, $userid, $competencyid, $value)
     return false;
 }
 
-function updateGroupManager($conn, $userid, $groupid, $value)
+function updateGroupManager($conn, $userid, $groupid, $value) //Switches a user between a manager or just a member - uses the userid, groupid, and the new value of the user
 {
-    error_log($value);
-    if ($value == '0' || $value == '1') {
+    if ($value == '0' || $value == '1') { //Determines if the value is a true or false
         mysqli_query($conn, "UPDATE usergroups SET isManager = '" . $value . "' WHERE Users = '" . $userid . "' AND Groups = '" . $groupid . "';");
         return mysqli_fetch_row(mysqli_query($conn, "SELECT isManager FROM usergroups WHERE Users = '" . $userid . "' AND Groups = '" . $groupid . "';")); //For certainty, checks the actual database value, rather than just passing back the user selected variable.
     }
@@ -200,13 +156,13 @@ function getCompetencies($conn) //Returns complete array of all departmanets
 
 
 //
-//JOINING TABLE PROCESSING
+//JOINING TABLE PROCESSING - based on one of the two values, returns the other. i.e. UserCompetenciesFromUser, finds all competencies associated with that User in the joining table 'UserCompetencies'
 //
 #region Joining Tables
 function UserGroupFromGroup($conn, $groupid)
 {
     return mysqli_query($conn, "SELECT
-    `users`.*
+    users.UserID, users.UName, users.UUsername, users.URole
 FROM
     `users`
     JOIN `usergroups` ON `users`.`UserID` = `usergroups`.`Users`
@@ -291,7 +247,7 @@ function CompetencyRolesFromRoles($conn, $roleid)
 function UserCompetenciesFromCompetency($conn, $competencyid)
 { //Recieves competency ID and returns groups
     return mysqli_query($conn, "SELECT
-  users.*
+  users.UserID, users.UName, users.UUsername, users.URole
   FROM
   users
   JOIN usercompetencies ON users.UserID = usercompetencies.Users
@@ -313,7 +269,7 @@ function UserCompetenciesFromUser($conn, $userid)
 function IndUserCompetenciesFromCompetency($conn, $competencyid)
 { //Recieves competency ID and returns groups
     return mysqli_query($conn, "SELECT
-  users.*
+  users.UserID, users.UName, users.UUsername, users.URole
   FROM
   users
   JOIN individualusercompetencies ON users.UserID = individualusercompetencies.users
@@ -338,7 +294,7 @@ function IndUserCompetenciesFromUser($conn, $userid)
 
 
 function RoleFromUser($conn, $userid)
-{ //Recieves competency ID and returns groups
+{ //Recieves the userid, returns the role that user has, 1 = staff, 2 = manager, 3 = Admin
     return mysqli_query($conn, "SELECT
   `roles`.*
   FROM
@@ -348,7 +304,7 @@ function RoleFromUser($conn, $userid)
   `users`.`UserID` = '" . $userid . "';");
 }
 
-function getUserRatingsFromCompetency($conn, $userid, $competencyid)
+function getUserRatingsFromCompetency($conn, $userid, $competencyid) //gets the user's rating value based on a competencyID
 {
     return mysqli_query($conn, "SELECT Rating
     From usercompetencies
@@ -365,10 +321,75 @@ function managerRoleSwitch($conn, $userid)
 }
 
 //
+//Value Updating
+//
+
+function updateSession($conn, $userid) //Rechecks the session variables
+{
+    $user = mysqli_query($conn, "SELECT * FROM users WHERE UserID = '" . $userid . "';");
+    $uservariables = mysqli_fetch_assoc($user);
+    $_SESSION["username"] = $uservariables["UUsername"];
+    $_SESSION["name"] = $uservariables["UName"];
+}
+
+function changePassword($conn, $userid, $password) //changes a user's password
+{
+    $hashedPwd = password_hash(mysqli_real_escape_string($conn, $password), PASSWORD_DEFAULT); //Stores passwords securely
+    return mysqli_query($conn, "UPDATE users SET UPassword = '" . $hashedPwd . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database - returns false if failed
+
+}
+
+function changeUsername($conn, $userid, $username) //changes a user's username
+{
+    if (userExists($conn, $username) == false && !invalidUser($username)) { //make sure that the username given is not already taken or is not applicable
+        mysqli_query($conn, "UPDATE users SET UUsername = '" . mysqli_real_escape_string($conn, $username) . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database
+        return mysqli_fetch_assoc(mysqli_query($conn, "SELECT UUsername FROM users WHERE UserID = '" . $userid . "';"));
+    }
+    return false; //returns false if it failed
+}
+
+function changeName($conn, $userid, $name) //Changes a user's name
+{
+    mysqli_query($conn, "UPDATE users SET UName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE UserID = '" . $userid . "';"); //Sets up the add to database
+    return mysqli_fetch_assoc(mysqli_query($conn, "SELECT UName FROM users WHERE UserID = '" . $userid . "';"));
+}
+
+function changeGName($conn, $groupid, $name) //Changes a group's name
+{
+    mysqli_query($conn, "UPDATE groups SET GName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE GroupID = '" . $groupid . "';"); //Sets up the add to database
+}
+
+function changeCName($conn, $competencyid, $name) //Changes a competency's name
+{
+    mysqli_query($conn, "UPDATE competencies SET CName = '" . mysqli_real_escape_string($conn, $name) . "' WHERE CompetencyID = '" . $competencyid . "';"); //Sets up the add to database
+}
+
+function changeCDescription($conn, $competencyid, $description) //Changes a Competency's description
+{
+    mysqli_query($conn, "UPDATE competencies SET CDescription = '" . mysqli_real_escape_string($conn, $description) . "' WHERE CompetencyID = '" . $competencyid . "';"); //Sets up the add to database
+}
+
+function updateUserCompetencies($conn, $userid) //Inefficent update process - but it works - can probably improve efficency of this - 1. adds all competencies that need added, 2. Removes all competencies that aren't supposed to be there. 
+{
+    $sqlString = "SELECT competencies.CompetencyID FROM `competencies` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = competencies.CompetencyID LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = competencies.CompetencyID LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = competencies.CompetencyID LEFT JOIN `usergroups` ON `usergroups`.`groups` = `competencygroups`.`Groups` LEFT JOIN `users` ON `users`.`UserID` = `usergroups`.`Users` WHERE (`users`.`UserID` = '" . $userid . "' OR `individualusercompetencies`.`Users` = '" . $userid . "' OR competencyroles.Roles = (SELECT URole FROM `users` WHERE `users`.`UserID` = '" . $userid . "'))";
+
+    $updates = mysqli_query($conn, $sqlString);
+    while ($competency = mysqli_fetch_row($updates)) {
+        if (mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM usercompetencies WHERE Users = '" . $userid . "' AND Competencies = '" . $competency[0] . "';")) == false) { //Checks if the item already exists in the table
+            mysqli_query($conn, "INSERT INTO usercompetencies (Users, Competencies) VALUES ('" . $userid . "', '" . $competency[0] . "')");
+        }
+    }
+    $userCompetencies = UserCompetenciesFromUser($conn, $userid);
+    while ($competency = mysqli_fetch_assoc($userCompetencies)) {
+        mysqli_query($conn, "DELETE FROM `usercompetencies` WHERE `usercompetencies`.`Users` = '" . $userid . "' AND `usercompetencies`.`Competencies` = '" . $competency["CompetencyID"] . "' AND NOT EXISTS (" . $sqlString . " AND `competencies`.`CompetencyID` = '" . $competency["CompetencyID"] . "')"); //checks if it exists in one of the joining tables, otherwise deletes
+    }
+}
+
+//
 //Echo/Formatting Based Functions
 //
 
-function displayUserRatings($conn, $competencyid, $userid)
+function displayUserRatings($conn, $competencyid, $userid) //Based on if the user is an admin (with editmode on) or not, it will display the user's rating (or print N/A if it is empty)
 {
     if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
@@ -388,54 +409,37 @@ function displayUserRatings($conn, $competencyid, $userid)
 }
 
 function displayCompetencyName($competency)
-{ //Allows competencies to recieve a tooltip for their description
+{ //Allows competencies to recieve the tooltip for their description
     if ($competency["CDescription"] == "") { //If empty, don't give a tooltip
         return $competency["CName"];
     }
     return "<div class=\"tooltip\">" . $competency["CName"] . "<span class=\"tooltiptext\">" . $competency["CDescription"] . "</span>";
 }
 
-function emptyArrayError()
+function emptyArrayError() //prints none found - called when no items were returned in a database query
 {
     echo "<tr><td>None Found</td><td>-</td></tr>";
 }
 
-function namePrint($sesh, $user)
+function namePrint($sesh, $user) //Appends (YOU) to the name, if the userid corresponds to the logged in user
 {
     return $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");
 }
 
-function displayNumberKey()
-{ //Displays the meaning of the numbers in English.
+function displayNumberKey() //Displays the Table Key - i.e. "0" = "Not Trained"
+{
     echo "<h4 class=\"centre\">Table Key</h4><table class=\"centre\" style='font-size:70%' border=\"1\"><tr><th>Number</th><th>Meaning</th></tr><tr><td>0</td><td>Not Trained</td></tr><tr><td>1</td><td>Trained</td></tr><tr><td>2</td><td>Can Demonstrate Competency</td></tr><tr><td>3</td><td>Can Train Others</td></tr></table>";
 }
 
-function formatPercent($summaryInfo)
+function formatPercent($summaryInfo) //Takes in an array entry, and turns it into a percentage of the correct format
 {
-    return  number_format(($summaryInfo["value"] / $summaryInfo["items"]) * 100, 2) . "%";
-}
+    if ($summaryInfo["items"] > 0) {
+        return  number_format(($summaryInfo["value"] / $summaryInfo["items"]) * 100, 2) . "%";
+    } else {
 
-
-//
-// Updating User Competency list
-//
-
-function updateUserCompetencies($conn, $userid) //Inefficent update process - but it works - can probably improve efficency of this
-{
-    $sqlString = "SELECT competencies.CompetencyID FROM `competencies` LEFT JOIN `competencygroups` ON `competencygroups`.`Competencies` = competencies.CompetencyID LEFT JOIN `competencyroles` ON `competencyroles`.`Competencies` = competencies.CompetencyID LEFT JOIN `individualusercompetencies` ON `individualusercompetencies`.`Competencies` = competencies.CompetencyID LEFT JOIN `usergroups` ON `usergroups`.`groups` = `competencygroups`.`Groups` LEFT JOIN `users` ON `users`.`UserID` = `usergroups`.`Users` WHERE (`users`.`UserID` = '" . $userid . "' OR `individualusercompetencies`.`Users` = '" . $userid . "' OR competencyroles.Roles = (SELECT URole FROM `users` WHERE `users`.`UserID` = '" . $userid . "'))";
-
-    $updates = mysqli_query($conn, $sqlString);
-    while ($competency = mysqli_fetch_row($updates)) {
-        if (mysqli_fetch_row(mysqli_query($conn, "SELECT * FROM usercompetencies WHERE Users = '" . $userid . "' AND Competencies = '" . $competency[0] . "';")) == false) { //Checks if the item already exists in the table
-            mysqli_query($conn, "INSERT INTO usercompetencies (Users, Competencies) VALUES ('" . $userid . "', '" . $competency[0] . "')");
-        }
-    }
-    $userCompetencies = UserCompetenciesFromUser($conn, $userid);
-    while ($competency = mysqli_fetch_assoc($userCompetencies)) {
-        mysqli_query($conn, "DELETE FROM `usercompetencies` WHERE `usercompetencies`.`Users` = '" . $userid . "' AND `usercompetencies`.`Competencies` = '" . $competency["CompetencyID"] . "' AND NOT EXISTS (" . $sqlString . " AND `competencies`.`CompetencyID` = '" . $competency["CompetencyID"] . "')"); //checks if it exists in one of the joining tables, otherwise deletes
+        return  "N/A";
     }
 }
-
 
 //
 //User Competency Checking
@@ -529,27 +533,97 @@ function getCompleteUserSummary($conn, $userid)
     return $value;
 }
 
-function updateSummaryValues($in, $global)
+function updateSummaryValues($in, $global) //sums the two key's values with a global variable - so for the complete summary it contains all the specific regions
 {
     $global["value"] = $global["value"] + $in["value"];
     $global["items"] = $global["items"] + $in["items"];
     return $global;
 }
 
+//
+//Manager view row display
+//
 
-function makeUserOrder($conn){//Makes the ordered Array which determines the ordering of users in ManagerView(Admin section)
-    $resultData = mysqli_query($conn, "SELECT UserID FROM users");
+function displayRowFromArray($order, $rowvalues, $isBold = false)
+{ //Accepts an array created from makeRowValuesFromUsers - which has all the updated values for the row. i.e. index 0=>rating 3, index 1 => rating 0....
+    if (!$isBold) {
+        for ($index = 0; $index < count($order); $index++) { //Doing a manual for loop to ensure the values are kept in numerical order, i.e. 0,1,2,3... 
+            echo "<td>" . $rowvalues[$order[$index]] . "</td>"; //Gets the value associated with the user at that particular index
+        }
+    } else {
+        for ($index = 0; $index < count($order); $index++) { //Doing a manual for loop to ensure the values are kept in numerical order, i.e. 0,1,2,3... 
+            echo "<th>" . $rowvalues[$order[$index]] . "</th>"; //Gets the value associated with the user at that particular index
+        }
+    }
+}
+
+function makeUserOrder($conn)
+{ //Makes the ordered Array which determines the ordering of users in ManagerView(Admin section)
+    $resultData = mysqli_query($conn, "SELECT UserID FROM users;");
     $result = array();
-    while($row = mysqli_fetch_array($resultData)){
-        $result[] = $row[0];//Adds the user ID to the order array
+    while ($row = mysqli_fetch_array($resultData)) {
+        $result[] = $row[0]; //Adds the user ID to the order array
     }
     return $result;
 }
 
-function findIndexInUserOrder($conn, $userid, $result){//Finds which x-pos the user is
-    for($index = 0; $index < count($result); $index++){
-        if($userid == $result[$index]){
-            return $index;
+function makeUserOrderAssoc($conn)
+{ //Creates the user order array, except the UserID is the key. 
+    $resultData = mysqli_query($conn, "SELECT UserID FROM users;");
+    $result = array();
+    $increment = 0;
+    while ($row = mysqli_fetch_array($resultData)) {
+        $result[$row[0]] = $increment; //Adds the user ID to the order array
+        $increment++;
+    }
+    return $result;
+}
+
+function getUserInfo($conn)
+{ //Creates a key-value array, holding the Names associated with the UserIDs
+    $arr = array();
+    $users = mysqli_query($conn, "SELECT UserID, UName FROM users;");
+    while ($user = mysqli_fetch_assoc($users)) {
+        $arr[$user["UserID"]] = $user["UName"];
+    }
+    return $arr;
+}
+
+function makeRowValuesFromUsers($order)
+{ //Creates an empty array, the length of the row (amount of users) - which allows the user values to be inserted
+    $rowvalues = array();
+    foreach ($order as $user) {
+        $rowvalues[$user] = "";//Default values for each cell
+    }
+    return $rowvalues;
+}
+
+function printUserNames($order, $idassoc, $sesh)
+{
+     //
+        //Name Order - Table top row
+        //
+        echo "<tr><th>--</th>";
+        for ($index = 0; $index < count($order); $index++) {
+            echo "<th>" . nameprint($sesh, array("UserID" => $order[$index], "UName" => $idassoc[$order[$index]])) . "</th>"; //adds the name of the ID to the table - formatted so if "you" are the user being written a (YOU) will appear beside it
         }
+        echo "</tr>";
+}
+
+
+function printValuesFromCompetency($conn, $compArray, $memberUsers, $order){//Accpets array of competencies to loop, users to check for (Only users as a whole a part of the joining table) and the order of names as a whole
+    while ($competency = mysqli_fetch_assoc($compArray)) { //Adds a row 
+        //--Filling the value array--
+        $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
+        mysqli_data_seek($memberUsers, 0);//Resets pointer to 0
+        while ($memberUser = mysqli_fetch_row($memberUsers)) { //Gives a heading to all users
+            if($userRating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $memberUser[0], $competency["CompetencyID"]))){//Checks if a value was found or not
+            $rowPrint[$memberUser[0]] = $userRating[0]; //Adds to the user key the value they had 
+            }
+        }
+        //--Printing--
+        echo "<tr><th>" . displayCompetencyName($competency) . "</th>"; //Displays the competency - with Description if present
+        displayRowFromArray($order, $rowPrint); //Displays the values of the current row
+        echo "</tr>";
     }
 }
