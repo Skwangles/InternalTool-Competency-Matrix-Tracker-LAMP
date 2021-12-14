@@ -7,20 +7,24 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] == "1") {
     header("location: index.php?error=invalidcall"); //If doesn't have the correct perms, kicks out
     exit();
 }
+
+
+
 include_once "admin-inwindow-controls.php"; //Gives the ability to change between edit mode and read-only mode
+
 ?>
 <h2 class="centre">Your Departments</h2>
 <?php
-$groups = UserGroupFromUserWhereManager($conn, $_SESSION["userid"]);
-while ($group = mysqli_fetch_array($groups)) {
+$usersgroups = UserGroupFromUserWhereManager($conn, $_SESSION["userid"]);
+while ($group = mysqli_fetch_array($usersgroups)) {
 ?>
 
-    <table border="1" class="centre">
+    <table border="1" class="centre" >
         <tr>
             <th class="tabletitle" colspan="100%"><?php echo $group["GName"] ?></th>
         </tr>
         <tr>
-            <th>-</th>
+            <th></th>
             <?php
             $Groupusers = UserGroupFromGroup($conn, $group["GroupID"]); //Gets all users in the current group
             while ($groupuser = mysqli_fetch_array($Groupusers)) { //Gives a heading to all users
@@ -35,13 +39,13 @@ while ($group = mysqli_fetch_array($groups)) {
 
             mysqli_data_seek($Groupusers, 0); //resets the pointer to 0
             while ($groupuser = mysqli_fetch_array($Groupusers)) {
-                displayUserRatings($conn, $competency["CompetencyID"], $groupuser["UserID"]);
+                echo "<td>".displayUserRatings($conn, $competency["CompetencyID"], $groupuser["UserID"])."</td>";
             }
             echo "</tr>";
         }
 
         mysqli_data_seek($Groupusers, 0); //Resets array pointer
-        echo "<tr class=\"blank_row\"></tr><tr><td>--</td>"; //setup row, and offset cells by 1 to match layout
+        echo "<tr class=\"blank_row\"></tr><tr><td></td>"; //setup row, and offset cells by 1 to match layout
         while ($groupuser = mysqli_fetch_assoc($Groupusers)) {
             $summaryInfo = getUserSingleGroupSummary($conn, $groupuser["UserID"], $group["GroupID"]);
             echo "<th>" .
@@ -62,11 +66,15 @@ displayNumberKey();
 
 if ($_SESSION["role"] == 3) { //Admin can see all groups
 
+    //Order specific arrays - 1. Contains the index=>userid, 2. contains the userid=>index, 3. contains Userid=>names
     $order = makeUserOrder($conn);
     $assocOrder = makeUserOrderAssoc($conn);
     $idassoc = getUserInfo($conn);
-    $groups = getGroups($conn);
-    $Allusers = getUsers($conn);
+
+//Mysqli_result values with values
+$Allgroups = getGroups($conn);
+$Allusers = getUsers($conn);
+
     //
     //-------------------------------------------------------------------------------------Ordered table starts here for Admin View in the ManagerView page-----------------------------------------------------------
     //
@@ -130,8 +138,7 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
 
         //All the names in order
         printUserNames($order, $idassoc, $_SESSION);
-        $groups = mysqli_query($conn, "SELECT * FROM groups");
-        displayRoleAndGroupValues($conn, $groups, $order, "SELECT Users FROM usergroups WHERE Groups = ", 'CompetencyGroupFromGroup', 'getUserGroupSummary');
+        displayRoleAndGroupValues($conn, $Allgroups, $order, "SELECT Users FROM usergroups WHERE Groups = ", 'CompetencyGroupFromGroup', 'getUserGroupSummary');
         echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
         //Overall User Summary
         summaryRowPrint($conn, $Allusers, $order, 'getCompleteUserSummary');
@@ -143,4 +150,65 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
 
 <?php
 }
+
+//
+//Code Reuse Functions
+//
+
+function printValuesFromCompetency($conn, $compArray, $memberUsers, $order){//Accpets array of competencies to loop, users to check for (Only users as a whole a part of the joining table) and the order of names as a whole
+    while ($competency = mysqli_fetch_assoc($compArray)) { //Adds a row 
+        //--Filling the value array--
+        $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
+        mysqli_data_seek($memberUsers, 0);//Resets pointer to 0
+        while ($memberUser = mysqli_fetch_row($memberUsers)) { //Gives a heading to all users        
+            $rowPrint[$memberUser[0]] = displayUserRatings($conn, $competency["CompetencyID"], $memberUser[0]); //Adds to the user key the value they had 
+        }
+        //--Printing--
+        echo "<tr><th>" . displayCompetencyName($competency) . "</th>"; //Displays the competency - with Description if present
+        displayRowFromArray($order, $rowPrint); //Displays the values of the current row
+        echo "</tr>";
+    }
+}
+
+function summaryRowPrint($conn, $Allusers, $order, $summaryGetFunction){
+    //--Array setup--
+    $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
+    mysqli_data_seek($Allusers, 0); //Ensures the array pointer is 0
+    //--Filling the value array--
+    while ($Alluser = mysqli_fetch_assoc($Allusers)) { //Runs through all users
+        $rowPrint[$Alluser["UserID"]] = formatPercent($summaryGetFunction($conn, $Alluser["UserID"])); //Adds to the user key the value they had 
+    }
+    //--Printing--
+    echo "<tr><td=\"blank_td\"></td></tr>"; //Blank row to distinguish better
+    echo "<tr><th>--</th>"; //Displays the competency - with Description if present
+    displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
+    echo "</tr>";
+    }
+
+function displayRoleAndGroupValues($conn, $setOfItems, $order, $sqlstring, $CompetencyFunction, $summaryGetFunction ){//1. connection to the database, 2. array of items to loop (roles, or groups), 3. Name order, 4. sql which finds the members, 5. function for the joining table, 6. function which gets the summary values
+    if (mysqli_num_rows($setOfItems) <= 0) {
+        emptyArrayError();
+    } else {
+        while ($items = mysqli_fetch_row($setOfItems)) {
+            //--Value retrieval--
+            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $items[1] . "</th></tr>";
+            $competencies = $CompetencyFunction($conn, $items[0]); //Gets all the users associated with this group/role
+            if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
+                emptyArrayError();
+            } else {
+                $memberUsers = mysqli_query($conn, $sqlstring."'" . $items[0] . "';");
+                printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
+            }
+        }
+        //
+        //---Prints group User summaries
+        //
+        summaryRowPrint($conn, getUsers($conn), $order, $summaryGetFunction);
+
+        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
+    }
+}
+
+
+
 include_once 'footer.php';

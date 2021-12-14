@@ -8,6 +8,8 @@ if (!isset($_SESSION["username"])) {
 require_once "includes/dbh.inc.php";
 require_once "includes/functions.inc.php";
 include_once "admin-inwindow-controls.php"; //gives ability to switch between edit and read-only mode
+
+
 ?>
 <h1 class="centre">Your Personal Competencies</h1>
 <table border="1" class="centre">
@@ -22,52 +24,50 @@ include_once "admin-inwindow-controls.php"; //gives ability to switch between ed
     if (mysqli_num_rows($competencies) <= 0) {//Determines if the array is empty
         emptyArrayError();
     } else {
-    while ($competency = mysqli_fetch_array($competencies)) {
+    while ($competency = mysqli_fetch_assoc($competencies)) {
         echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
-        displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
+        echo "<td>".displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"])."</td>";
     }
 }
 
     //Role Display
-    $role = mysqli_fetch_assoc(RoleFromUser($conn, $_SESSION["userid"]));
-    echo "<tr><td><b>" . $role["RName"] . "</b></td></tr>";
-    $competencies = CompetencyRolesFromRoles($conn, $role["RoleID"]);
-    if (mysqli_num_rows($competencies) <= 0) {
-        emptyArrayError();
-    } else {
-        while ($competency = mysqli_fetch_array($competencies)) { //loops through all competencies
-            echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
-            displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
-            echo "</tr>";
-        }
-    }
+    $role = RoleFromUser($conn, $_SESSION["userid"]);
+    displaySingleViewRoleAndGroup($conn, $role, 'CompetencyRolesFromRoles');
 
     //Group Display
     $groups = UserGroupFromUser($conn, $_SESSION["userid"]);
-    while ($group = mysqli_fetch_array($groups)) {
-
-        echo "<tr><td><b>" . $group["GName"] . "</b></td></tr>";
-        $competencies = CompetencyGroupFromGroup($conn, $group["GroupID"]);
-        if (mysqli_num_rows($competencies) <= 0) {
-            emptyArrayError();
-        } else {
-            while ($competency = mysqli_fetch_array($competencies)) {
-                echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
-                displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"]);
-                echo "</tr>";
-            }
-        }
-    }
+    displaySingleViewRoleAndGroup($conn, $groups, 'CompetencyGroupFromGroup');
     ?>
     <tr><td>--</td><th><?php $summaryInfo = getCompleteUserSummary($conn, $_SESSION["userid"]); 
         echo formatPercent($summaryInfo);
     ?></th></tr>
 </table>
 <?php
+
+
 //
 //Table Key
 //
 displayNumberKey();
+
+
+function displaySingleViewRoleAndGroup($conn, $sets, $compGetFunction){
+    while ($set = mysqli_fetch_row($sets)) {
+
+        echo "<tr><td><b>" . $set[1] . "</b></td></tr>";
+        $competencies = $compGetFunction($conn, $set[0]);
+        if (mysqli_num_rows($competencies) <= 0) {
+            emptyArrayError();
+        } else {
+            while ($competency = mysqli_fetch_assoc($competencies)) {
+                echo "<tr><td>" . displayCompetencyName($competency) . "</td>";
+                echo "<td>".displayUserRatings($conn, $competency["CompetencyID"], $_SESSION["userid"])."</td>";
+                echo "</tr>";
+            }
+        }
+    }
+}
+
 
 include_once 'footer.php';
 ?>

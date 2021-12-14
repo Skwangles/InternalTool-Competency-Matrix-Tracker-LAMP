@@ -1,4 +1,7 @@
 <?php
+//
+//Input Checking ---------------------
+//
 function emptyInputs($username, $password, $name) //Returns if a single value is empty
 {
     if (empty($name) || empty($username) || empty($password)) { //Checks the values aren't empty
@@ -15,7 +18,7 @@ function invalidUser($username) //Determines if alphanumeric
 }
 
 //
-//USER PROCESSING
+//USER PROCESSING--------------------------------------------
 //
 function userExists($conn, $username) //Confirms if a matching username is found in the database - returns details if found
 {
@@ -98,7 +101,7 @@ function updateGroupManager($conn, $userid, $groupid, $value) //Switches a user 
     return false;
 }
 //
-//GROUP PROCESSING
+//GROUP PROCESSING-------------------------------------
 //
 function getGroups($conn) //Returns complete array of all departmanets
 {
@@ -124,7 +127,7 @@ function getGroupsFromName($conn, $name) //Returns the groupIDs of the different
 }
 
 //
-//COMPETENCY PROCESSING
+//COMPETENCY PROCESSING------------------------------------------------------
 //
 function getCompetenciesFromName($conn, $name) //Allows retrieval of id, from name
 {
@@ -156,7 +159,7 @@ function getCompetencies($conn) //Returns complete array of all departmanets
 
 
 //
-//JOINING TABLE PROCESSING - based on one of the two values, returns the other. i.e. UserCompetenciesFromUser, finds all competencies associated with that User in the joining table 'UserCompetencies'
+//JOINING TABLE PROCESSING - based on one of the two values, returns the other. i.e. UserCompetenciesFromUser, finds all competencies associated with that User in the joining table 'UserCompetencies'-----------------------------------------
 //
 #region Joining Tables
 function UserGroupFromGroup($conn, $groupid)
@@ -289,7 +292,7 @@ function IndUserCompetenciesFromUser($conn, $userid)
 }
 #endregion
 //
-//Roles & Ratings
+//Roles & Ratings-------------------------------------------
 //
 
 
@@ -321,7 +324,7 @@ function managerRoleSwitch($conn, $userid)
 }
 
 //
-//Value Updating
+//Value Updating----------------------------------------------
 //
 
 function updateSession($conn, $userid) //Rechecks the session variables
@@ -386,7 +389,7 @@ function updateUserCompetencies($conn, $userid) //Inefficent update process - bu
 }
 
 //
-//Echo/Formatting Based Functions
+//Echo/Formatting Based Functions------------------------------------------
 //
 
 function displayUserRatings($conn, $competencyid, $userid) //Based on if the user is an admin (with editmode on) or not, it will display the user's rating (or print N/A if it is empty)
@@ -394,16 +397,16 @@ function displayUserRatings($conn, $competencyid, $userid) //Based on if the use
     if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-            echo "<td><input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"" . $userid . "-" . $competencyid . "-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value)\"></td>"; //Gives the text versions of the names - limits it to the numbers
+            return "<input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"" . $userid . "-" . $competencyid . "-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value)\">"; //Gives the text versions of the names - limits it to the numbers
         } else {
-            echo "<td>N/A</td>"; //Gives empty
+            return ""; //Gives empty
         }
     } else {
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-            echo "<td>" . $Rating["Rating"] . "</td>"; //Gives the text versions of the names
+            return $Rating["Rating"] ; //Gives the text versions of the names
         } else {
-            echo "<td>N/A</td>"; //Gives empty
+            return ""; //Gives empty
         }
     }
 }
@@ -442,7 +445,7 @@ function formatPercent($summaryInfo) //Takes in an array entry, and turns it int
 }
 
 //
-//User Competency Checking
+//User Competency Checking--------------------------------------------
 //
 
 function isCompInOtherGroup($conn, $comp, $group, $user)
@@ -462,7 +465,7 @@ function isCompInIndividualUser($conn, $comp, $userid)
 
 
 //
-//User Summaries
+//User Summaries--------------------------------------------------
 //
 
 function getUserGroupSummary($conn, $userid)
@@ -541,7 +544,7 @@ function updateSummaryValues($in, $global) //sums the two key's values with a gl
 }
 
 //
-//Manager view row display
+//Manager view row display----------------------------------------------------------
 //
 
 function displayRowFromArray($order, $rowvalues, $isBold = false)
@@ -611,59 +614,8 @@ function printUserNames($order, $idassoc, $sesh)
 }
 
 
-function printValuesFromCompetency($conn, $compArray, $memberUsers, $order){//Accpets array of competencies to loop, users to check for (Only users as a whole a part of the joining table) and the order of names as a whole
-    while ($competency = mysqli_fetch_assoc($compArray)) { //Adds a row 
-        //--Filling the value array--
-        $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
-        mysqli_data_seek($memberUsers, 0);//Resets pointer to 0
-        while ($memberUser = mysqli_fetch_row($memberUsers)) { //Gives a heading to all users
-            if($userRating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $memberUser[0], $competency["CompetencyID"]))){//Checks if a value was found or not
-            $rowPrint[$memberUser[0]] = $userRating[0]; //Adds to the user key the value they had 
-            }
-        }
-        //--Printing--
-        echo "<tr><th>" . displayCompetencyName($competency) . "</th>"; //Displays the competency - with Description if present
-        displayRowFromArray($order, $rowPrint); //Displays the values of the current row
-        echo "</tr>";
-    }
-}
-
-function summaryRowPrint($conn, $Allusers, $order, $summaryGetFunction){
-//--Array setup--
-$rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
-mysqli_data_seek($Allusers, 0); //Ensures the array pointer is 0
-//--Filling the value array--
-while ($Alluser = mysqli_fetch_assoc($Allusers)) { //Runs through all users
-    $rowPrint[$Alluser["UserID"]] = formatPercent($summaryGetFunction($conn, $Alluser["UserID"])); //Adds to the user key the value they had 
-}
-//--Printing--
-echo "<tr><td=\"blank_td\"></td></tr>"; //Blank row to distinguish better
-echo "<tr><th>--</th>"; //Displays the competency - with Description if present
-displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
-echo "</tr>";
-}
 
 
-function displayRoleAndGroupValues($conn, $setOfItems, $order, $sqlstring, $CompetencyFunction, $summaryGetFunction ){
-    if (mysqli_num_rows($setOfItems) <= 0) {
-        emptyArrayError();
-    } else {
-        while ($items = mysqli_fetch_row($setOfItems)) {
-            //--Value retrieval--
-            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $items[1] . "</th></tr>";
-            $competencies = $CompetencyFunction($conn, $items[0]); //Gets all the users associated with this competency
-            if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
-                emptyArrayError();
-            } else {
-                $memberUsers = mysqli_query($conn, $sqlstring."'" . $items[0] . "';");
-                printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
-            }
-        }
-        //
-        //---Prints group User summaries
-        //
-        summaryRowPrint($conn, getUsers($conn), $order, $summaryGetFunction);
 
-        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
-    }
-}
+
+
