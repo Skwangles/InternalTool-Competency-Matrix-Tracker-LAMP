@@ -105,8 +105,20 @@ $Allusers = getUsers($conn);
             //
             //Prints all values - in order, with their values filled in. 
             //
-            $memberUsers = mysqli_query($conn, "SELECT DISTINCT Users FROM individualusercompetencies");
-            printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
+
+            while ($competency = mysqli_fetch_assoc($competencies)) { //Adds a row 
+                //--Filling the value array--
+                $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
+                $memberUsers = mysqli_query($conn, "SELECT Users FROM individualusercompetencies WHERE Competencies = '" . $competency["CompetencyID"] . "';");
+                while ($memberUser = mysqli_fetch_row($memberUsers)) { //Gives a heading to all users        
+                    $rowPrint[$memberUser[0]] = displayUserRatings($conn, $competency["CompetencyID"], $memberUser[0]); //Adds to the user key the value they had 
+                }
+                //--Printing--
+                echo "<tr><th>" . displayCompetencyName($competency) . "</th>"; //Displays the competency - with Description if present
+                displayRowFromArray($order, $rowPrint); //Displays the values of the current row
+                echo "</tr>";
+            }
+
             //
             //---Prints individual competency User summaries
             //
@@ -139,8 +151,11 @@ $Allusers = getUsers($conn);
         //All the names in order
         printUserNames($order, $idassoc, $_SESSION);
         displayRoleAndGroupValues($conn, $Allgroups, $order, "SELECT Users FROM usergroups WHERE Groups = ", 'CompetencyGroupFromGroup', 'getUserGroupSummary');
-        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
+        
+
         //Overall User Summary
+        echo "</tr><tr><td colspan=\"100%\" class=\"tabletitle\">Overall Summary</td></tr>"; //Black line to seperate areas
+        printUserNames($order, $idassoc, $_SESSION);
         summaryRowPrint($conn, $Allusers, $order, 'getCompleteUserSummary');
 
         echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas

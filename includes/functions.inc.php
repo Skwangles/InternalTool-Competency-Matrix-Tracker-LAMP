@@ -60,7 +60,7 @@ function loginUser($conn, $username, $password) //Logs user in and sets session 
         $_SESSION["username"] = $uidExists["UUsername"];
         $_SESSION["name"] = $uidExists["UName"];
         $_SESSION["role"] = $uidExists["URole"];
-        $_SESSION["editMode"] = "1";
+        $_SESSION["editMode"] = "0";
     }
 }
 
@@ -494,7 +494,7 @@ function getInvidiualUserSummary($conn, $userid)
         if ($rating = mysqli_fetch_row(getUserRatingsFromCompetency($conn, $userid, $competency["CompetencyID"]))) {
             $value["value"] = $value["value"] + $rating[0];
             $value["items"] = $value["items"] + 3;
-        }; //Adds the rating to the value if it exists
+        } //Adds the rating to the value if it exists
     }
     return $value; //Returns the completed sum
 }
