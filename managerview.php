@@ -102,24 +102,12 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
             //
             //---Prints individual competency User summaries
             //
-            //--Array setup--
-            $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
-            mysqli_data_seek($Allusers, 0); //Ensures the array pointer is 0
-            //--Filling the value array--
-            while ($Alluser = mysqli_fetch_assoc($Allusers)) { //Runs through all users
-                $rowPrint[$Alluser["UserID"]] = formatPercent(getInvidiualUserSummary($conn, $Alluser["UserID"])); //Adds to the user key the value they had 
-            }
-            //--Printing--
-            echo "<tr><td=\"blank_td\"></td></tr>"; //Blank row to distinguish better
-            echo "<tr><th>--</th>"; //Displays the competency - with Description if present
-            displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
-            echo "</tr>";
+            summaryRowPrint($conn, $Allusers, $order, 'getInvidiualUserSummary');
 
             echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>";
         }
 
         ?>
-<!-- 
         <!-- Role User Values -->
         <tr>
             <th colspan="100%" class="tabletitle"><b>Roles</b></th>
@@ -128,38 +116,8 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
         //All the names in order
         printUserNames($order, $idassoc, $_SESSION);
         $roles = mysqli_query($conn, "SELECT * FROM roles");
-        if (mysqli_num_rows($roles) <= 0) {
-            emptyArrayError();
-        } else {
-            while ($role = mysqli_fetch_array($roles)) {
-                //--Value retrieval--
-                echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $role["RName"] . "</th></tr>";
-                $roleComp = CompetencyRolesFromRoles($conn, $role["RoleID"]); //Gets all the users associated with this competency
-                if (mysqli_num_rows($roleComp) <= 0) { //Checking for empty values - should NEVER be empty, as there is ALWAYS 3 roles - as of coding this.
-                    emptyArrayError();
-                } else {
-                    $memberUsers = mysqli_query($conn, "SELECT UserID FROM users WHERE URole = '" . $role["RoleID"] . "';"); //Gets all users in that role to check
-                    printValuesFromCompetency($conn, $roleComp, $memberUsers, $order);
-                }
-            }
-            //
-            //---Prints individual competency User summaries
-            //
-            //--Array setup--
-            $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
-            mysqli_data_seek($Allusers, 0); //Ensures the array pointer is 0
-            //--Filling the value array--
-            while ($Alluser = mysqli_fetch_assoc($Allusers)) { //Runs through all users
-                $rowPrint[$Alluser["UserID"]] = formatPercent(getUserRoleSummary($conn, $Alluser["UserID"])); //Adds to the user key the value they had 
-            }
-            //--Printing--
-            echo "<tr><td=\"blank_td\"></td></tr>"; //Blank row to distinguish better
-            echo "<tr><th>--</th>"; //Displays the competency - with Description if present
-            displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
-            echo "</tr>";
-
-            echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
-        }
+        displayRoleAndGroupValues($conn, $roles, $order, "SELECT UserID FROM users WHERE URole = ", 'CompetencyRolesFromRoles', 'getUserRoleSummary');
+        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
         ?>
 
         <!-- Group User Values-->
@@ -173,39 +131,13 @@ if ($_SESSION["role"] == 3) { //Admin can see all groups
         //All the names in order
         printUserNames($order, $idassoc, $_SESSION);
         $groups = mysqli_query($conn, "SELECT * FROM groups");
-        if (mysqli_num_rows($groups) <= 0) {
-            emptyArrayError();
-        } else {
-            while ($group = mysqli_fetch_array($groups)) {
-                //--Value retrieval--
-                echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $group["GName"] . "</th></tr>";
-                $groupCompetencies = CompetencyGroupFromGroup($conn, $group["GroupID"]); //Gets all the users associated with this competency
-                if (mysqli_num_rows($groupCompetencies) <= 0) { //Checking for empty values - should NEVER be empty, as there is ALWAYS 3 roles - as of coding this.
-                    emptyArrayError();
-                } else {
-                    $memberUsers = mysqli_query($conn, "SELECT Users FROM usergroups WHERE Groups = '" . $group["GroupID"] . "';");
-                    printValuesFromCompetency($conn, $groupCompetencies, $memberUsers, $order);
-                }
-            }
-            //
-            //---Prints individual competency User summaries
-            //
-            //--Array setup--
-            $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
-            mysqli_data_seek($Allusers, 0); //Ensures the array pointer is 0
-            //--Filling the value array--
-            while ($Alluser = mysqli_fetch_assoc($Allusers)) { //Runs through all users
-                $rowPrint[$Alluser["UserID"]] = formatPercent(getUserGroupSummary($conn, $Alluser["UserID"])); //Adds to the user key the value they had 
-            }
-            //--Printing--
-            echo "<tr><td=\"blank_td\"></td></tr>"; //Blank row to distinguish better
-            echo "<tr><th>--</th>"; //Displays the competency - with Description if present
-            displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
-            echo "</tr>";
+        displayRoleAndGroupValues($conn, $groups, $order, "SELECT Users FROM usergroups WHERE Groups = ", 'CompetencyGroupFromGroup', 'getUserGroupSummary');
+        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
+        //Overall User Summary
+        summaryRowPrint($conn, $Allusers, $order, 'getCompleteUserSummary');
 
-            echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
-        }
-        ?> -->
+        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
+        ?>
 
     </table>
 

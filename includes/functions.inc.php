@@ -627,3 +627,43 @@ function printValuesFromCompetency($conn, $compArray, $memberUsers, $order){//Ac
         echo "</tr>";
     }
 }
+
+function summaryRowPrint($conn, $Allusers, $order, $summaryGetFunction){
+//--Array setup--
+$rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
+mysqli_data_seek($Allusers, 0); //Ensures the array pointer is 0
+//--Filling the value array--
+while ($Alluser = mysqli_fetch_assoc($Allusers)) { //Runs through all users
+    $rowPrint[$Alluser["UserID"]] = formatPercent($summaryGetFunction($conn, $Alluser["UserID"])); //Adds to the user key the value they had 
+}
+//--Printing--
+echo "<tr><td=\"blank_td\"></td></tr>"; //Blank row to distinguish better
+echo "<tr><th>--</th>"; //Displays the competency - with Description if present
+displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
+echo "</tr>";
+}
+
+
+function displayRoleAndGroupValues($conn, $setOfItems, $order, $sqlstring, $CompetencyFunction, $summaryGetFunction ){
+    if (mysqli_num_rows($setOfItems) <= 0) {
+        emptyArrayError();
+    } else {
+        while ($items = mysqli_fetch_row($setOfItems)) {
+            //--Value retrieval--
+            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $items[1] . "</th></tr>";
+            $competencies = $CompetencyFunction($conn, $items[0]); //Gets all the users associated with this competency
+            if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
+                emptyArrayError();
+            } else {
+                $memberUsers = mysqli_query($conn, $sqlstring."'" . $items[0] . "';");
+                printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
+            }
+        }
+        //
+        //---Prints group User summaries
+        //
+        summaryRowPrint($conn, getUsers($conn), $order, $summaryGetFunction);
+
+        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
+    }
+}
