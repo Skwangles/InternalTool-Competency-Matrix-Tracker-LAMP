@@ -435,9 +435,9 @@ function emptyArrayError() //prints none found - called when no items were retur
     echo "<tr><td>None Found</td><td>-</td></tr>";
 }
 
-function namePrint($sesh, $user) //Appends (YOU) to the name, if the userid corresponds to the logged in user
+function namePrint($sesh, $user, $showLink = false) //Appends (YOU) to the name, if the userid corresponds to the logged in user
 {
-    if ($sesh["role"] == "2" || $sesh["role"] == "3") {
+    if ($sesh["role"] == "2" || $sesh["role"] == "3" && $showLink) {
         return  "<a class=\"nameTag\" href=\"singleview.php" . ($user["UserID"] == $sesh["userid"] ? "" : "?userid=".$user["UserID"]) . "\">" . $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "") . "</a>";//If the user is admin or manager, allows them to view the user individually
     } else {
         return  $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");

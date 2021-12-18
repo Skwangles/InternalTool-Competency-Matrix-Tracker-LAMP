@@ -28,7 +28,7 @@ while ($group = mysqli_fetch_array($usersgroups)) {
             <?php
             $Groupusers = UserGroupFromGroup($conn, $group["GroupID"]); //Gets all users in the current group
             while ($groupuser = mysqli_fetch_array($Groupusers)) { //Gives a heading to all users
-                echo "<th>" . namePrint($_SESSION, $groupuser) . "</th>";
+                echo "<th>" . namePrint($_SESSION, $groupuser, true) . "</th>";
             }
             ?>
         </tr>
