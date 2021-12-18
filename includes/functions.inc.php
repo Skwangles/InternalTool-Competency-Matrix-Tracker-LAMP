@@ -100,6 +100,17 @@ function updateGroupManager($conn, $userid, $groupid, $value) //Switches a user 
     }
     return false;
 }
+
+
+function isManagerOfUser($conn, $sesh, $viewedUserID) //Checks if the user is a manager of the user - i.e. is the manager of a group that user shares. - takes the connection, the session variables, and the id which is to be viewed
+{
+    if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM `usergroups` as main WHERE EXISTS (SELECT * FROM usergroups as sub WHERE sub.Groups = main.Groups AND Users = '" . mysqli_real_escape_string($conn, $viewedUserID) . "') AND EXISTS (SELECT * FROM usergroups as sub WHERE sub.Groups = main.Groups AND Users = '" . mysqli_real_escape_string($conn, $sesh["userid"]) . "' AND isManager = '1');"))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 //
 //GROUP PROCESSING-------------------------------------
 //
@@ -404,7 +415,7 @@ function displayUserRatings($conn, $competencyid, $userid) //Based on if the use
     } else {
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
-            return $Rating["Rating"] ; //Gives the text versions of the names
+            return $Rating["Rating"]; //Gives the text versions of the names
         } else {
             return ""; //Gives empty
         }
@@ -426,7 +437,11 @@ function emptyArrayError() //prints none found - called when no items were retur
 
 function namePrint($sesh, $user) //Appends (YOU) to the name, if the userid corresponds to the logged in user
 {
-    return $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");
+    if ($sesh["role"] == "2" || $sesh["role"] == "3") {
+        return  "<a class=\"nameTag\" href=\"singleview.php" . ($user["UserID"] == $sesh["userid"] ? "" : "?userid=".$user["UserID"]) . "\">" . $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "") . "</a>";//If the user is admin or manager, allows them to view the user individually
+    } else {
+        return  $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");
+    }
 }
 
 function displayNumberKey() //Displays the Table Key - i.e. "0" = "Not Trained"
@@ -596,26 +611,19 @@ function makeRowValuesFromUsers($order)
 { //Creates an empty array, the length of the row (amount of users) - which allows the user values to be inserted
     $rowvalues = array();
     foreach ($order as $user) {
-        $rowvalues[$user] = "";//Default values for each cell
+        $rowvalues[$user] = ""; //Default values for each cell
     }
     return $rowvalues;
 }
 
-function printUserNames($order, $idassoc, $sesh)
+function printUserNames($order, $idassoc, $sesh) //Prints user names as a row, in a particular dictated order. 
 {
-     //
-        //Name Order - Table top row
-        //
-        echo "<tr><th>--</th>";
-        for ($index = 0; $index < count($order); $index++) {
-            echo "<th>" . nameprint($sesh, array("UserID" => $order[$index], "UName" => $idassoc[$order[$index]])) . "</th>"; //adds the name of the ID to the table - formatted so if "you" are the user being written a (YOU) will appear beside it
-        }
-        echo "</tr>";
+    //
+    //Name Order - Table top row
+    //
+    echo "<tr><th>--</th>";
+    for ($index = 0; $index < count($order); $index++) {
+        echo "<th>" . nameprint($sesh, array("UserID" => $order[$index], "UName" => $idassoc[$order[$index]])) . "</th>"; //adds the name of the ID to the table - formatted so if "you" are the user being written a (YOU) will appear beside it
+    }
+    echo "</tr>";
 }
-
-
-
-
-
-
-

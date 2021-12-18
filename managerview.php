@@ -154,7 +154,7 @@ $Allusers = getUsers($conn);
         
 
         //Overall User Summary
-        echo "</tr><tr><td colspan=\"100%\" class=\"tabletitle\">Overall Summary</td></tr>"; //Black line to seperate areas
+        echo "</tr><tr><td colspan=\"100%\" class=\"tabletitle\"><b>Overall Summary</b></td></tr>"; //Black line to seperate areas
         printUserNames($order, $idassoc, $_SESSION);
         summaryRowPrint($conn, $Allusers, $order, 'getCompleteUserSummary');
 

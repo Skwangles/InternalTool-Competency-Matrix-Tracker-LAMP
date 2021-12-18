@@ -318,6 +318,11 @@ Modified from https://www.w3schools.com/css/css_tooltip.asp
     visibility: visible;
 }
 
+
+/*
+Admin controls
+*/
+
 .inwindow-buttons {
     width: 50%;
     margin-left: auto;
@@ -331,6 +336,20 @@ Modified from https://www.w3schools.com/css/css_tooltip.asp
     margin: 0 auto;
     text-align: center;
     display: inline;
-    background-color: darkcyan;
     width: max-content;
+}
+
+.adminbuttons {
+    background-color: darkcyan;
+}
+
+
+/*
+Name links in single + manager views
+*/
+
+.nameTag {
+    color: #000000;
+    text-decoration: none;
+    border-bottom: 1px dotted black;
 }
