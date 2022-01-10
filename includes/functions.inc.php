@@ -96,6 +96,7 @@ function updateGroupManager($conn, $userid, $groupid, $value) //Switches a user 
 {
     if ($value == '0' || $value == '1') { //Determines if the value is a true or false
         mysqli_query($conn, "UPDATE usergroups SET isManager = '" . $value . "' WHERE Users = '" . $userid . "' AND Groups = '" . $groupid . "';");
+        managerRoleSwitch($conn, $userid);
         return mysqli_fetch_row(mysqli_query($conn, "SELECT isManager FROM usergroups WHERE Users = '" . $userid . "' AND Groups = '" . $groupid . "';")); //For certainty, checks the actual database value, rather than just passing back the user selected variable.
     }
     return false;
@@ -187,7 +188,7 @@ WHERE
 function UserGroupFromUser($conn, $userid)
 {
     return mysqli_query($conn, "SELECT
-    `groups`.*
+    `groups`.*,`usergroups`.`isManager`
 FROM
     `groups`
     JOIN `usergroups` ON `groups`.`GroupID` = `usergroups`.`Groups`
@@ -327,7 +328,8 @@ function getUserRatingsFromCompetency($conn, $userid, $competencyid) //gets the 
 
 function managerRoleSwitch($conn, $userid)
 { //For non-admin users, based on if they have any manager roles in any groups, role is alternated between 1 & 2
-    if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = " . $userid . " AND isManager = 1"))) { //If users are a manager, give manager global role, otherwise strip role
+
+    if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = '" . $userid . "' AND isManager = 1"))) { //If users are a manager, give manager global role, otherwise strip role
         mysqli_query($conn, "UPDATE users SET URole = 2 WHERE UserID = '" . $userid . "' AND URole = 1"); //If staff which has a mangerrole, give global manager role - ignore Admins
     } else {
         mysqli_query($conn, "UPDATE users SET URole = 1 WHERE UserID = '" . $userid . "' AND URole = 2"); //If manager without managing any managed groups, strip the manager role - ignore Admins
@@ -438,7 +440,7 @@ function emptyArrayError() //prints none found - called when no items were retur
 function namePrint($sesh, $user, $showLink = false) //Appends (YOU) to the name, if the userid corresponds to the logged in user
 {
     if ($sesh["role"] == "2" || $sesh["role"] == "3" && $showLink) {
-        return  "<a class=\"nameTag\" href=\"singleview.php" . ($user["UserID"] == $sesh["userid"] ? "" : "?userid=".$user["UserID"]) . "\">" . $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "") . "</a>";//If the user is admin or manager, allows them to view the user individually
+        return  "<a class=\"nameTag\" href=\"singleview.php" . ($user["UserID"] == $sesh["userid"] ? "" : "?userid=" . $user["UserID"]) . "\">" . $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "") . "</a>"; //If the user is admin or manager, allows them to view the user individually
     } else {
         return  $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");
     }
@@ -623,7 +625,7 @@ function printUserNames($order, $idassoc, $sesh) //Prints user names as a row, i
     //
     echo "<tr><th>--</th>";
     for ($index = 0; $index < count($order); $index++) {
-        echo "<th>" . nameprint($sesh, array("UserID" => $order[$index], "UName" => $idassoc[$order[$index]])) . "</th>"; //adds the name of the ID to the table - formatted so if "you" are the user being written a (YOU) will appear beside it
+        echo "<th>" . nameprint($sesh, array("UserID" => $order[$index], "UName" => $idassoc[$order[$index]]), true) . "</th>"; //adds the name of the ID to the table - formatted so if "you" are the user being written a (YOU) will appear beside it
     }
     echo "</tr>";
 }

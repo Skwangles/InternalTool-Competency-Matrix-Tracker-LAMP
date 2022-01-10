@@ -1,6 +1,5 @@
 body {
     justify-content: center;
-    /* min-height: 100vh; */
     display: block;
     margin: 0 auto;
     background-color: #389E47;
@@ -8,17 +7,22 @@ body {
 }
 
 .dangerous {
+    /*Styling for buttons which do dangerous - irreversible things*/
     background-color: red;
 }
 
 .centre {
+    /*Forces item to be centre aligned*/
     text-align: center;
     margin-left: auto;
     margin-right: auto;
 }
 
 
-/* Style the navigation menu - from https://www.w3schools.com/howto/howto_css_topnav_equal_width.asp */
+/* Style the navigation menu - from https://www.w3schools.com/howto/howto_css_topnav_equal_width.asp 
+
+-----Start---
+*/
 
 nav {
     width: 100%;
@@ -60,6 +64,9 @@ nav a:hover {
         /* If you want the text to be left-aligned on small screens */
     }
 }
+
+
+/*---------*/
 
 
 /*
@@ -234,6 +241,24 @@ hr.seperator {
 
 
 /*
+Changes the scrollbar
+*/
+
+body::-webkit-scrollbar {
+    width: 1em;
+}
+
+body::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+    background-color: darkgrey;
+    outline: 1px solid slategrey;
+}
+
+
+/*
 -
 Error Styling
 -
@@ -304,7 +329,7 @@ Modified from https://www.w3schools.com/css/css_tooltip.asp
     word-wrap: break-word;
     max-width: 300px;
     background-color: rgb(0, 0, 0);
-    opacity: 70%;
+    opacity: .7;
     color: #fff;
     text-align: center;
     border-radius: 6px;
@@ -332,15 +357,12 @@ Admin controls
 }
 
 .inwindow {
-    width: 200px;
-    margin: 0 auto;
     text-align: center;
     display: inline;
-    width: max-content;
 }
 
 .adminbuttons {
-    background-color: darkcyan;
+    background-color: #008B8B;
 }
 
 
@@ -352,4 +374,43 @@ Name links in single + manager views
     color: #000000;
     text-decoration: none;
     border-bottom: 1px dotted black;
+}
+
+
+/*
+Back to top button -- from https://www.w3schools.com/howto/howto_js_scroll_to_top.asp
+*/
+
+#myBtn {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Fixed/sticky position */
+    bottom: 20px;
+    /* Place the button at the bottom of the page */
+    right: 30px;
+    /* Place the button 30px from the right */
+    z-index: 99;
+    /* Make sure it does not overlap */
+    border: none;
+    /* Remove borders */
+    outline: none;
+    /* Remove outline */
+    background-color: red;
+    /* Set a background color */
+    color: white;
+    /* Text color */
+    cursor: pointer;
+    /* Add a mouse pointer on hover */
+    padding: 15px;
+    /* Some padding */
+    border-radius: 10px;
+    /* Rounded corners */
+    font-size: 18px;
+    /* Increase font size */
+}
+
+#myBtn:hover {
+    background-color: #555;
+    /* Add a dark-grey background on hover */
 }

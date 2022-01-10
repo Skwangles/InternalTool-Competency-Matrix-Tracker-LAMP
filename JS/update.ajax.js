@@ -42,10 +42,11 @@ function switchEditMode() { //Updates the edit mode for Admins from edit everyth
 }
 
 function updateManager(userid, groupid, value) {
+
     $.ajax({
         type: 'POST',
         url: "ajax/manager.ajax.php",
-        data: { UserID: userid, GroupID: groupid, Value: value },
+        data: { UserID: userid, GroupID: groupid, Value: (value.checked ? 1 : 0) },
         dataType: 'JSON',
         success: function(response) {
             var status = response.status;

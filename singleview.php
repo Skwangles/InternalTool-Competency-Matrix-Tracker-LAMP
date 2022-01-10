@@ -49,7 +49,7 @@ if (isset($_GET["userid"])) {
     //Role Display
     $role = RoleFromUser($conn, $uservalues["UserID"]);
     displaySingleViewRoleAndGroup($conn, $role, 'CompetencyRolesFromRoles', $uservalues);
-
+    
     //Group Display
     $groups = UserGroupFromUser($conn, $uservalues["UserID"]);
     displaySingleViewRoleAndGroup($conn, $groups, 'CompetencyGroupFromGroup', $uservalues);
@@ -70,11 +70,18 @@ if (isset($_GET["userid"])) {
 displayNumberKey();
 
 
-function displaySingleViewRoleAndGroup($conn, $sets, $compGetFunction, $uservalues)
+function displaySingleViewRoleAndGroup($conn, $sets, $compGetFunction, $uservalues)//conn, Role/group id, CompetencyGetFunction, UserValues(name, id)
 {
     while ($set = mysqli_fetch_row($sets)) {
-
-        echo "<tr><td><b>" . $set[1] . "</b></td></tr>";
+        if($_SESSION["editMode"] == '1' && isset($set[2])){//Determines if a marker needs to be added to control the Manager option for a user
+            $add = "<td><label>Is Manager</label><input type=\"checkbox\" onclick=\"updateManager(".$uservalues["UserID"].",". $set[0].", this)\" ".($set[2] == "1"?"checked":"")."></td>";//If is a group value, adds check box
+        }else if(isset($set[2])){
+            $add = "<td>".($set[2] == "1" ? "(Manager)":"") ."</td>";
+        }
+        else{
+            $add = "";
+        }
+        echo "<tr><td><b>" . $set[1] . "</b></td>".$add ."</tr>";
         $competencies = $compGetFunction($conn, $set[0]);
         if (mysqli_num_rows($competencies) <= 0) {
             emptyArrayError();
@@ -87,7 +94,6 @@ function displaySingleViewRoleAndGroup($conn, $sets, $compGetFunction, $uservalu
         }
     }
 }
-
 
 include_once 'footer.php';
 ?>
