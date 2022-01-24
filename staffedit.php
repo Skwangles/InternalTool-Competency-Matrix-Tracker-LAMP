@@ -38,6 +38,7 @@ include_once 'includes/signup.inc.php';
             $roles = mysqli_query($conn, "SELECT * FROM roles");
             while ($row = mysqli_fetch_array($result)) {
                 echo "<tr>";
+                
                 echo "<td>" . "<input type=\"checkbox\" id=\"" . $row["UserID"] . "-cbu\" name=\"users[]\" value=\"" . $row["UserID"] . "\">" . "</td>";     //Creates Checkbox
                 echo "<td><label for=\"" . $row["UserID"] . "-cbu\">" . namePrint($_SESSION, $row) . "</label></td>";   //Gives name
                 echo "<td>" . $row["UUsername"] . "</td>";
@@ -158,6 +159,17 @@ include_once 'includes/signup.inc.php';
 <br>
 <?php
 //Handles error tags
+// function modifiableUserNames($userInfo){
+//     if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {//If in edit mode, return "editable" names/values
+//         echo "<td><input type=\"hidden\" name=\"ids[]\" value=\"" . $userInfo["UserID"] . "\"><input class=\"editbox\" type=\"text\" id=\"" . $userInfo["UserID"] . "-name\" name=\"uname[]\" onInput=\"updateName(" . $userInfo["UserID"] . ", this.value)\" value=\"" . $userInfo["UName"] . "\"></td>";
+//                     echo "<td><input class=\"editbox\" type=\"text\" id=\"" . $userInfo["UserID"] . "-username\" name=\"uusername[]\" onInput=\"updateUsername(" . $userInfo["UserID"] . ", this.value)\" value=\"" . $userInfo["UUsername"] . "\"></td>";
+//     }
+//     else{
+//         echo "<td><label for=\"" . $userInfo["UserID"] . "-cbu\">" . namePrint($_SESSION, $userInfo) . "</label></td>";   //Gives name
+//         echo "<td>" . $userInfo["UUsername"] . "</td>";
+//     }
+// }
+
 
 include_once 'footer.php';
 ?>

@@ -407,7 +407,7 @@ function updateUserCompetencies($conn, $userid) //Inefficent update process - bu
 
 function displayUserRatings($conn, $competencyid, $userid) //Based on if the user is an admin (with editmode on) or not, it will display the user's rating (or print N/A if it is empty)
 {
-    if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {
+    if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {//If in edit mode, allow the user to "edit" the values
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
             return "<input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"" . $userid . "-" . $competencyid . "-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value)\">"; //Gives the text versions of the names - limits it to the numbers
@@ -484,6 +484,72 @@ function isCompInIndividualUser($conn, $comp, $userid)
 //
 //User Summaries--------------------------------------------------
 //
+
+function displayRoleValues($conn, $setOfItems, $order){//Takes a set of roles to print out, and the order which the user names must appear - prints out the table (is not a stand alone table, requires additional <table> tags)
+    //1. connection to the database, 2. array of items to loop (roles, or groups), 3. Name order, 4. sql which finds the members, 5. function for the joining table, 6. function which gets the summary values
+    if (mysqli_num_rows($setOfItems) <= 0) {
+        emptyArrayError();
+    } else {
+        while ($items = mysqli_fetch_row($setOfItems)) {
+            //--Value retrieval--
+            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $items[1] . "</th></tr>";
+            $competencies = CompetencyGroupFromGroup($conn, $items[0]); //Gets all the users associated with this group/role
+            if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
+                emptyArrayError();
+            } else {
+                $memberUsers = mysqli_query($conn,"SELECT UserID FROM users WHERE URole = '" . $items[0] . "';");
+                printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
+            }
+        }
+        //
+        //---Prints group User summaries
+        //
+        summaryRowPrint($conn, getUsers($conn), $order, 'getUserRoleSummary');
+
+        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
+    }
+}
+
+function displayGroupValues($conn, $setOfItems, $order){//Takes a set of groups to print out, and the order which the user names must appear - prints out the table (is not a stand alone table, requires additional <table> tags)
+    if (mysqli_num_rows($setOfItems) <= 0) {
+        emptyArrayError();
+    } else {
+        while ($items = mysqli_fetch_row($setOfItems)) {
+            //--Value retrieval--
+            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $items[1] . "</th></tr>";
+            $competencies = CompetencyGroupFromGroup($conn, $items[0]); //Gets all the users associated with this group/role
+            if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
+                emptyArrayError();
+            } else {
+                $memberUsers = mysqli_query($conn, "SELECT Users FROM usergroups WHERE Groups = '" . $items[0] . "';");
+                printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
+            }
+        }
+        //
+        //---Prints group User summaries
+        //
+        summaryRowPrint($conn, getUsers($conn), $order, 'getUserGroupSummary');
+
+        echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
+    }
+}
+
+function summaryRowPrint($conn, $Allusers, $order, $summaryGetFunction){//Takes a list of users, the order to print out and the function which gives the percentages - prints out a formatted row in the place it is called
+    //--Array setup--
+    $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
+    mysqli_data_seek($Allusers, 0); //Ensures the array pointer is 0
+    //--Filling the value array--
+    while ($Alluser = mysqli_fetch_assoc($Allusers)) { //Runs through all users
+        $rowPrint[$Alluser["UserID"]] = formatPercent($summaryGetFunction($conn, $Alluser["UserID"])); //Adds to the user key the value they had 
+    }
+    //--Printing--
+    echo "<tr><td=\"blank_td\"></td></tr>"; //Blank row to distinguish better
+    echo "<tr><th>--</th>"; //Displays the competency - with Description if present
+    displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
+    echo "</tr>";
+    }
+
+
 
 function getUserGroupSummary($conn, $userid)
 { //------gets the sum of all ratings for the user's groups------
