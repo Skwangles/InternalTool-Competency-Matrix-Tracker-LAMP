@@ -64,48 +64,27 @@ function updateManager(userid, groupid, value) {
 }
 
 
-function UpdateUserValues() {
-    var datastring = $("#userinfoform").serialize();
+function UpdateUserValuesFromForm(formID) {
 
+    var datastring = $("#" + formID).serialize();
     $.ajax({
+        type: 'POST',
         url: 'ajax/updateuserinfo.ajax.php',
-        type: 'POST',
-        data: datastring,
-        dataType: 'JSON',
-        success: function(response) {
-            console.log(response);
-            var status = response.status;
-            if (status != "ok") {
-                //failure message here
-            }
-            return;
-        },
-        error: function(xhr, error) {
-            // showError("Manager update failed, please try again later...");
-            console.log(response);
-        }
-    });
-}
-
-function UpdatePassword() { //Updates the selected user's password
-    var datastring = $("#userinfoform").serialize();
-
-    $.ajax({
-        url: 'ajax/updatepassword.ajax.php',
-        type: 'POST',
         data: datastring,
         dataType: 'JSON',
         success: function(response) {
             console.log(response);
             var status = response.status;
             if (status == "ok") {
-                document.getElementById("changePassword").value = ""; //Sets to empty to indicate it was successful
+
             }
             return;
         },
         error: function(xhr, error) {
             // showError("Manager update failed, please try again later...");
-            console.log(response);
+            console.log(error);
+            console.log(xhr);
         }
     });
+    window.location.href = location.protocol + '//' + location.host + location.pathname + "#" + formID; //reloads the page, with the desired setting window still in focus
 }

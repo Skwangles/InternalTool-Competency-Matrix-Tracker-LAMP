@@ -38,7 +38,7 @@ include_once 'includes/signup.inc.php';
             $roles = mysqli_query($conn, "SELECT * FROM roles");
             while ($row = mysqli_fetch_array($result)) {
                 echo "<tr>";
-                
+
                 echo "<td>" . "<input type=\"checkbox\" id=\"" . $row["UserID"] . "-cbu\" name=\"users[]\" value=\"" . $row["UserID"] . "\">" . "</td>";     //Creates Checkbox
                 echo "<td><label for=\"" . $row["UserID"] . "-cbu\">" . namePrint($_SESSION, $row) . "</label></td>";   //Gives name
                 echo "<td>" . $row["UUsername"] . "</td>";
@@ -96,41 +96,80 @@ include_once 'includes/signup.inc.php';
 <hr class="seperator">
 <section id="individualusers">
     <h1 class="centre">Modify Specific Users</h1>
-    <form class="centre" id="userinfoform" action="staffedit.php" method="post">
-        <table class="centre" border="1">
-            <tr>
-                <th>Select</th>
-                <th>Name</th>
-                <th>Username</th>
-            </tr>
+    <table class="centre" border="1">
+        <tr>
+            <th>Select</th>
+            <th>Name</th>
+            <th>Username</th>
+        </tr>
 
-            <?php
-            $users = mysqli_query($conn, "SELECT * FROM users");
-            if (mysqli_num_rows($users) <= 0) {
-                emptyArrayError();
-            } else {
-                while ($user = mysqli_fetch_array($users)) {
-                    echo "<tr>";
-                    echo "<td>" . "<input type=\"radio\" id=\"" . $user["UserID"] . "-radio\" name=\"userradio\" value=\"" . $user["UserID"] . "\">" . "</td>";     //Creates Checkbox
-                    echo "<td><input type=\"hidden\" name=\"ids[]\" value=\"" . $user["UserID"] . "\"><input class=\"editbox\" type=\"text\" id=\"" . $user["UserID"] . "-name\" name=\"uname[]\" onInput=\"updateName(" . $user["UserID"] . ", this.value)\" value=\"" . $user["UName"] . "\"></td>";
-                    echo "<td><input class=\"editbox\" type=\"text\" id=\"" . $user["UserID"] . "-username\" name=\"uusername[]\" onInput=\"updateUsername(" . $user["UserID"] . ", this.value)\" value=\"" . $user["UUsername"] . "\"></td>";
-                    echo "</tr>";
-                }
+        <?php
+        $users = mysqli_query($conn, "SELECT * FROM users");
+        if (mysqli_num_rows($users) <= 0) {
+            emptyArrayError();
+        } else {
+            echo "<script> items = []</script>";
+            while ($user = mysqli_fetch_array($users)) {
+                echo "<tr>";
+                echo "<td><p id=\"" . $user["UserID"] . "-name\">" . $user["UName"] . "</p></td>";
+                echo "<td><p id=\"" . $user["UserID"] . "-username\">" . $user["UUsername"] . "</p></td>";
+                //Testing having a form popup to edit the values
+
+                //The following provides the user values "edit" form
+                echo " <script>
+                    document.addEventListener('mouseup', function(e) {
+                        var container = document.getElementById('formDiv-" . $user["UserID"] . "');
+                        if (!container.contains(e.target)) {
+                            container.style.display = 'none';
+                        }
+                    });
+                </script>";
+
+                echo "<td>
+                    <button class=\"open-button\" onclick=\"openForm('formDiv-" . $user["UserID"] . "')\">Edit User</button>
+
+                    <div class=\"form-popup\" id=\"formDiv-" . $user["UserID"] . "\">
+                        <form class=\"form-container\" id=\"formID-" . $user["UserID"] . "\">
+                            <h1>Change " . $user["UName"] . "'s Information</h1>
+                            <input type=\"hidden\" value=\"" . $user["UserID"] . "\" name=\"id\">
+                            <label for=\"name\"><b>Updated Name</b></label>
+                            <input type=\"text\" placeholder=\"" . $user["UName"] . "\" name=\"name\" value=\"" . $user["UName"] . "\">
+
+                            <label for=\"usr\"><b>Username</b></label>
+                            <input type=\"text\" placeholder=\"" . $user["UUsername"] . "\" name=\"usr\" value=\"" . $user["UUsername"] . "\">
+
+                            <label for=\"psw\"><b>Password</b></label>
+                            <input type=\"password\" placeholder=\"New Password\" name=\"psw\">
+
+                            <label for=\"role\"><b>Is Admin</b></label>
+                            <input type=\"hidden\" value=\"1\" name=\"role\">
+                            <input type=\"checkbox\" value=\"3\" name=\"role\" ".($user["URole"] == 3 ? "checked":"") .">
+
+                            <button type=\"button\" class=\"btn\" onclick=\"UpdateUserValuesFromForm('formID-" . $user["UserID"] . "')\">Update Entries</button>
+                            <button type=\"button\" class=\"btn cancel\" onclick=\"closeForm('formDiv-" . $user["UserID"] . "')\">Close</button>
+                        </form>
+                        
+                    </div>
+                    </td>";
+
+                echo "</tr>";
             }
-            ?>
+        }
+        ?>
 
-        </table>
-        <button class="actionbuttons addbuttons centre" type="submit" onClick="UpdateUserValues()">Apply new values</button>
+    </table>
+    <script>
+        function openForm(idValue) {
+            var element = document.getElementById(idValue);
+            element.style.display = "inline-block";
+            element.scrollIntoView(false);
+        }
 
-        <h3 class="centre">Change Password</h3>
+        function closeForm(idValue) {
+            document.getElementById(idValue).style.display = "none";
+        }
+    </script>
 
-        <input type="text" name="passwordChange" maxlength="25">
-        <button class="centre actionbuttons addbuttons" type="submit" onClick="UpdatePassword()">Update Password</button>
-        <br>
-        <br>
-        <button class="centre dangerous" type="submit" name="delete">Delete User PERMANENTLY</button>
-
-    </form>
 </section>
 <!--
 //
@@ -158,18 +197,5 @@ include_once 'includes/signup.inc.php';
 <br>
 <br>
 <?php
-//Handles error tags
-// function modifiableUserNames($userInfo){
-//     if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {//If in edit mode, return "editable" names/values
-//         echo "<td><input type=\"hidden\" name=\"ids[]\" value=\"" . $userInfo["UserID"] . "\"><input class=\"editbox\" type=\"text\" id=\"" . $userInfo["UserID"] . "-name\" name=\"uname[]\" onInput=\"updateName(" . $userInfo["UserID"] . ", this.value)\" value=\"" . $userInfo["UName"] . "\"></td>";
-//                     echo "<td><input class=\"editbox\" type=\"text\" id=\"" . $userInfo["UserID"] . "-username\" name=\"uusername[]\" onInput=\"updateUsername(" . $userInfo["UserID"] . ", this.value)\" value=\"" . $userInfo["UUsername"] . "\"></td>";
-//     }
-//     else{
-//         echo "<td><label for=\"" . $userInfo["UserID"] . "-cbu\">" . namePrint($_SESSION, $userInfo) . "</label></td>";   //Gives name
-//         echo "<td>" . $userInfo["UUsername"] . "</td>";
-//     }
-// }
-
 
 include_once 'footer.php';
-?>
