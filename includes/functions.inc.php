@@ -71,12 +71,10 @@ function getUsers($conn) //Returns all the Users in the database & their values.
 
 function deleteUser($conn, $POST, $SESSION) //Permanently deletes the user from the Database
 {
-    $values = mysqli_query($conn, "SELECT * FROM users");
-    foreach ($values as $value) {
-        if (isset($POST[$value["UserID"]]) && $value["UserID"] != $SESSION["userid"]) { //Checks value exists, and is not the current user (Can't delete yourself)
-
-            mysqli_query($conn, "DELETE FROM users WHERE UserID = " . $value["UserID"]); //Sets up the add to database
-
+    if (isset($POST["UserID"]) && $POST["UserID"] != $SESSION["userid"]) { //Checks value exists, and is not the current user (Can't delete yourself)
+        $values = mysqli_query($conn, "SELECT * FROM users WHERE UserID = '" . $POST["UserID"] . "';");
+        if (mysqli_num_rows($values) > 0) {
+            mysqli_query($conn, "DELETE FROM users WHERE UserID = '" . $_POST["UserID"] . "';"); //Sets up the add to database
         }
     }
 }
@@ -407,7 +405,7 @@ function updateUserCompetencies($conn, $userid) //Inefficent update process - bu
 
 function displayUserRatings($conn, $competencyid, $userid) //Based on if the user is an admin (with editmode on) or not, it will display the user's rating (or print N/A if it is empty)
 {
-    if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") {//If in edit mode, allow the user to "edit" the values
+    if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") { //If in edit mode, allow the user to "edit" the values
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
             return "<input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"" . $userid . "-" . $competencyid . "-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value)\">"; //Gives the text versions of the names - limits it to the numbers
@@ -485,7 +483,8 @@ function isCompInIndividualUser($conn, $comp, $userid)
 //User Summaries--------------------------------------------------
 //
 
-function displayRoleValues($conn, $setOfItems, $order){//Takes a set of roles to print out, and the order which the user names must appear - prints out the table (is not a stand alone table, requires additional <table> tags)
+function displayRoleValues($conn, $setOfItems, $order)
+{ //Takes a set of roles to print out, and the order which the user names must appear - prints out the table (is not a stand alone table, requires additional <table> tags)
     //1. connection to the database, 2. array of items to loop (roles, or groups), 3. Name order, 4. sql which finds the members, 5. function for the joining table, 6. function which gets the summary values
     if (mysqli_num_rows($setOfItems) <= 0) {
         emptyArrayError();
@@ -497,7 +496,7 @@ function displayRoleValues($conn, $setOfItems, $order){//Takes a set of roles to
             if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
                 emptyArrayError();
             } else {
-                $memberUsers = mysqli_query($conn,"SELECT UserID FROM users WHERE URole = '" . $items[0] . "';");
+                $memberUsers = mysqli_query($conn, "SELECT UserID FROM users WHERE URole = '" . $items[0] . "';");
                 printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
             }
         }
@@ -510,7 +509,8 @@ function displayRoleValues($conn, $setOfItems, $order){//Takes a set of roles to
     }
 }
 
-function displayGroupValues($conn, $setOfItems, $order){//Takes a set of groups to print out, and the order which the user names must appear - prints out the table (is not a stand alone table, requires additional <table> tags)
+function displayGroupValues($conn, $setOfItems, $order)
+{ //Takes a set of groups to print out, and the order which the user names must appear - prints out the table (is not a stand alone table, requires additional <table> tags)
     if (mysqli_num_rows($setOfItems) <= 0) {
         emptyArrayError();
     } else {
@@ -534,7 +534,8 @@ function displayGroupValues($conn, $setOfItems, $order){//Takes a set of groups 
     }
 }
 
-function summaryRowPrint($conn, $Allusers, $order, $summaryGetFunction){//Takes a list of users, the order to print out and the function which gives the percentages - prints out a formatted row in the place it is called
+function summaryRowPrint($conn, $Allusers, $order, $summaryGetFunction)
+{ //Takes a list of users, the order to print out and the function which gives the percentages - prints out a formatted row in the place it is called
     //--Array setup--
     $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
     mysqli_data_seek($Allusers, 0); //Ensures the array pointer is 0
@@ -547,7 +548,7 @@ function summaryRowPrint($conn, $Allusers, $order, $summaryGetFunction){//Takes 
     echo "<tr><th>--</th>"; //Displays the competency - with Description if present
     displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
     echo "</tr>";
-    }
+}
 
 
 

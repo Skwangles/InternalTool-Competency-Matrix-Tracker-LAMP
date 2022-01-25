@@ -75,21 +75,6 @@ Button Styling
 -
 */
 
-.block {
-    display: block;
-    width: 100%;
-    border: none;
-    background-color: #04AA6D;
-    padding: 14px 28px;
-    font-size: 16px;
-    cursor: pointer;
-    text-align: center;
-}
-
-.block:hover {
-    background-color: #0d724d;
-}
-
 .addbuttons {
     background-color: #2eb839;
 }
