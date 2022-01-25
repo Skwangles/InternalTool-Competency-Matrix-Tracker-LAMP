@@ -22,6 +22,7 @@ function updateValue(userid, competencyid, value) { //Updates the user values wh
             //showError("Value update failed, please try again later...");
         }
     });
+    return false;
 }
 
 function switchEditMode() { //Updates the edit mode for Admins from edit everything, to just READ-ONLY
@@ -38,7 +39,7 @@ function switchEditMode() { //Updates the edit mode for Admins from edit everyth
             //showError("Mode switch failed, please try again later...");
         }
     });
-
+    return false;
 }
 
 function updateManager(userid, groupid, value) {
@@ -55,16 +56,17 @@ function updateManager(userid, groupid, value) {
                 document.getElementById(id).value = response.Value; //updates the value to what the internal value is. 
                 //showError("Update successful");  
             }
-            return;
+            return false;
         },
         error: function(xhr, error) {
             // showError("Manager update failed, please try again later...");
         }
     });
+    return false;
 }
 
 
-function UpdateUserValuesFromForm(formID) {
+function UpdateUserValuesFromForm(formID, userid) {
 
     var datastring = $("#" + formID).serialize();
     $.ajax({
@@ -86,5 +88,29 @@ function UpdateUserValuesFromForm(formID) {
             console.log(xhr);
         }
     });
-    window.location.href = location.protocol + '//' + location.host + location.pathname + "#" + formID; //reloads the page, with the desired setting window still in focus
+    location.reload();
+    document.getElementById("se-accord").click();
+    window.location.href = location.protocol + '//' + location.host + location.pathname + "#formDiv-" + userid; //reloads the page, with the desired setting window still in focus
+    return false;
+}
+
+function deleteUser(formID, userID) {
+    $.ajax({
+        type: 'POST',
+        url: 'ajax/deleteuser.ajax.php',
+        data: { UserID: userID },
+        dataType: 'JSON',
+        success: function(response) {
+            console.log(response);
+            var status = response.status;
+            if (status == "ok") {
+                console.log("User deleted");
+            }
+            return;
+        },
+        error: function(xhr, error) {}
+    });
+    location.reload();
+    window.location.href = location.protocol + '//' + location.host + location.pathname + "#formDiv-" + userid; //reloads the page, with the desired setting window still in focus
+    return false;
 }
