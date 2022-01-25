@@ -147,6 +147,10 @@ include_once 'includes/signup.inc.php';
 
                             <button type=\"button\" class=\"btn\" onclick=\"UpdateUserValuesFromForm('formID-" . $user["UserID"] . "')\">Update Entries</button>
                             <button type=\"button\" class=\"btn cancel\" onclick=\"closeForm('formDiv-" . $user["UserID"] . "')\">Close</button>
+                            <br>
+                            <br>
+                            <button type=\"button\" class=\"dangerous\" onclick=\"deleteUser('formDiv-" . $user["UserID"] . "', '" . $user["UserID"] . "')\">Delete user PERMANENTLY</button>
+                        
                         </form>
                         
                     </div>
@@ -159,13 +163,13 @@ include_once 'includes/signup.inc.php';
 
     </table>
     <script>
-        function openForm(idValue) {
+        function openForm(idValue) {//opens user edit form
             var element = document.getElementById(idValue);
             element.style.display = "inline-block";
             element.scrollIntoView(false);
         }
 
-        function closeForm(idValue) {
+        function closeForm(idValue) {//closes user edit form
             document.getElementById(idValue).style.display = "none";
         }
     </script>
