@@ -21,6 +21,6 @@ if (isset($_POST["createUser"]) && isset($_POST["name"]) && isset($_POST["userna
         exit();
     }
     createUser($conn, $name, $username, $password, $role); //Adds user to database
-    header("location: ../admin.php?error=none#StaffManage"); //Sends back success message
+    header("location: ../admin.php?error=none#AddRemoveGR"); //Sends back success message
     exit();
 }

@@ -7,8 +7,6 @@ require_once 'includes/functions.inc.php';
 include_once 'includes/actiongroups.inc.php'; //Adds actions for check upon reload
 include_once 'includes/actioncompetencies.inc.php';
 
-include_once 'error.php'; //Adds error tags based on the url parameters
-
 include_once 'admin.php'; //Adds the buttons & permission checks
 ?>
 <!--

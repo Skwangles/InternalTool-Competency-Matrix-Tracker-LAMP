@@ -48,3 +48,4 @@ session_start();
             </ul>
         </div>
     </nav>
+    <?php include_once 'error.php';?>

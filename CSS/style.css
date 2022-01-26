@@ -270,13 +270,13 @@ Error Styling
 */
 
 .error {
-    padding: 10px 30px;
+    padding: 10px;
     font-size: large;
     background: green;
     color: white;
     position: fixed;
+    bottom: 0px;
     width: 100%;
-    display: none;
 }
 
 .error {

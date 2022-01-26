@@ -2,7 +2,6 @@
 include_once 'header.php';
 ?>
 <?php
-include_once 'error.php';
 
         if(isset($_SESSION["username"])){
             echo "<h2 class=\"centre\">Welcome, " . $_SESSION["name"] . "</h2>"; 

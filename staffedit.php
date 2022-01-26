@@ -3,8 +3,6 @@
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
-include_once 'error.php';
-
 include_once 'admin.php';
 include_once 'includes/modifyusers.inc.php';
 include_once 'includes/signup.inc.php';
