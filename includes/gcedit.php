@@ -1,13 +1,11 @@
 <?php
 
 //----------Not sure if this is secure, this is for the loading of the group list, have a look at alternative ways------
-require_once 'includes/dbh.inc.php';
-require_once 'includes/functions.inc.php';
+require_once 'dbh.inc.php';
+require_once 'functions.inc.php';
 
-include_once 'includes/actiongroups.inc.php'; //Adds actions for check upon reload
-include_once 'includes/actioncompetencies.inc.php';
-
-include_once 'admin.php'; //Adds the buttons & permission checks
+include_once 'actiongroups.inc.php'; //Adds actions for check upon reload
+include_once 'actioncompetencies.inc.php';
 ?>
 <!--
 //
@@ -223,8 +221,3 @@ include_once 'admin.php'; //Adds the buttons & permission checks
         <button class="dangerous centre" type="submit" name="permdeleteC">Delete Selected PERMANENTLY</button>
     </form>
 </section>
-
-<br>
-<?php
-include_once 'footer.php';
-?>

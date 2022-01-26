@@ -1,5 +1,5 @@
 <?php
-include_once 'header.php';
+include_once 'includes/header.php';
 if (!isset($_SESSION["username"])) {
     header("location: login.php?error=notlogged"); //If not logged in, kicks out
     exit();
@@ -7,8 +7,8 @@ if (!isset($_SESSION["username"])) {
 
 require_once "includes/dbh.inc.php";
 require_once "includes/functions.inc.php";
-include_once "admin-inwindow-controls.php"; //gives ability to switch between edit and read-only mode
-include_once "tablekey.php";
+include_once "includes/admin-inwindow-controls.php"; //gives ability to switch between edit and read-only mode
+include_once "includes/tablekey.php";
 
 if (isset($_GET["userid"])) {
     if ($_SESSION["role"] == "3"  ||  isManagerOfUser($conn, $_SESSION, $_GET["userid"]) && $_GET["userid"] != $_SESSION["userid"]) { //Checks if the logged-in-user managed the selected user-to-be-viewed, or If the user is Admin -- cannot view your own competencies in this manner, instead redirects you to the pure "singleview.php" page
@@ -91,5 +91,5 @@ function displaySingleViewRoleAndGroup($conn, $sets, $compGetFunction, $uservalu
 }
 
 
-include_once 'footer.php';
+include_once 'includes/footer.php';
 ?>

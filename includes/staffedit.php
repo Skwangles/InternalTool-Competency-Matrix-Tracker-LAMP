@@ -1,11 +1,10 @@
 <?php
 //----------Not sure if this is secure, this is for the loading of the group list, have a look at alternative ways------
-require_once 'includes/dbh.inc.php';
-require_once 'includes/functions.inc.php';
+require_once 'dbh.inc.php';
+require_once 'functions.inc.php';
 
-include_once 'admin.php';
-include_once 'includes/modifyusers.inc.php';
-include_once 'includes/signup.inc.php';
+include_once 'modifyusers.inc.php';
+include_once 'signup.inc.php';
 ?>
 <!----
 //
@@ -197,5 +196,3 @@ include_once 'includes/signup.inc.php';
 <br>
 <br>
 <?php
-
-include_once 'footer.php';

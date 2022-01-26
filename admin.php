@@ -1,5 +1,5 @@
 <?php
-include_once 'header.php';
+include_once 'includes/header.php';
 
 if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
     header("location: index.php?error=invalidcall");
@@ -13,7 +13,7 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
 
 <?php
 
-include_once 'staffedit.php';
+include_once 'includes/staffedit.php';
 
 ?>
 
@@ -23,6 +23,6 @@ include_once 'staffedit.php';
 
 <?php
 
-include_once 'gcedit.php';
+include_once 'includes/gcedit.php';
 
-include_once 'footer.php';
+include_once 'includes/footer.php';

@@ -1,5 +1,5 @@
 <?php
-include_once 'header.php';
+include_once 'includes/header.php';
 
 //----------Not sure if this is secure, this is for the loading of the group list, have a look at alternative ways------
 require_once 'includes/dbh.inc.php';
@@ -7,7 +7,7 @@ require_once 'includes/functions.inc.php';
 
 include_once 'includes/settings.inc.php';
 
-include_once 'error.php';
+include_once 'includes/error.php';
 ?>
 <h1 class="centre"><b><?php echo $_SESSION["name"] ?></b></h1>
 <h2 class="centre">Your Username: <br><?php echo $_SESSION["username"] ?></h2>
@@ -29,5 +29,5 @@ include_once 'error.php';
 <?php
 //Handles error tags
 
-include_once 'footer.php';
+include_once 'includes/footer.php';
 ?>

@@ -1,5 +1,5 @@
 <?php
-include_once 'header.php';
+include_once 'includes/header.php';
 require_once 'includes/functions.inc.php';
 require_once 'includes/dbh.inc.php';
 
@@ -8,8 +8,8 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] == "1") {
     exit();
 }
 
-include_once "admin-inwindow-controls.php"; //Gives the ability to change between edit mode and read-only mode
-include_once "tablekey.php";
+include_once "includes/admin-inwindow-controls.php"; //Gives the ability to change between edit mode and read-only mode
+include_once "includes/tablekey.php";
 ?>
 <hr class="seperator2">
 <h2 class="centre">Your Departments</h2>
@@ -189,4 +189,4 @@ function printValuesFromCompetency($conn, $compArray, $memberUsers, $order){//Ac
 
 
 
-include_once 'footer.php';
+include_once 'includes/footer.php';
