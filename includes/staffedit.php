@@ -3,8 +3,8 @@
 require_once 'dbh.inc.php';
 require_once 'functions.inc.php';
 
-include_once 'modifyusers.inc.php';
-include_once 'signup.inc.php';
+require_once 'modifyusers.inc.php';
+require_once 'signup.inc.php';
 ?>
 <!----
 //
@@ -34,7 +34,7 @@ include_once 'signup.inc.php';
             while ($row = mysqli_fetch_array($result)) {
                 echo "<tr>";
 
-                echo "<td>" . "<input type=\"checkbox\" id=\"" . $row["UserID"] . "-checkbox-users-staffedit\" name=\"users[]\" value=\"" . $row["UserID"] . "\">" . "</td>";     //Creates Checkbox
+                echo "<td><label>" . "<input type=\"checkbox\" id=\"" . $row["UserID"] . "-checkbox-users-staffedit\" name=\"users[]\" value=\"" . $row["UserID"] . "\">" . "</label></td>";     //Creates Checkbox
                 echo "<td><label for=\"" . $row["UserID"] . "-checkbox-users-staffedit\">" . namePrint($_SESSION, $row) . "</label></td>";   //Gives name
                 echo "<td>" . $row["UUsername"] . "</td>";
                 echo "<td>" . ($row["URole"] == 3 ? "Admin" : ($row["URole"] == 2 ? "Manager" : "Staff")) . "</td>"; //if is a 3 in the global role, is admin, otherwise is not
@@ -65,7 +65,7 @@ include_once 'signup.inc.php';
 
         while ($group = mysqli_fetch_array($groups)) { //Loops through entries in array
             echo "<tr>";
-            echo "<td>" . "<input type=\"checkbox\" id=\"" . $group["GroupID"] . "-checkbox-groups-staffedit\" name=\"groups[]\" value=\"" . $group["GroupID"] . "\">" . "</td>"; //Creates Checkbox
+            echo "<td><label>" . "<input type=\"checkbox\" id=\"" . $group["GroupID"] . "-checkbox-groups-staffedit\" name=\"groups[]\" value=\"" . $group["GroupID"] . "\">" . "</label></td>"; //Creates Checkbox
             echo "<td><label for=\"" . $group["GroupID"] . "-checkbox-groups-staffedit\">" . $group['GName'] . "</label></td>"; //Gives name
             echo "</tr>";
         }
@@ -193,6 +193,3 @@ include_once 'signup.inc.php';
     <br>
 </section>
 
-<br>
-<br>
-<?php

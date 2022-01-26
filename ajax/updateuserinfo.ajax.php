@@ -1,5 +1,5 @@
 <?php
-
+session_start();
 require_once '../includes/functions.inc.php';
 require_once '../includes/dbh.inc.php';
 if (isset($_POST["id"]) && isset($_POST["name"]) || isset($_POST["usr"]) || isset($_POST["psw"])) {

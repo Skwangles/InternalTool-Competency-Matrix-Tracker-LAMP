@@ -198,6 +198,19 @@ td {
     height: 100%;
 }
 
+td label {
+    display: block;
+    text-align: center;
+    /* border: 1px solid #f00; - I couldn't figure out how to make the label fill the entire TD heighwise */
+    min-height: 100%;
+    cursor: pointer;
+    /* for the latest browsers which support min-height */
+    height: auto !important;
+    /* for newer IE versions */
+    height: 100%;
+    /* the only height-related attribute that IE6 does not ignore  */
+}
+
 th {
     background-color: #207928;
 }
@@ -229,7 +242,6 @@ label {
     height: auto !important;
     /* for newer IE versions */
     height: 100%;
-    width: 100%;
     /* the only height-related attribute that IE6 does not ignore  */
 }
 
@@ -316,6 +328,7 @@ Error Styling
     100% {
         opacity: 0;
         display: none;
+        height: 0px;
     }
 }
 

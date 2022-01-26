@@ -478,20 +478,20 @@ function isCompInIndividualUser($conn, $comp, $userid)
 //User Summaries--------------------------------------------------
 //
 
-function displayRoleValues($conn, $setOfItems, $order)
+function displayRoleValues($conn, $roles, $order)
 { //Takes a set of roles to print out, and the order which the user names must appear - prints out the table (is not a stand alone table, requires additional <table> tags)
     //1. connection to the database, 2. array of items to loop (roles, or groups), 3. Name order, 4. sql which finds the members, 5. function for the joining table, 6. function which gets the summary values
-    if (mysqli_num_rows($setOfItems) <= 0) {
+    if (mysqli_num_rows($roles) <= 0) {
         emptyArrayError();
     } else {
-        while ($items = mysqli_fetch_row($setOfItems)) {
+        while ($role = mysqli_fetch_row($roles)) {
             //--Value retrieval--
-            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $items[1] . "</th></tr>";
-            $competencies = CompetencyGroupFromGroup($conn, $items[0]); //Gets all the users associated with this group/role
+            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $role[1] . "</th></tr>";
+            $competencies = CompetencyRolesFromRoles($conn, $role[0]); //Gets all the users associated with this group/role
             if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
                 emptyArrayError();
             } else {
-                $memberUsers = mysqli_query($conn, "SELECT UserID FROM users WHERE URole = '" . $items[0] . "';");
+                $memberUsers = mysqli_query($conn, "SELECT UserID FROM users WHERE URole = '" . $role[0] . "';");
                 printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
             }
         }
@@ -504,19 +504,19 @@ function displayRoleValues($conn, $setOfItems, $order)
     }
 }
 
-function displayGroupValues($conn, $setOfItems, $order)
+function displayGroupValues($conn, $groups, $order)
 { //Takes a set of groups to print out, and the order which the user names must appear - prints out the table (is not a stand alone table, requires additional <table> tags)
-    if (mysqli_num_rows($setOfItems) <= 0) {
+    if (mysqli_num_rows($groups) <= 0) {
         emptyArrayError();
     } else {
-        while ($items = mysqli_fetch_row($setOfItems)) {
+        while ($group = mysqli_fetch_row($groups)) {
             //--Value retrieval--
-            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $items[1] . "</th></tr>";
-            $competencies = CompetencyGroupFromGroup($conn, $items[0]); //Gets all the users associated with this group/role
+            echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $group[1] . "</th></tr>";
+            $competencies = CompetencyGroupFromGroup($conn, $group[0]); //Gets all the users associated with this group/role
             if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
                 emptyArrayError();
             } else {
-                $memberUsers = mysqli_query($conn, "SELECT Users FROM usergroups WHERE Groups = '" . $items[0] . "';");
+                $memberUsers = mysqli_query($conn, "SELECT Users FROM usergroups WHERE Groups = '" . $group[0] . "';");
                 printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
             }
         }
