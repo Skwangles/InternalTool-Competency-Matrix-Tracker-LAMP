@@ -23,9 +23,9 @@ if (isset($_POST["id"]) && isset($_POST["name"]) || isset($_POST["usr"]) || isse
         if (isset($_POST['role']) && isset($_POST['role']) != "") {
             if ($id != $_SESSION["userid"]) { //Cannot update own role. 
                 mysqli_query($conn, "UPDATE users SET URole = '" . mysqli_escape_string($conn, $_POST['role']) . "' WHERE UserID = '" . $id . "';"); //Overwrites role with new one
-                managerRoleSwitch($conn, $id);//Juggles role if it is 1, to be manager if the user manages any roles - does nothing if the user is now an Admin
+                managerRoleSwitch($conn, $id); //Juggles role if it is 1, to be manager if the user manages any roles - does nothing if the user is now an Admin
                 updateUserCompetencies($conn, $id);
-            }else{
+            } else {
                 echo json_encode(array("status" => "fail - cannot change own role"));
             }
         }

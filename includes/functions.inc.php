@@ -444,11 +444,6 @@ function namePrint($sesh, $user, $showLink = false) //Appends (YOU) to the name,
     }
 }
 
-function displayNumberKey() //Displays the Table Key - i.e. "0" = "Not Trained"
-{
-    echo "<h4 class=\"centre\">Table Key</h4><table class=\"centre\" style='font-size:70%' border=\"1\"><tr><th>Number</th><th>Meaning</th></tr><tr><td>0</td><td>Not Trained</td></tr><tr><td>1</td><td>Trained</td></tr><tr><td>2</td><td>Can Demonstrate Competency</td></tr><tr><td>3</td><td>Can Train Others</td></tr></table>";
-}
-
 function formatPercent($summaryInfo) //Takes in an array entry, and turns it into a percentage of the correct format
 {
     if ($summaryInfo["items"] > 0) {

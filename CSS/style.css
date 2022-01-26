@@ -2,7 +2,7 @@ body {
     justify-content: center;
     display: block;
     margin: 0 auto;
-    background-color: #389E47;
+    background-color: #389e47;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -97,29 +97,31 @@ Button Styling
     border: 1px;
     padding: 14px 28px;
     font-size: 16px;
+    border-radius: 3px;
     cursor: pointer;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
 }
 
-input[type=text],
-input[type=password],
+input[type="text"],
+input[type="password"],
 textarea {
     width: 20%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    box-sizing: border-box;
-    border: 2px solid red;
-    border-radius: 4px;
+    padding: 15px;
+    margin: 5px 0 22px 0;
+    border-radius: 3px;
+    border: none;
+    background: #f1f1f1;
 }
 
-input[type=text]:focus,
-input[type=password]:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
 textarea:focus,
-input[type=number]:focus,
+input[type="number"]:focus,
 .editbox:focus {
-    background-color: lightblue;
+    background-color: #ddd;
+    outline: none;
 }
 
 
@@ -128,7 +130,7 @@ For Admin edit textboxes
 -important so it overrides unneeded css
 */
 
-input[type=number],
+input[type="number"],
 .editbox {
     width: max-content !important;
     padding: 0px 12px !important;
@@ -153,15 +155,27 @@ select {
     background-color: #f1f1f1;
 }
 
-input[type=button],
-input[type=submit] {
-    background-color: #4CAF50;
+input[type="button"],
+input[type="submit"] {
+    background-color: #4caf50;
+    border-radius: 3px;
     border: none;
     color: white;
     padding: 16px 32px;
     text-decoration: none;
     margin: 4px 2px;
     cursor: pointer;
+}
+
+
+/*
+Table key
+*/
+
+.tablekey {
+    position: fixed;
+    left: 10px;
+    bottom: 20px;
 }
 
 
@@ -221,7 +235,13 @@ label {
 hr.seperator {
     border-top: 8px solid rgb(32, 117, 47);
     border-radius: 5px;
-    width: 60%;
+    width: 100%;
+}
+
+hr.seperator2 {
+    border-top: 8px solid rgb(32, 117, 47);
+    border-radius: 5px;
+    width: 30%;
 }
 
 
@@ -250,9 +270,12 @@ Error Styling
 */
 
 .error {
-    padding: 10px;
+    padding: 10px 30px;
+    font-size: large;
     background: green;
     color: white;
+    position: fixed;
+    width: 100%;
 }
 
 .error {
@@ -269,23 +292,23 @@ Error Styling
 
 @keyframes cssAnimation {
     0% {
-        opacity: 1;
+        opacity: 0.9;
         display: block;
     }
     /* 60 sec : visible */
-    44% {
-        opacity: 1;
+    30% {
+        opacity: 0.8;
         display: block;
     }
     /* 62 sec : start fading out */
     55% {
-        opacity: 1;
+        opacity: 0.7;
         display: block;
     }
     /* 63 sec : not visible */
     60% {
         opacity: 0;
-        display: block;
+        display: none;
     }
     /* 64 sec */
     100% {
@@ -314,7 +337,7 @@ Modified from https://www.w3schools.com/css/css_tooltip.asp
     word-wrap: break-word;
     max-width: 300px;
     background-color: rgb(0, 0, 0);
-    opacity: .7;
+    opacity: 0.7;
     color: #fff;
     text-align: center;
     border-radius: 6px;
@@ -338,6 +361,7 @@ Admin controls
     margin-left: auto;
     margin-right: auto;
     text-align: center;
+    border-radius: 3px;
     display: block;
 }
 
@@ -347,7 +371,7 @@ Admin controls
 }
 
 .adminbuttons {
-    background-color: #008B8B;
+    background-color: #008b8b;
 }
 
 
@@ -416,6 +440,7 @@ Button used to open the contact form - fixed at the bottom of the page */
     border: none;
     cursor: pointer;
     opacity: 0.8;
+    border-radius: 3px;
     width: max-content;
 }
 
@@ -425,8 +450,8 @@ Button used to open the contact form - fixed at the bottom of the page */
 .form-popup {
     display: none;
     position: absolute;
-    background-color: #389E47;
-    border: 3px solid #256B30;
+    background-color: #389e47;
+    border: 3px solid #256b30;
     z-index: 9;
 }
 
@@ -436,15 +461,15 @@ Button used to open the contact form - fixed at the bottom of the page */
 .form-container {
     max-width: 300px;
     padding: 10px;
-    background-color: #389E47;
+    background-color: #389e47;
 }
 
 
 /* Full-width input fields */
 
-.form-container input[type=text],
-.form-container input[type=password] {
-    width: 100%;
+.form-container input[type="text"],
+.form-container input[type="password"] {
+    width: 90%;
     padding: 15px;
     margin: 5px 0 22px 0;
     border: none;
@@ -454,8 +479,8 @@ Button used to open the contact form - fixed at the bottom of the page */
 
 /* When the inputs get focus, do something */
 
-.form-container input[type=text]:focus,
-.form-container input[type=password]:focus {
+.form-container input[type="text"]:focus,
+.form-container input[type="password"]:focus {
     background-color: #ddd;
     outline: none;
 }
@@ -464,7 +489,7 @@ Button used to open the contact form - fixed at the bottom of the page */
 /* Set a style for the submit/login button */
 
 .form-container .btn {
-    background-color: #04AA6D;
+    background-color: #04aa6d;
     color: white;
     padding: 16px 20px;
     border: none;

@@ -1,5 +1,4 @@
 <?php
-include_once 'header.php';
 require_once 'includes/functions.inc.php';
 require_once 'includes/dbh.inc.php';
 
@@ -8,12 +7,12 @@ if (!isset($_SESSION["role"]) || $_SESSION["role"] == "1") {
     exit();
 }
 
-
-
 include_once "admin-inwindow-controls.php"; //Gives the ability to change between edit mode and read-only mode
-
+include_once "tablekey.php";
 ?>
+<hr class="seperator2">
 <h2 class="centre">Your Departments</h2>
+<hr class="seperator2">
 <?php
 $usersgroups = UserGroupFromUserWhereManager($conn, $_SESSION["userid"]);
 while ($group = mysqli_fetch_array($usersgroups)) {
@@ -59,12 +58,6 @@ while ($group = mysqli_fetch_array($usersgroups)) {
 <?php
 } //--End of group while loop
 
-//
-//Table Key
-//
-displayNumberKey();
-
-
 if ($_SESSION["role"] == 3) { //Admin can see all groups
 
     //Order specific arrays - 1. Contains the index=>userid, 2. contains the userid=>index, 3. contains Userid=>names
@@ -81,11 +74,12 @@ $Allusers = getUsers($conn);
     //
 
 ?>
-
-
+<br>
+<br>
+<hr class="seperator2">
     <h2 class="centre">ALL groups & users</h2>
 
-    <hr class="seperator">
+    <hr class="seperator2">
     <div class="centre" style="overflow-x:auto; max-width:90%; z-index: 5; ">
     <table border="1" class="centre" style="empty-cells: hide;  ">
         <!-- Table with border of 1, and any empty cells are hidden -->

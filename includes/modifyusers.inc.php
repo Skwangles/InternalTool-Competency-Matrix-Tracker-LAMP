@@ -13,7 +13,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
             }
         }
     }
-    header("location: ../staffedit.php?error=none#AddRemoveGR");
+    header("location: ../admin.php?error=none#AddRemoveGR");
     exit();
 } else if (isset($_POST["removeG"]) && isset($_POST["users"]) && isset($_POST["groups"])) { //If remove group was selected - remove group
     $selectedUsers = $_POST["users"];
@@ -24,7 +24,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
             updateUserCompetencies($conn, $userid);
         }
     } //--foreach end--
-    header("location: ../staffedit.php?error=none#AddRemoveGR");
+    header("location: ../admin.php?error=none#AddRemoveGR");
     exit();
 } else if (isset($_POST["roleUpdate"]) && isset($_POST["users"]) && isset($_POST["role"])) { //If role update was selected - update role
     $users = $_POST["users"];
@@ -36,7 +36,7 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
         updateUserCompetencies($conn, $userid);
     }
     updateSession($conn, $_SESSION["userid"]); //Makes sure if the user is updated, that they would have correct variables
-    header("location: ../staffedit.php?error=none#AddRemoveGR");
+    header("location: ../admin.php?error=none#AddRemoveGR");
     exit();
 }
 //
@@ -47,9 +47,9 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
 elseif (isset($_POST["delete"]) && isset($_POST["userradio"])) {
     if ($_POST["userradio"] != $_SESSION["userid"]) { //Cannot delete yourself. 
         mysqli_query($conn, "DELETE FROM users WHERE UserID = '" . $_POST["userradio"] . "';"); //Deletes user from the system
-        header("location: ../staffedit.php?error=none#individualusers");
+        header("location: ../admin.php?error=none#individualusers");
         exit();
     }
-    header("location: ../staffedit.php?error=invalidcall#individualusers"); //Returns error
+    header("location: ./admin.php?error=invalidcall#individualusers"); //Returns error
     exit();
 }

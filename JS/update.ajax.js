@@ -18,11 +18,8 @@ function updateValue(userid, competencyid, value) { //Updates the user values wh
                 console.log("AJAX Success, Processing failure");
             }
         },
-        error: function(xhr, error) {
-            //showError("Value update failed, please try again later...");
-        }
+        error: function(xhr, error) {}
     });
-    return false;
 }
 
 function switchEditMode() { //Updates the edit mode for Admins from edit everything, to just READ-ONLY
@@ -35,11 +32,9 @@ function switchEditMode() { //Updates the edit mode for Admins from edit everyth
                 window.location.reload(); //updates all values on the page
             }
         },
-        error: function(xhr, error) {
-            //showError("Mode switch failed, please try again later...");
-        }
+        error: function(xhr, error) {}
     });
-    return false;
+
 }
 
 function updateManager(userid, groupid, value) {
@@ -54,19 +49,15 @@ function updateManager(userid, groupid, value) {
             if (status == "ok") {
                 var id = userid + "-" + groupid + "-select";
                 document.getElementById(id).value = response.Value; //updates the value to what the internal value is. 
-                //showError("Update successful");  
             }
-            return false;
+            return;
         },
-        error: function(xhr, error) {
-            // showError("Manager update failed, please try again later...");
-        }
+        error: function(xhr, error) {}
     });
-    return false;
 }
 
 
-function UpdateUserValuesFromForm(formID, userid) {
+function UpdateUserValuesFromForm(formID) {
 
     var datastring = $("#" + formID).serialize();
     $.ajax({
@@ -89,11 +80,10 @@ function UpdateUserValuesFromForm(formID, userid) {
         }
     });
     location.reload();
-    window.location.href = location.protocol + '//' + location.host + location.pathname + "#formDiv-" + userid; //reloads the page, with the desired setting window still in focus
-    return false;
+    window.location.href = location.protocol + '//' + location.host + location.pathname + "#individualusers"; //reloads the page, with the desired setting window still in focus
 }
 
-function deleteUser(formID, userID) {
+function deleteUser(userID) {
     $.ajax({
         type: 'POST',
         url: 'ajax/deleteuser.ajax.php',
@@ -110,6 +100,5 @@ function deleteUser(formID, userID) {
         error: function(xhr, error) {}
     });
     location.reload();
-    window.location.href = location.protocol + '//' + location.host + location.pathname + "#formDiv-" + userid; //reloads the page, with the desired setting window still in focus
-    return false;
+    window.location.href = location.protocol + '//' + location.host + location.pathname + "#individualusers"; //reloads the page, with the desired setting window still in focus
 }

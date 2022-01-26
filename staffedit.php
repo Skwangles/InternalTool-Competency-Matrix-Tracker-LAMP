@@ -1,6 +1,4 @@
 <?php
-include_once 'header.php';
-
 //----------Not sure if this is secure, this is for the loading of the group list, have a look at alternative ways------
 require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
@@ -24,7 +22,7 @@ include_once 'includes/signup.inc.php';
     $result = mysqli_query($conn, "SELECT * FROM users");
     //Table is inside a form
     ?>
-    <form class="centre" action="staffedit.php" method="post">
+    <form class="centre" action="admin.php" method="post">
         <table class="centre" border="1">
             <tr>
                 <th>Select</th>
@@ -39,8 +37,8 @@ include_once 'includes/signup.inc.php';
             while ($row = mysqli_fetch_array($result)) {
                 echo "<tr>";
 
-                echo "<td>" . "<input type=\"checkbox\" id=\"" . $row["UserID"] . "-cbu\" name=\"users[]\" value=\"" . $row["UserID"] . "\">" . "</td>";     //Creates Checkbox
-                echo "<td><label for=\"" . $row["UserID"] . "-cbu\">" . namePrint($_SESSION, $row) . "</label></td>";   //Gives name
+                echo "<td>" . "<input type=\"checkbox\" id=\"" . $row["UserID"] . "-checkbox-users-staffedit\" name=\"users[]\" value=\"" . $row["UserID"] . "\">" . "</td>";     //Creates Checkbox
+                echo "<td><label for=\"" . $row["UserID"] . "-checkbox-users-staffedit\">" . namePrint($_SESSION, $row) . "</label></td>";   //Gives name
                 echo "<td>" . $row["UUsername"] . "</td>";
                 echo "<td>" . ($row["URole"] == 3 ? "Admin" : ($row["URole"] == 2 ? "Manager" : "Staff")) . "</td>"; //if is a 3 in the global role, is admin, otherwise is not
                 echo "<td><ul>";
@@ -70,8 +68,8 @@ include_once 'includes/signup.inc.php';
 
         while ($group = mysqli_fetch_array($groups)) { //Loops through entries in array
             echo "<tr>";
-            echo "<td>" . "<input type=\"checkbox\" id=\"" . $group["GroupID"] . "-cb\" name=\"groups[]\" value=\"" . $group["GroupID"] . "\">" . "</td>"; //Creates Checkbox
-            echo "<td><label for=\"" . $group["GroupID"] . "-cb\">" . $group['GName'] . "</label></td>"; //Gives name
+            echo "<td>" . "<input type=\"checkbox\" id=\"" . $group["GroupID"] . "-checkbox-groups-staffedit\" name=\"groups[]\" value=\"" . $group["GroupID"] . "\">" . "</td>"; //Creates Checkbox
+            echo "<td><label for=\"" . $group["GroupID"] . "-checkbox-groups-staffedit\">" . $group['GName'] . "</label></td>"; //Gives name
             echo "</tr>";
         }
         echo "</table>";
@@ -93,7 +91,7 @@ include_once 'includes/signup.inc.php';
 <br>
 <br>
 
-<hr class="seperator">
+<hr class="seperator2">
 <section id="individualusers">
     <h1 class="centre">Modify Specific Users</h1>
     <table class="centre" border="1">
@@ -108,7 +106,6 @@ include_once 'includes/signup.inc.php';
         if (mysqli_num_rows($users) <= 0) {
             emptyArrayError();
         } else {
-            echo "<script> items = []</script>";
             while ($user = mysqli_fetch_array($users)) {
                 echo "<tr>";
                 echo "<td><p id=\"" . $user["UserID"] . "-name\">" . $user["UName"] . "</p></td>";
@@ -149,7 +146,7 @@ include_once 'includes/signup.inc.php';
                             <button type=\"button\" class=\"btn cancel\" onclick=\"closeForm('formDiv-" . $user["UserID"] . "')\">Close</button>
                             <br>
                             <br>
-                            <button type=\"button\" class=\"dangerous\" onclick=\"deleteUser('formDiv-" . $user["UserID"] . "', '" . $user["UserID"] . "')\">Delete user PERMANENTLY</button>
+                            <button type=\"button\" class=\"dangerous\" onclick=\"deleteUser('" . $user["UserID"] . "')\">Delete user PERMANENTLY</button>
                         
                         </form>
                         
@@ -181,10 +178,10 @@ include_once 'includes/signup.inc.php';
 //
 //
 -->
-<hr class="seperator">
+<hr class="seperator2">
 <section id="StaffManage">
     <h3 class="centre">Add Staff Login</h3>
-    <form class="centre" action="staffedit.php" method="post">
+    <form class="centre" action="admin.php" method="post">
         <input type="text" name="name" placeholder="Name" maxlength="20">
         <input type="text" name="username" placeholder="Username" maxlength="20">
         <input type="password" name="pwd" placeholder="password" maxlength="25">

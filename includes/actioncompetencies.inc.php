@@ -5,16 +5,16 @@ require_once 'functions.inc.php';
 if (isset($_POST["createC"]) && isset($_POST["competency"])) { //----------------Create Competency----------------
     $name = $_POST["competency"]; //This is where the name of the competency is stored
     if (emptyInputs($name, $name, $name)) {
-        header("location: ../gcedit.php?error=emptyinput");
+        header("location: ../admin.php?error=emptyinput");
         exit();
     }
     if (!isset($_POST["competency"])) { //must be empty, if not set
-        header("location: ../gcedit.php?error=emptyinput#CompetencyManage");
+        header("location: ../admin.php?error=emptyinput#CompetencyManage");
         exit();
     }
     addCompetency($conn, $name, isset($_POST["description"]) ? $_POST["description"] : ""); //Adds competency to the database - alsong with description
 
-    header("location: ../gcedit.php?error=none#CompetencyManage"); //Returns back to edit page - success
+    header("location: ../admin.php?error=none#CompetencyManage"); //Returns back to edit page - success
     exit();
 } elseif (isset($_POST["addC"]) && isset($_POST["competencies"])) { //--------------------------------ADD Competency To Group---------------------
     $selectedCompetencies = $_POST["competencies"]; //Selected values in the form
@@ -62,7 +62,7 @@ if (isset($_POST["createC"]) && isset($_POST["competency"])) { //---------------
         updateUserCompetencies($conn, $user["UserID"]);
     }
 
-    header("location: ../gcedit.php?error=none#AddRemoveCG");
+    header("location: ../admin.php?error=none#AddRemoveCG");
     exit();
 } elseif (isset($_POST["removeC"]) && isset($_POST["competencies"])) { //-------------------------Remove Competency From Group------------------------
     $selectedCompetencies = $_POST["competencies"];
@@ -97,7 +97,7 @@ if (isset($_POST["createC"]) && isset($_POST["competency"])) { //---------------
     while ($user = mysqli_fetch_assoc($users)) {
         updateUserCompetencies($conn, $user["UserID"]);
     }
-    header("location: ../gcedit.php#AddRemoveCG");
+    header("location: ../admin.php#AddRemoveCG");
     exit();
 } elseif (isset($_POST["permdeleteC"]) && isset($_POST["competencyradio"])) { //--------------------------Delete Competency--------------------
 
@@ -108,18 +108,18 @@ if (isset($_POST["createC"]) && isset($_POST["competency"])) { //---------------
                 updateUserCompetencies($conn, $user["UserID"]);
                 
             }
-    header("location: ../gcedit.php?error=none#CompetencyManage");
+    header("location: ../admin.php?error=none#CompetencyManage");
     exit();
 } 
 elseif (isset($_POST["changeCNameC"]) && isset($_POST["cnameChange"]) && isset($_POST["competencyradio"])) {
      if($_POST["cnameChange"] != ""){
     changeCName($conn, $_POST["competencyradio"], $_POST["cnameChange"]);
      }
-    header("location: ../gcedit.php?error=none#CompetencyManage");
+    header("location: ../admin.php?error=none#CompetencyManage");
     exit();
 }
 elseif (isset($_POST["changeCDescriptionC"]) && isset($_POST["description"]) && isset($_POST["competencyradio"])) {
    changeCDescription($conn, $_POST["competencyradio"], $_POST["description"]);
-   header("location: ../gcedit.php?error=none#CompetencyManage");
+   header("location: ../admin.php?error=none#CompetencyManage");
    exit();
 }
