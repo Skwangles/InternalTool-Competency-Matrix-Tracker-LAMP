@@ -89,7 +89,6 @@ function UpdateUserValuesFromForm(formID, userid) {
         }
     });
     location.reload();
-    document.getElementById("se-accord").click();
     window.location.href = location.protocol + '//' + location.host + location.pathname + "#formDiv-" + userid; //reloads the page, with the desired setting window still in focus
     return false;
 }

@@ -10,9 +10,9 @@ include_once 'error.php';
         }
         else{
             ?>
-            <h1 class="centre">Login to see your competencies</h1>
-            <form action="login.php"><button class="actionbuttons">Go To Login</button></form>
+           
 <?php
+        include_once 'login.php';
         }
         ?>
 
