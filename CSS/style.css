@@ -276,6 +276,7 @@ Error Styling
     color: white;
     position: fixed;
     width: 100%;
+    display: none;
 }
 
 .error {

@@ -1,4 +1,5 @@
 <?php
+include_once 'header.php';
 require_once 'includes/functions.inc.php';
 require_once 'includes/dbh.inc.php';
 
