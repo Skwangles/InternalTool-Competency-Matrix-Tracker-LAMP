@@ -94,9 +94,9 @@ include_once 'includes/signup.inc.php';
     <h1 class="centre">Modify Specific Users</h1>
     <table class="centre" border="1">
         <tr>
-            <th>Select</th>
             <th>Name</th>
             <th>Username</th>
+            <th>Admin</th>
         </tr>
 
         <?php
@@ -106,8 +106,9 @@ include_once 'includes/signup.inc.php';
         } else {
             while ($user = mysqli_fetch_array($users)) {
                 echo "<tr>";
-                echo "<td><p id=\"" . $user["UserID"] . "-name\">" . $user["UName"] . "</p></td>";
+                echo "<td><p id=\"" . $user["UserID"] . "-name\">" . namePrint($_SESSION, $user) . "</p></td>";
                 echo "<td><p id=\"" . $user["UserID"] . "-username\">" . $user["UUsername"] . "</p></td>";
+                echo "<td><p id=\"" . $user["UserID"] . "-role\">" . ($user["URole"] == 3 ? "✓" : "✕") . "</p></td>";
                 //Testing having a form popup to edit the values
 
                 //The following provides the user values "edit" form
