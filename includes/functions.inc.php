@@ -199,7 +199,7 @@ function IsManagerOfGroup($conn, $userid, $groupid)
     if (mysqli_fetch_row(mysqli_query($conn, "SELECT
     isManager FROM usergroups
 WHERE
-    Users = " . $userid . " AND Groups = " . $groupid))[0] == 1) return true; //if is manager, true
+    Users = '" . $userid . "' AND Groups = '" . $groupid."';"))[0] == 1) return true; //if is manager, true
     return false;
 }
 
@@ -512,11 +512,13 @@ function displayGroupValues($conn, $groups, $order)
         while ($group = mysqli_fetch_row($groups)) {
             //--Value retrieval--
             echo "<tr><th colspan=\"100%\" class=\"tableentry\">" . $group[1] . "</th></tr>";
+
             $competencies = CompetencyGroupFromGroup($conn, $group[0]); //Gets all the users associated with this group/role
             if (mysqli_num_rows($competencies) <= 0) { //Checking for empty values
                 emptyArrayError();
             } else {
                 $memberUsers = mysqli_query($conn, "SELECT Users FROM usergroups WHERE Groups = '" . $group[0] . "';");
+                printIsManagerCheckbox($conn, $group[0], $memberUsers, $order); //Prints whether the user is a manager - if edit mode- gives a checkbox to change if manager
                 printValuesFromCompetency($conn, $competencies, $memberUsers, $order);
             }
         }
@@ -528,6 +530,48 @@ function displayGroupValues($conn, $groups, $order)
         echo "</tr><tr><td colspan=\"100%\" class=\"blank_td\"></td></tr>"; //Black line to seperate areas
     }
 }
+
+function printIsManagerCheckbox($conn, $groupid, $memberUsers, $order)
+{ //Creates an empty string array, using the memberuser's index find where to put the checkbox/check
+    if (session_status() === PHP_SESSION_NONE) { //if session is not started, start it. 
+        session_start();
+    }
+    $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
+    mysqli_data_seek($memberUsers, 0); //Resets pointer to 0
+    while ($memberUser = mysqli_fetch_row($memberUsers)) { //Gives a heading to all users - $memberUser is the UserID, $rowPrint is an array formatted {userID1=>"", userID2=>""}
+        if ($_SESSION["editMode"] == '1') {
+            $rowPrint[$memberUser[0]] = "<label><input type=\"checkbox\" id=\"".$memberUser[0]. "-" . $groupid . "-select\" value=\"1\" onClick=\"updateManager('" . $memberUser[0] . "', '" . $groupid . "', this)\"  " . (IsManagerOfGroup($conn, $memberUser[0], $groupid) ? "checked" : "") . "></label>";
+        } else if ($_SESSION["editMode"] == '0') {
+            $rowPrint[$memberUser[0]] = "<p style=\"font-size:12px; margin:0px;\"><b>" . (IsManagerOfGroup($conn, $memberUser[0], $groupid) ? "✓" : "✕") . "</b></p>";
+        }
+    }
+    //--Printing--
+    echo "<tr><th style=\"font-size:12px;\"><i>Is Manager</i></th>"; //Empty header for alignment
+    displayRowFromArray($order, $rowPrint); //Displays the values of the current row
+    echo "</tr>";
+}
+
+//
+//Code Reuse Functions
+//
+
+function printValuesFromCompetency($conn, $compArray, $memberUsers, $order)
+{ //Accpets array of competencies to loop, users to check for (Only users as a whole a part of the joining table) and the order of names as a whole
+    while ($competency = mysqli_fetch_assoc($compArray)) { //Adds a row 
+        //--Filling the value array--
+        $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating - $memberUser is the UserID, $rowPrint is an array formatted {userID1=>"", userID2=>""}
+        mysqli_data_seek($memberUsers, 0); //Resets pointer to 0
+        while ($memberUser = mysqli_fetch_row($memberUsers)) { //Gives a heading to all users        
+            $rowPrint[$memberUser[0]] = displayUserRatings($conn, $competency["CompetencyID"], $memberUser[0]); //Adds to the user key the value they had 
+        }
+        //--Printing--
+        echo "<tr><th>" . displayCompetencyName($competency) . "</th>"; //Displays the competency - with Description if present
+        displayRowFromArray($order, $rowPrint); //Displays the values of the current row
+        echo "</tr>";
+    }
+}
+
+
 
 function summaryRowPrint($conn, $Allusers, $order, $summaryGetFunction)
 { //Takes a list of users, the order to print out and the function which gives the percentages - prints out a formatted row in the place it is called

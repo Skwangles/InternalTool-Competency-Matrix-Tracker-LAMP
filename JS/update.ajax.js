@@ -46,9 +46,10 @@ function updateManager(userid, groupid, value) {
         dataType: 'JSON',
         success: function(response) {
             var status = response.status;
+            var value = response.Value;
             if (status == "ok") {
                 var id = userid + "-" + groupid + "-select";
-                document.getElementById(id).value = response.Value; //updates the value to what the internal value is. 
+                document.getElementById(id).checked = (value == "1" ? true : false); //updates the value to what the internal value is. 
             }
             return;
         },

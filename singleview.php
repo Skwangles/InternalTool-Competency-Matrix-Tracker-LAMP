@@ -68,15 +68,14 @@ if (isset($_GET["userid"])) {
 function displaySingleViewRoleAndGroup($conn, $sets, $compGetFunction, $uservalues)
 {
     while ($set = mysqli_fetch_row($sets)) {
-        if($_SESSION["editMode"] == '1' && isset($set[2])){//Determines if a marker needs to be added to control the Manager option for a user -- only the groups sets value contains isManager values
-            $add = "<td><label>Is Manager<input type=\"checkbox\" onclick=\"updateManager(".$uservalues["UserID"].",". $set[0].", this)\" ".($set[2] == "1"?"checked":"")."></label></td>";//If is a group value, adds check box
-        }else if(isset($set[2])){//Only groups contains a index 2
-            $add = "<td>".($set[2] == "1" ? "(Manager)":"") ."</td>";
-        }
-        else{
+        if ($_SESSION["editMode"] == '1' && isset($set[2])) { //Determines if a marker needs to be added to control the Manager option for a user -- only the groups sets value contains isManager values
+            $add = "<td><label>Is Manager<input type=\"checkbox\" id=\"" . $uservalues["UserID"] . "-" . $set[0] . "-select\" onclick=\"updateManager(" . $uservalues["UserID"] . "," . $set[0] . ", this)\" " . ($set[2] == "1" ? "checked" : "") . "></label></td>"; //If is a group value, adds check box
+        } else if (isset($set[2])) { //Only groups contains a index 2
+            $add = "<td>" . ($set[2] == "1" ? "(Manager)" : "") . "</td>";
+        } else {
             $add = "";
         }
-        echo "<tr><td><b>" . $set[1] . "</b></td>".$add ."</tr>";
+        echo "<tr><td><b>" . $set[1] . "</b></td>" . $add . "</tr>";
         $competencies = $compGetFunction($conn, $set[0]);
         if (mysqli_num_rows($competencies) <= 0) {
             emptyArrayError();

@@ -167,25 +167,6 @@ $Allusers = getUsers($conn);
 <?php
 }
 
-//
-//Code Reuse Functions
-//
-
-function printValuesFromCompetency($conn, $compArray, $memberUsers, $order){//Accpets array of competencies to loop, users to check for (Only users as a whole a part of the joining table) and the order of names as a whole
-    while ($competency = mysqli_fetch_assoc($compArray)) { //Adds a row 
-        //--Filling the value array--
-        $rowPrint = makeRowValuesFromUsers($order); //Gets the array which contains the userid=> current row rating
-        mysqli_data_seek($memberUsers, 0);//Resets pointer to 0
-        while ($memberUser = mysqli_fetch_row($memberUsers)) { //Gives a heading to all users        
-            $rowPrint[$memberUser[0]] = displayUserRatings($conn, $competency["CompetencyID"], $memberUser[0]); //Adds to the user key the value they had 
-        }
-        //--Printing--
-        echo "<tr><th>" . displayCompetencyName($competency) . "</th>"; //Displays the competency - with Description if present
-        displayRowFromArray($order, $rowPrint); //Displays the values of the current row
-        echo "</tr>";
-    }
-}
-
 
 
 
