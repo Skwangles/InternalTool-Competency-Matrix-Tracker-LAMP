@@ -12,7 +12,7 @@ if (isset($_POST["createG"]) && isset($_POST["groupname"])) {
         header("location: ../admin.php?error=none#GroupManage");
         exit();
 } elseif (isset($_POST["permdeleteG"]) && isset($_POST["groupradio"])) {
-        mysqli_query($conn, "DELETE FROM groups WHERE GroupID =" . $_POST["groupradio"]);
+        mysqli_query($conn, "DELETE FROM groups WHERE GroupID =" . mysqli_escape_string($conn, $_POST["groupradio"]));
 
         $users = getUsers($conn);
         while ($user = mysqli_fetch_assoc($users)) { //Updates all user's values
@@ -20,9 +20,9 @@ if (isset($_POST["createG"]) && isset($_POST["groupname"])) {
         }
         header("location: ../admin.php?error=none#GroupManage");
         exit();
-} elseif (isset($_POST["changeGNameG"]) && isset($_POST["gnameChange"]) && isset($_POST["groupradio"])) {
-        if ($_POST["gnameChange"] != "") {
-                changeGName($conn, $_POST["groupradio"], $_POST["gnameChange"]);
+} elseif (isset($_POST["changeGNameG"]) && isset($_POST["gnameNewValue"]) && isset($_POST["groupradio"])) {
+        if ($_POST["gnameNewValue"] != "") {
+                changeGName($conn, $_POST["groupradio"], $_POST["gnameNewValue"]);
         }
         
         header("location: ../admin.php?error=none#GroupManage");

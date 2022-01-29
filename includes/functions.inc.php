@@ -2,14 +2,14 @@
 //
 //Input Checking ---------------------
 //
-function emptyInputs($username, $password, $name) //Returns if a single value is empty
+function emptyInputs(...$entries) //Returns if a single value is empty
 {
-    if (empty($name) || empty($username) || empty($password)) { //Checks the values aren't empty
-        $result = true;
-    } else {
-        $result = false;
+    foreach ($entries as $entry) {
+        if (empty($entry)) { //Checks the values aren't empty
+            return true;
+        }
     }
-    return $result;
+    return false;
 }
 
 function invalidUser($username) //Determines if alphanumeric
@@ -547,7 +547,7 @@ function printIsManagerCheckbox($conn, $groupid, $memberUsers, $order)
     }
     //--Printing--
     echo "<tr><th style=\"font-size:12px;\"><i>Is Manager</i></th>"; //Empty header for alignment
-    displayRowFromArray($order, $rowPrint); //Displays the values of the current row
+    displayRowFromArray($order, $rowPrint, true); //Displays the values of the current row
     echo "</tr>";
 }
 

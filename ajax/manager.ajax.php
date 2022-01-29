@@ -1,8 +1,8 @@
 <?php
-
+session_start();
 require_once '../includes/functions.inc.php';
 require_once '../includes/dbh.inc.php';
-if(isset($_POST['UserID']) && isset($_POST['GroupID']) && isset($_POST['Value'])){
+if(isset($_POST['UserID']) && isset($_POST['GroupID']) && isset($_POST['Value']) && $_SESSION["role"] == "3"){
     $UserID = json_decode($_POST['UserID']);
     $GroupID = json_decode($_POST['GroupID']);
     $Value = json_decode($_POST['Value']);

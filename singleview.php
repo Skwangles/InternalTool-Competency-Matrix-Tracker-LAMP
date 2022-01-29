@@ -7,7 +7,7 @@ if (!isset($_SESSION["username"])) {
 
 require_once "includes/dbh.inc.php";
 require_once "includes/functions.inc.php";
-include_once "includes/admin-inwindow-controls.php"; //gives ability to switch between edit and read-only mode
+include_once "includes/editmode-controls.php"; //gives ability to switch between edit and read-only mode
 include_once "includes/tablekey.php";
 
 if (isset($_GET["userid"])) {

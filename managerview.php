@@ -1,21 +1,29 @@
 <?php
-include_once 'includes/header.php';
-require_once 'includes/functions.inc.php';
-require_once 'includes/dbh.inc.php';
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] == "1") {
+include_once 'includes/header.php';
+
+if (!isset($_SESSION["role"]) || ($_SESSION["role"] != "2" && $_SESSION["role"] != "3")) {
     header("location: index.php?error=invalidcall"); //If doesn't have the correct perms, kicks out
     exit();
 }
 
-include_once "includes/admin-inwindow-controls.php"; //Gives the ability to change between edit mode and read-only mode
+require_once 'includes/functions.inc.php';
+require_once 'includes/dbh.inc.php';
+
+include_once "includes/editmode-controls.php"; //Gives the ability to change between edit mode and read-only mode
 include_once "includes/tablekey.php";
+
+$order = makeUserOrder($conn);
 ?>
 <hr class="seperator2">
 <h2 class="centre">Your Departments</h2>
 <hr class="seperator2">
 <?php
 $usersgroups = UserGroupFromUserWhereManager($conn, $_SESSION["userid"]);
+if(mysqli_num_rows($usersgroups) <= 0){//Checks if there is atleast 1 group managed by that user
+    echo "<p class=\"centre\">You are not the manager of any departments!</p>";
+}
+else{
 while ($group = mysqli_fetch_array($usersgroups)) {
 ?>
     <div class="centre" style="overflow-x:auto; max-width:90%; ">
@@ -27,9 +35,10 @@ while ($group = mysqli_fetch_array($usersgroups)) {
             <th></th>
             <?php
             $Groupusers = UserGroupFromGroup($conn, $group["GroupID"]); //Gets all users in the current group
-            while ($groupuser = mysqli_fetch_array($Groupusers)) { //Gives a heading to all users
-                echo "<th>" . namePrint($_SESSION, $groupuser, true) . "</th>";
+            while ($groupuser = mysqli_fetch_array($Groupusers)) { //Gives a heading to all users - the order given by the database is assumed to match in the following Value fetching functions
+                echo "<th>" . namePrint($_SESSION, $groupuser, true) . (IsManagerOfGroup($conn, $groupuser["UserID"], $group["GroupID"]) ? "(M)" : "") . "</th>";//Prints name out with correct formatting, adds (M) if manager - Could have adapted the PrintIsManagerCheckbox for this.
             }
+            
             ?>
         </tr>
         <?php
@@ -57,9 +66,10 @@ while ($group = mysqli_fetch_array($usersgroups)) {
     </div>
 
 <?php
-} //--End of group while loop
+}
+}
 
-if ($_SESSION["role"] == 3) { //Admin can see all groups
+if ($_SESSION["role"] == 3) { //Only admins can see ALL groups
 
     //Order specific arrays - 1. Contains the index=>userid, 2. contains the userid=>index, 3. contains Userid=>names
     $order = makeUserOrder($conn);
@@ -149,7 +159,6 @@ $Allusers = getUsers($conn);
             <th colspan="100%" class="tabletitle"><b>Groups</b></th>
         </tr>
         <?php
-        //---The following is Largely reused code from the Roles area, except for specific areas where GroupID, CompetencyGroup and GName are referenced---
 
 
         //All the names in order

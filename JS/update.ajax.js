@@ -12,10 +12,9 @@ function updateValue(userid, competencyid, value) { //Updates the user values wh
                 document.getElementById(userid + "-" + competencyid + "-tb").value = res;
                 return; //updates the value to what the internal value is. 
             } else {
-                if (document.getElementById(callerid).value != "") { //If not empty, the input must be false
+                if (!empty(document.getElementById(callerid).value)) { //If not empty, the input must be false
                     document.getElementById(callerid).value = "";
                 }
-                console.log("AJAX Success, Processing failure");
             }
         },
         error: function(xhr, error) {}

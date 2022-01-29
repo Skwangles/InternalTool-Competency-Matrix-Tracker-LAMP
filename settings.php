@@ -6,11 +6,10 @@ require_once 'includes/dbh.inc.php';
 require_once 'includes/functions.inc.php';
 
 include_once 'includes/settings.inc.php';
-
-include_once 'includes/error.php';
 ?>
 <h1 class="centre"><b><?php echo $_SESSION["name"] ?></b></h1>
-<h2 class="centre">Your Username: <br><?php echo $_SESSION["username"] ?></h2>
+<h4 class="centre" style="color:#4C4C4C;">Your Username:</h4>
+<h2 class="centre"><?php echo $_SESSION["username"] ?></h2>
 
 <br>
 <br>

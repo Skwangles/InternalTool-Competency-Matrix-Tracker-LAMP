@@ -128,13 +128,13 @@ require_once 'signup.inc.php';
                             <h1>Change " . $user["UName"] . "'s Information</h1>
                             <input type=\"hidden\" value=\"" . $user["UserID"] . "\" name=\"id\">
                             <label for=\"name\"><b>Updated Name</b></label>
-                            <input type=\"text\" placeholder=\"" . $user["UName"] . "\" name=\"name\" value=\"" . $user["UName"] . "\">
+                            <input type=\"text\" placeholder=\"" . $user["UName"] . "\" name=\"name\" maxlength=\"20\" value=\"" . $user["UName"] . "\">
 
                             <label for=\"usr\"><b>Username</b></label>
-                            <input type=\"text\" placeholder=\"" . $user["UUsername"] . "\" name=\"usr\" value=\"" . $user["UUsername"] . "\">
+                            <input type=\"text\" placeholder=\"" . $user["UUsername"] . "\" name=\"usr\" maxlength=\"20\" value=\"" . $user["UUsername"] . "\">
 
                             <label for=\"psw\"><b>Password</b></label>
-                            <input type=\"password\" placeholder=\"New Password\" name=\"psw\">
+                            <input type=\"password\" placeholder=\"New Password\" maxlength=\"25\" name=\"psw\">
 
                             <label for=\"role\"><b>Is Admin</b></label>
                             <input type=\"hidden\" value=\"1\" name=\"role\">
@@ -192,4 +192,3 @@ require_once 'signup.inc.php';
     </form>
     <br>
 </section>
-
