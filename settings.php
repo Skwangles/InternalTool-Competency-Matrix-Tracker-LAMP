@@ -15,13 +15,13 @@ include_once 'includes/settings.inc.php';
 <br>
 <form class="centre" action="settings.php" method="post">
     <h3 class="centre">Change Your Username</h3>
-    <input type="text" name="usernameChange" maxlength="20">
+    <input type="text" name="usernameNewValue" maxlength="20">
     <button class="centre actionbuttons addbuttons" type="submit" name="changeUsername">Update Username</button>
 </form>
 
 <form class="centre" action="settings.php" method="post">
     <h3 class="centre">Change Your Password</h3>
-    <input type="text" name="passwordChange" maxlength="25">
+    <input type="text" name="passwordNewValue" maxlength="25">
     <button class="centre actionbuttons addbuttons" type="submit" name="changePassword">Update Password</button>
 </form>
 <br>
