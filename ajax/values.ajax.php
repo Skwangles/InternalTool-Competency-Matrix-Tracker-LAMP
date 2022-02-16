@@ -2,7 +2,7 @@
 session_start();
 require_once '../includes/functions.inc.php';
 require_once '../includes/dbh.inc.php';
-if(isset($_POST['UserID']) && isset($_POST['CompetencyID']) && isset($_POST['Value']) && $_SESSION["role"] == "3"){
+if(isset($_POST['UserID']) && isset($_POST['CompetencyID']) && isset($_POST['Value']) && $_SESSION["isAdmin"] == "1"){
     $UserID = json_decode($_POST['UserID']);
     $CompetencyID = json_decode($_POST['CompetencyID']);
     $Value = json_decode($_POST['Value']);

@@ -11,7 +11,7 @@ include_once "includes/editmode-controls.php"; //gives ability to switch between
 include_once "includes/tablekey.php";
 
 if (isset($_GET["userid"])) {
-    if ($_SESSION["role"] == "3"  ||  isManagerOfUser($conn, $_SESSION, $_GET["userid"]) && $_GET["userid"] != $_SESSION["userid"]) { //Checks if the logged-in-user managed the selected user-to-be-viewed, or If the user is Admin -- cannot view your own competencies in this manner, instead redirects you to the pure "singleview.php" page
+    if ($_SESSION["isAdmin"] == "1"  ||  isManagerOfUser($conn, $_SESSION, $_GET["userid"]) && $_GET["userid"] != $_SESSION["userid"]) { //Checks if the logged-in-user managed the selected user-to-be-viewed, or If the user is Admin -- cannot view your own competencies in this manner, instead redirects you to the pure "singleview.php" page
         $uservalues = array("UName" => mysqli_fetch_row(mysqli_query($conn, "SELECT UName FROM users WHERE UserID = '" . mysqli_real_escape_string($conn, $_GET["userid"]) . "';"))[0], "UserID" => $_GET["userid"]);
         echo "
         <br>

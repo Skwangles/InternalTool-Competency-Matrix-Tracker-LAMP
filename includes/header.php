@@ -29,10 +29,10 @@ session_start();
 
                 <?php
                 if (isset($_SESSION["username"])) {
-                    if ($_SESSION["role"] > 1) {
+                    if ($_SESSION["role"] == 2 || $_SESSION["isAdmin"] == 1) {
                         echo "<a href=\"managerview.php\">Your Department's Competencies</a>";
                     }
-                    if ($_SESSION["role"] == "3") { //If admin, shows admin options
+                    if ($_SESSION["isAdmin"] == "1") { //If admin, shows admin options
                 ?>
                         <a class="dropbtn" href="admin.php">Admin Panel</a>
                 <?php
@@ -48,4 +48,5 @@ session_start();
             </ul>
         </div>
     </nav>
-    <?php include_once 'error.php';?>
+    <?php 
+    include_once 'error.php';

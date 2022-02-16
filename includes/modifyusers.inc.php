@@ -26,18 +26,6 @@ if (isset($_POST["addG"]) && isset($_POST["users"]) && isset($_POST["groups"])) 
     } //--foreach end--
     header("location: ../admin.php?error=none#AddRemoveGR");
     exit();
-} else if (isset($_POST["roleUpdate"]) && isset($_POST["users"]) && isset($_POST["role"])) { //If role update was selected - update role
-    $users = $_POST["users"];
-    $role = $_POST["role"];
-    foreach ($users as $userid) { //Foreach user selected, update the Role to be the desired
-        if ($userid == $_SESSION["userid"]) continue; //Cannot update own role. 
-        mysqli_query($conn, "UPDATE users SET URole = '" . $role . "' WHERE UserID = '" . $userid . "';"); //Overwrites role with new one
-        managerRoleSwitch($conn, $userid);
-        updateUserCompetencies($conn, $userid);
-    }
-    updateSession($conn, $_SESSION["userid"]); //Makes sure if the user is updated, that they would have correct variables
-    header("location: ../admin.php?error=none#AddRemoveGR");
-    exit();
 }
 //
 //

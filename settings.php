@@ -27,6 +27,5 @@ include_once 'includes/settings.inc.php';
 <br>
 <?php
 //Handles error tags
-
 include_once 'includes/footer.php';
 ?>

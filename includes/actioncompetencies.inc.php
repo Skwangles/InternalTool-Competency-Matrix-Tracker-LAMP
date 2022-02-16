@@ -27,7 +27,7 @@ if (isset($_POST["createC"]) && isset($_POST["competency"])) { //---------------
         echo var_dump($selectedCompetencies);
         foreach ($selectedGroups as $groupid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competencyid) {
-                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM competencygroups WHERE Competencies = " . mysqli_escape_string($conn,$competencyid) . " AND Groups = " . mysqli_escape_string($conn,$groupid))) == false) { //If no value is found, then insert
+                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM competencygroups WHERE Competencies = '" . mysqli_escape_string($conn,$competencyid) . "' AND Groups = '" . mysqli_escape_string($conn,$groupid)."';")) == false) { //If no value is found, then insert
                     mysqli_query($conn, "INSERT INTO competencygroups (Competencies, Groups) VALUES ('" . mysqli_escape_string($conn,$competencyid) . "', '" . mysqli_escape_string($conn,$groupid) . "')");
                 }
             }
@@ -37,7 +37,7 @@ if (isset($_POST["createC"]) && isset($_POST["competency"])) { //---------------
         $selectedRoles = $_POST["roles"];
         foreach ($selectedRoles as $roleid) { //Loops through entries in array to apply to multiple roles
             foreach ($selectedCompetencies as $competencyid) {
-                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM competencyroles WHERE Competencies = " . mysqli_escape_string($conn,$competencyid) . " AND Roles = " . mysqli_escape_string($conn,$roleid))) == false) {
+                if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM competencyroles WHERE Competencies = '" . mysqli_escape_string($conn,$competencyid) . "' AND Roles = '" . mysqli_escape_string($conn,$roleid)."';")) == false) {
                     mysqli_query($conn, "INSERT INTO competencyroles (Competencies, Roles) VALUES ('" . mysqli_escape_string($conn,$competencyid) . "', '" . mysqli_escape_string($conn,$roleid) . "')");
                 }
             }
@@ -70,7 +70,7 @@ if (isset($_POST["createC"]) && isset($_POST["competency"])) { //---------------
         $selectedGroups = $_POST["groups"];
         foreach ($selectedGroups as $groupid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competencyid) {
-                mysqli_query($conn, "DELETE FROM competencygroups WHERE Competencies = " . mysqli_escape_string($conn,$competencyid) . " AND Groups = " . mysqli_escape_string($conn,$groupid)); //Deletes every occurence of the groups and competency together
+                mysqli_query($conn, "DELETE FROM competencygroups WHERE Competencies = '" . mysqli_escape_string($conn,$competencyid) . "' AND Groups = '" . mysqli_escape_string($conn,$groupid)."';"); //Deletes every occurence of the groups and competency together
             }
         }
     }
@@ -78,7 +78,7 @@ if (isset($_POST["createC"]) && isset($_POST["competency"])) { //---------------
         $roles = $_POST["roles"];
         foreach ($roles as $roleid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competencyid) {
-                mysqli_query($conn, "DELETE FROM competencyroles WHERE Competencies = " . mysqli_escape_string($conn,$competencyid) . " AND roles = " . mysqli_escape_string($conn,$roleid)); //Deletes every occurence of the rioles and competency together
+                mysqli_query($conn, "DELETE FROM competencyroles WHERE Competencies = '" . mysqli_escape_string($conn,$competencyid) . "' AND roles = '" . mysqli_escape_string($conn,$roleid)."';"); //Deletes every occurence of the rioles and competency together
             }
         }
     }
@@ -86,7 +86,7 @@ if (isset($_POST["createC"]) && isset($_POST["competency"])) { //---------------
         $users = $_POST["users"];
         foreach ($users as $userid) { //Loops through entries in array to apply to multiple groups
             foreach ($selectedCompetencies as $competencyid) {
-                mysqli_query($conn, "DELETE FROM individualusercompetencies WHERE Competencies = " . mysqli_escape_string($conn,$competencyid) . " AND Users = " . mysqli_escape_string($conn,$userid)); //Deletes every occurence of the rioles and competency together
+                mysqli_query($conn, "DELETE FROM individualusercompetencies WHERE Competencies = '" . mysqli_escape_string($conn,$competencyid) . "' AND Users = '" . mysqli_escape_string($conn,$userid)."';"); //Deletes every occurence of the rioles and competency together
             }
         }
     }

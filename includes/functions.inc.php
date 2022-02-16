@@ -33,10 +33,10 @@ function userExists($conn, $username) //Confirms if a matching username is found
     }
 }
 
-function createUser($conn, $name, $username, $password, $role) //Adds new user to database
+function createUser($conn, $name, $username, $password, $isAdmin) //Adds new user to database
 {
     $hashedPwd = password_hash(mysqli_real_escape_string($conn, $password), PASSWORD_DEFAULT); //Stores passwords securely
-    mysqli_query($conn, "INSERT INTO users (uname, uusername, upassword, urole) VALUES ('" . mysqli_real_escape_string($conn, $name) . "', '" . mysqli_real_escape_string($conn, $username) . "', '" . $hashedPwd . "', '" . mysqli_real_escape_string($conn, $role) . "');"); //Sets up the add to database
+    mysqli_query($conn, "INSERT INTO users (uname, uusername, upassword, urole) VALUES ('" . mysqli_real_escape_string($conn, $name) . "', '" . mysqli_real_escape_string($conn, $username) . "', '" . $hashedPwd . "', '" . mysqli_real_escape_string($conn, $isAdmin) . "');"); //Sets up the add to database
 }
 
 
@@ -61,6 +61,7 @@ function loginUser($conn, $username, $password) //Logs user in and sets session 
         $_SESSION["name"] = $uidExists["UName"];
         $_SESSION["role"] = $uidExists["URole"];
         $_SESSION["editMode"] = "0";
+        $_SESSION["isAdmin"] = $uidExists["UAdmin"];
     }
 }
 
@@ -328,9 +329,9 @@ function managerRoleSwitch($conn, $userid)
 { //For non-admin users, based on if they have any manager roles in any groups, role is alternated between 1 & 2
 
     if (mysqli_fetch_assoc(mysqli_query($conn, "SELECT * FROM usergroups WHERE Users = '" . $userid . "' AND isManager = 1"))) { //If users are a manager, give manager global role, otherwise strip role
-        mysqli_query($conn, "UPDATE users SET URole = 2 WHERE UserID = '" . $userid . "' AND URole = 1"); //If staff which has a mangerrole, give global manager role - ignore Admins
+        mysqli_query($conn, "UPDATE users SET URole = 2 WHERE UserID = '" . $userid . "' AND URole = '1'"); //If staff which has a mangerrole, give global manager role - ignore Admins
     } else {
-        mysqli_query($conn, "UPDATE users SET URole = 1 WHERE UserID = '" . $userid . "' AND URole = 2"); //If manager without managing any managed groups, strip the manager role - ignore Admins
+        mysqli_query($conn, "UPDATE users SET URole = 1 WHERE UserID = '" . $userid . "' AND URole = '2'"); //If manager without managing any managed groups, strip the manager role - ignore Admins
     }
 }
 
@@ -344,6 +345,8 @@ function updateSession($conn, $userid) //Rechecks the session variables
     $uservariables = mysqli_fetch_assoc($user);
     $_SESSION["username"] = $uservariables["UUsername"];
     $_SESSION["name"] = $uservariables["UName"];
+    $_SESSION["role"] = $uservariables["URole"];
+    $_SESSION["isAdmin"] = $uservariables["UAdmin"];
 }
 
 function changePassword($conn, $userid, $password) //changes a user's password
@@ -405,7 +408,7 @@ function updateUserCompetencies($conn, $userid) //Inefficent update process - bu
 
 function displayUserRatings($conn, $competencyid, $userid) //Based on if the user is an admin (with editmode on) or not, it will display the user's rating (or print N/A if it is empty)
 {
-    if ($_SESSION["role"] == 3 && $_SESSION["editMode"] == "1") { //If in edit mode, allow the user to "edit" the values
+    if ($_SESSION["isAdmin"] == "1" && $_SESSION["editMode"] == "1") { //If in edit mode, allow the user to "edit" the values
         $Ratings = getUserRatingsFromCompetency($conn, $userid, $competencyid);
         if ($Rating = mysqli_fetch_assoc($Ratings)) { //If there is a value in the array, get the first and only the first
             return "<input type=\"number\" maxlength=\"1\" required=\"required\" max=\"3\" min=\"0\" value=\"" . $Rating["Rating"] . "\" id=\"" . $userid . "-" . $competencyid . "-tb\" onInput=\"updateValue(" . $userid . ", " . $competencyid . ", this.value)\">"; //Gives the text versions of the names - limits it to the numbers
@@ -437,7 +440,7 @@ function emptyArrayError() //prints none found - called when no items were retur
 
 function namePrint($sesh, $user, $showLink = false) //Appends (YOU) to the name, if the userid corresponds to the logged in user
 {
-    if ($sesh["role"] == "2" || $sesh["role"] == "3" && $showLink) {
+    if (($sesh["role"] == "2" || $sesh["isAdmin"] == "1") && $showLink) {
         return  "<a class=\"nameTag\" href=\"singleview.php" . ($user["UserID"] == $sesh["userid"] ? "" : "?userid=" . $user["UserID"]) . "\">" . $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "") . "</a>"; //If the user is admin or manager, allows them to view the user individually
     } else {
         return  $user["UName"] . ($user["UserID"] == $sesh["userid"] ? " (You)" : "");

@@ -37,7 +37,7 @@ require_once 'signup.inc.php';
                 echo "<td><label>" . "<input type=\"checkbox\" id=\"" . $row["UserID"] . "-checkbox-users-staffedit\" name=\"users[]\" value=\"" . $row["UserID"] . "\">" . "</label></td>";     //Creates Checkbox
                 echo "<td><label for=\"" . $row["UserID"] . "-checkbox-users-staffedit\">" . namePrint($_SESSION, $row) . "</label></td>";   //Gives name
                 echo "<td>" . $row["UUsername"] . "</td>";
-                echo "<td>" . ($row["URole"] == 3 ? "Admin" : ($row["URole"] == 2 ? "Manager" : "Staff")) . "</td>"; //if is a 3 in the global role, is admin, otherwise is not
+                echo "<td>" . ($row["URole"] == 2 ? "Manager" : "Staff") . "</td>"; //if is a 3 in the global role, is admin, otherwise is not
                 echo "<td><ul>";
 
                 $usersgroups = UserGroupFromUser($conn, $row["UserID"]);
@@ -74,15 +74,6 @@ require_once 'signup.inc.php';
         <button class="centre actionbuttons addbuttons" type="submit" name="addG">Add Selected</button>
         <button class="centre actionbuttons rembuttons" type="submit" name="removeG">Remove Selected</button>
 
-
-        <h3 class="centre">Define Admin Users</h3>
-
-        <select class="centre" name="role">
-            <option value="1">Non-Admin</option>
-            <option value="3">Admin</option>
-        </select>
-        <button class="centre actionbuttons addbuttons" type="submit" name="roleUpdate">Update Role</button>
-
     </form>
 </section>
 <br>
@@ -107,7 +98,7 @@ require_once 'signup.inc.php';
                 echo "<tr>";
                 echo "<td><p id=\"" . $user["UserID"] . "-name\">" . namePrint($_SESSION, $user) . "</p></td>";
                 echo "<td><p id=\"" . $user["UserID"] . "-username\">" . $user["UUsername"] . "</p></td>";
-                echo "<td><p id=\"" . $user["UserID"] . "-role\">" . ($user["URole"] == 3 ? "✓" : "✕") . "</p></td>";
+                echo "<td><p id=\"" . $user["UserID"] . "-role\">" . ($user["UAdmin"] == 1  ? "✓" : "✕") . "</p></td>";
                 //Testing having a form popup to edit the values
 
                 //The following provides the user values "edit" form
@@ -137,8 +128,8 @@ require_once 'signup.inc.php';
                             <input type=\"password\" placeholder=\"New Password\" maxlength=\"25\" name=\"psw\">
 
                             <label for=\"role\"><b>Is Admin</b></label>
-                            <input type=\"hidden\" value=\"1\" name=\"role\">
-                            <input type=\"checkbox\" value=\"3\" name=\"role\" ".($user["URole"] == 3 ? "checked":"") .">
+                            <input type=\"hidden\" value=\"0\" name=\"admin\">
+                            <input type=\"checkbox\" value=\"1\" name=\"admin\" ".($user["UAdmin"] == 1 ? "checked":"") .">
 
                             <button type=\"button\" class=\"btn\" onclick=\"UpdateUserValuesFromForm('formID-" . $user["UserID"] . "')\">Update Entries</button>
                             <button type=\"button\" class=\"btn cancel\" onclick=\"closeForm('formDiv-" . $user["UserID"] . "')\">Close</button>
@@ -147,7 +138,6 @@ require_once 'signup.inc.php';
                             <button type=\"button\" class=\"dangerous\" onclick=\"deleteUser('" . $user["UserID"] . "')\">Delete user PERMANENTLY</button>
                         
                         </form>
-                        
                     </div>
                     </td>";
 
@@ -157,6 +147,7 @@ require_once 'signup.inc.php';
         ?>
 
     </table>
+    <p class="centre"><i>A second page-reload may be required to show updated values</i></p>
     <script>
         function openForm(idValue) {//opens user edit form
             var element = document.getElementById(idValue);
@@ -183,11 +174,9 @@ require_once 'signup.inc.php';
         <input type="text" name="name" placeholder="Name" maxlength="20">
         <input type="text" name="username" placeholder="Username" maxlength="20">
         <input type="password" name="pwd" placeholder="password" maxlength="25">
-        <label for="role">Account Type:</label>
-        <select name="role" id="role">
-            <option value="1">Non-Admin</option>
-            <option value="3">Admin</option>
-        </select>
+        <label for="role"><b>Is Admin:</b></label>
+        <input type="hidden" value="0" name="admin">
+        <input type="checkbox" value="1" name="admin">
         <button class="actionbuttons addbuttons" type="submit" name="createUser">Add User</button>
     </form>
     <br>

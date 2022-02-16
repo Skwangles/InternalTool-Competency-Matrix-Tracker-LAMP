@@ -1,9 +1,9 @@
 <?php
-if (isset($_POST["createUser"]) && isset($_POST["name"]) && isset($_POST["username"]) && isset($_POST["pwd"]) && isset($_POST["role"])) {
+if (isset($_POST["createUser"]) && isset($_POST["name"]) && isset($_POST["username"]) && isset($_POST["pwd"]) && isset($_POST["admin"]) && $_SESSION["isAdmin"] == 1) {
     $name = $_POST["name"];
     $username = $_POST["username"];
     $password = $_POST["pwd"];
-    $role = $_POST["role"];
+    $admin = $_POST["admin"];
 
     require_once 'dbh.inc.php';
     require_once 'functions.inc.php';
@@ -20,7 +20,7 @@ if (isset($_POST["createUser"]) && isset($_POST["name"]) && isset($_POST["userna
         header("location: ../admin.php?error=usernametaken#StaffManage");
         exit();
     }
-    createUser($conn, $name, $username, $password, $role); //Adds user to database
+    createUser($conn, $name, $username, $password, $admin); //Adds user to database
     header("location: ../admin.php?error=none#AddRemoveGR"); //Sends back success message
     exit();
 }

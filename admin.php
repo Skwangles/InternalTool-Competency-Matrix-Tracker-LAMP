@@ -1,7 +1,7 @@
 <?php
 include_once 'includes/header.php';
 
-if (!isset($_SESSION["role"]) || $_SESSION["role"] != "3") {
+if (!isset($_SESSION["isAdmin"]) || $_SESSION["isAdmin"] != "1") {
     header("location: index.php?error=invalidcall");
     exit();
 }
@@ -34,6 +34,12 @@ include_once 'includes/staffedit.php';
 <?php
 
 include_once 'includes/gcedit.php';
+?>
+<br>
+<br>
+<br>
+<?
+//^ extra spacing, so that the elements are not nestled at the bottom of the screen
 
 include_once 'includes/footer.php';
 ?>

@@ -2,7 +2,7 @@
 
 include_once 'includes/header.php';
 
-if (!isset($_SESSION["role"]) || ($_SESSION["role"] != "2" && $_SESSION["role"] != "3")) {
+if (!isset($_SESSION["role"]) || ($_SESSION["role"] != "2" && $_SESSION["isAdmin"] != "1")) {
     header("location: index.php?error=invalidcall"); //If doesn't have the correct perms, kicks out
     exit();
 }
@@ -69,7 +69,7 @@ while ($group = mysqli_fetch_array($usersgroups)) {
 }
 }
 
-if ($_SESSION["role"] == 3) { //Only admins can see ALL groups
+if ($_SESSION["isAdmin"] == 1) { //Only admins can see ALL groups
 
     //Order specific arrays - 1. Contains the index=>userid, 2. contains the userid=>index, 3. contains Userid=>names
     $order = makeUserOrder($conn);
