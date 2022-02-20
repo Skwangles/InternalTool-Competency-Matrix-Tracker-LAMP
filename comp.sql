@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 18, 2021 at 02:07 AM
+-- Generation Time: Feb 20, 2022 at 10:39 PM
 -- Server version: 10.4.21-MariaDB
 -- PHP Version: 8.0.12
 
@@ -33,7 +33,6 @@ CREATE TABLE `competencies` (
   `CDescription` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
 -- --------------------------------------------------------
 
 --
@@ -44,7 +43,6 @@ CREATE TABLE `competencygroups` (
   `Competencies` int(10) UNSIGNED NOT NULL,
   `Groups` int(10) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii;
-
 
 -- --------------------------------------------------------
 
@@ -96,8 +94,7 @@ CREATE TABLE `roles` (
 
 INSERT INTO `roles` (`RoleID`, `RName`) VALUES
 (1, 'Staff'),
-(2, 'Manager'),
-(3, 'Admin');
+(2, 'Manager');
 
 -- --------------------------------------------------------
 
@@ -123,7 +120,6 @@ CREATE TABLE `usergroups` (
   `isManager` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=ascii;
 
-
 -- --------------------------------------------------------
 
 --
@@ -135,15 +131,18 @@ CREATE TABLE `users` (
   `UName` varchar(30) DEFAULT NULL,
   `UUsername` varchar(30) NOT NULL,
   `UPassword` varchar(128) DEFAULT NULL,
-  `URole` int(10) NOT NULL
+  `URole` int(1) NOT NULL DEFAULT 1,
+  `UAdmin` int(1) NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `users`
+-- Default Admin account is Admin/Admin
 --
 
-INSERT INTO `users` (`UserID`, `UName`, `UUsername`, `UPassword`, `URole`) VALUES
-(1, 'Admin', 'Admin', '$2y$10$ssi.UQRAuspwnhKV4kDt/uylud6YgxFCF6YMsf1Hbid1lnPh1H7Ve', 3);
+INSERT INTO `users` (`UserID`, `UName`, `UUsername`, `UPassword`, `URole`, `UAdmin`) VALUES
+(25, 'Admin', 'Admin', '$2y$10$C.vqEKqMmQpBG8EI.dxGNep084tolflZkisznFSrQVvdJKXyE0Pzu', 1, 0);
+
 --
 -- Indexes for dumped tables
 --
@@ -218,13 +217,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `competencies`
 --
 ALTER TABLE `competencies`
-  MODIFY `CompetencyID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `CompetencyID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `groups`
 --
 ALTER TABLE `groups`
-  MODIFY `GroupID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `GroupID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `roles`
@@ -236,7 +235,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `UserID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `UserID` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Constraints for dumped tables

@@ -73,7 +73,7 @@ require_once 'actioncompetencies.inc.php';
             while ($row = mysqli_fetch_array($users)) {
                 echo "<tr>";
                 echo "<td><label>" . "<input type=\"checkbox\" name=\"users[]\" id=\"" . $row["UserID"] . "-checkbox-users-gcedit\" value=\"" . $row["UserID"] . "\">" . "</label></td>"; //Creates Checkbox with group ID
-                echo "<td><label for=\"" . $row["UserID"] . "-checkbox-users-gcedit\">" . $row["UName"] . "</label></td>";   //Gives name of the group - allows user to click on name to select checkbox
+                echo "<td><label for=\"" . $row["UserID"] . "-checkbox-users-gcedit\">" . namePrint($_SESSION, $row) . "</label></td>";   //Gives name of the group - allows user to click on name to select checkbox
                 
 
                 $indUserCompetencies = IndUserCompetenciesFromUser($conn, $row["UserID"]);
