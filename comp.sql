@@ -141,7 +141,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`UserID`, `UName`, `UUsername`, `UPassword`, `URole`, `UAdmin`) VALUES
-(1, 'Admin', 'Admin', '$2y$10$C.vqEKqMmQpBG8EI.dxGNep084tolflZkisznFSrQVvdJKXyE0Pzu', 1, 1);
+(1, 'Admin', 'Admin', '$2y$10$By9hdQ3lH9x91XN3jZjFrOLOpthAbHE3dJJIH7WVjs3EmeqWu3mle', 1, 1);
 
 --
 -- Indexes for dumped tables
