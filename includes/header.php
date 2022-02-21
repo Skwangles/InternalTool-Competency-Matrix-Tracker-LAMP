@@ -25,12 +25,13 @@ session_start();
         <div id="wrapper" class="wrapper">
        
             <ul>
-               
-                <a href="index.php">Home</a>
+               <?php 
+               if (isset($_SESSION["username"])) {
+               ?>
                 <a href="singleview.php">Your Competencies</a>
 
                 <?php
-                if (isset($_SESSION["username"])) {
+                
                     if ($_SESSION["role"] == 2 || $_SESSION["isAdmin"] == 1) {
                         echo "<a href=\"managerview.php\">Department Competencies</a>";
                     }
@@ -41,11 +42,7 @@ session_start();
                     }
                     echo "<a href=\"settings.php\">Settings</a>";
                     echo "<a href=\"logout.php\">Logout</a>";
-                } else {
-
-                    echo "<a href=\"login.php\">Log In</a>";
-                }
-
+                } 
                 ?>
             </ul>
         </div>
