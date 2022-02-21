@@ -38,8 +38,7 @@ include_once 'includes/gcedit.php';
 <br>
 <br>
 <br>
-<?
+<?php
 //^ extra spacing, so that the elements are not nestled at the bottom of the screen
 
 include_once 'includes/footer.php';
-?>

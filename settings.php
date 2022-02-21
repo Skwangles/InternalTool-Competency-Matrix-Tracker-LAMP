@@ -28,4 +28,3 @@ include_once 'includes/settings.inc.php';
 <?php
 //Handles error tags
 include_once 'includes/footer.php';
-?>

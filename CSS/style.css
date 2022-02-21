@@ -24,7 +24,8 @@ body {
 -----Start---
 */
 
-nav {
+.wrapper {
+    z-index: 99;
     width: 100%;
     background-color: #05b43f;
     overflow: hidden;
@@ -34,13 +35,13 @@ nav {
 
 /* Navigation links */
 
-nav a {
-    padding: 12px;
+.wrapper a {
+    padding: 15px;
     color: black;
     text-decoration: none;
     font-size: 17px;
-    width: 25%;
-    /* Four equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
+    width: 100%;
+    /* equal-width links. If you have two links, use 50%, and 33.33% for three links, etc.. */
     text-align: center;
     /* If you want the text to be centered */
 }
@@ -48,21 +49,48 @@ nav a {
 
 /* Add a background color on mouse-over */
 
-nav a:hover {
-    background-color: #0b6d2c;
+.wrapper a:hover {
+    background-color: #0e963b;
+    border-radius: 5px;
 }
 
 
 /* Add responsiveness - on screens less than 500px, make the navigation links appear on top of each other, instead of next to each other */
 
 @media screen and (max-width: 500px) {
-    nav a {
+    .wrapper a {
         float: none;
         display: block;
+        padding-top: 20px;
         width: 100%;
         text-align: left;
         /* If you want the text to be left-aligned on small screens */
     }
+}
+
+
+/* The sticky class is added to the header with JS when it reaches its scroll position */
+
+.sticky {
+    position: fixed;
+    top: 0;
+    width: 100%;
+}
+
+
+/* Add some top padding to the page content to prevent sudden quick movement (as the header gets a new position at the top of the page (position:fixed and top:0) */
+
+.sticky+.content {
+    padding-top: 102px;
+}
+
+#currentUserTag {
+    z-index: 100;
+    float: left;
+    position: fixed;
+    font-size: 10px;
+    padding-left: 20px;
+    opacity: 0.85;
 }
 
 
@@ -176,7 +204,7 @@ Table key
     position: fixed;
     left: 10px;
     bottom: 20px;
-    opacity: .8;
+    opacity: 0.8;
 }
 
 
@@ -372,6 +400,7 @@ Admin controls
 */
 
 .inwindow-buttons {
+    padding-bottom: 10px;
     width: 50%;
     margin-left: auto;
     margin-right: auto;
@@ -405,7 +434,7 @@ Name links in single + manager views
 Back to top button -- from https://www.w3schools.com/howto/howto_js_scroll_to_top.asp
 */
 
-#myBtn {
+#scrollToTop {
     display: none;
     /* Hidden by default */
     position: fixed;

@@ -11,26 +11,28 @@ session_start();
     <link rel="stylesheet" href="CSS/style.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="JS/update.ajax.js"></script>
+    
     <!-- CSS only -->
     
 <body>
 
     <!--Nav Bar-->
-    <nav>
-        <div class="wrapper">
-            <ul>
-                <?php
+    <?php
                 if (isset($_SESSION["name"])) {
-                    echo "<p style=\"float:left;\"><b>User: " . $_SESSION["name"] . "</b></p>";
+                    echo "<div id='currentUserTag'><p>Logged In As: </p><p><b>" . $_SESSION["name"] . "</b></p></div>";
                 }
                 ?>
+        <div id="wrapper" class="wrapper">
+       
+            <ul>
+               
                 <a href="index.php">Home</a>
                 <a href="singleview.php">Your Competencies</a>
 
                 <?php
                 if (isset($_SESSION["username"])) {
                     if ($_SESSION["role"] == 2 || $_SESSION["isAdmin"] == 1) {
-                        echo "<a href=\"managerview.php\">Your Department's Competencies</a>";
+                        echo "<a href=\"managerview.php\">Department Competencies</a>";
                     }
                     if ($_SESSION["isAdmin"] == "1") { //If admin, shows admin options
                 ?>
@@ -47,6 +49,6 @@ session_start();
                 ?>
             </ul>
         </div>
-    </nav>
+        <div class ="content">
     <?php 
     include_once 'error.php';
