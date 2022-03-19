@@ -4,7 +4,7 @@ The purpose of this code is to add the ability to track the levels of competency
 It allows the employer to track what things users are trained in, compared to their coworkers. 
 
 This is a project, developed for internal usage for a IT company. 
-Developed soley by Skwangles. 
+Developed soley by Skwangles. The rights belong to Millennium Technology & Support NZ. 
 
 
 The stack is Mysql + Php + HTML5.
